@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 import { baseResponse } from 'common/dto/baseResponse.dto'
-import { sendResponse } from 'utils/common/dto/sendResponse.dto'
+import { sendResponse } from 'common/dto/sendResponse.dto'
 
 export namespace ErrorMiddleware {
   export function DtoValidator(req: Request, res: Response, next: NextFunction) {

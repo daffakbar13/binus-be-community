@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { getEnv } from 'configs/env'
-import { baseResponse } from 'utils/common/dto/baseResponse.dto'
+import { baseResponse } from 'common/dto/baseResponse.dto'
 import bcrypt from 'bcrypt'
 import { Request } from 'express'
 import { AuthDto } from 'app/dto/auth.dto'

@@ -1,26 +1,26 @@
 stages:
-#  - prepare
+  - prepare
   - build_docker
   - deploy_microk8s
-#cache:
-#  key: "$CI_BUILD_REF_NAME"
-#  untracked: true    
-#  paths:
-#    - node_modules/
+cache:
+  key: "$CI_BUILD_REF_NAME"
+  untracked: true    
+  paths:
+    - node_modules/
 
-#prepare:
-#  stage: prepare
-#  image: registry.stagingapps.net/build/node:16
-#  script:
-#   - yarn install
-#   - CI=false yarn build
-#   - ls -lah
-#  only:
-#    - staging
-#  artifacts:
-#    paths:
-#      - "dist"
-#    expire_in: 1 days
+prepare:
+  stage: prepare
+  image: registry.stagingapps.net/build/node:16
+  script:
+   - yarn install
+   - CI=false yarn build
+   - ls -lah
+  only:
+    - staging
+  artifacts:
+    paths:
+      - "dist"
+    expire_in: 1 days
 
 build_docker:
   stage: build_docker

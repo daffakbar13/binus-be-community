@@ -19,7 +19,7 @@ prepare:
     - staging
   artifacts:
     paths:
-      - "build"
+      - "dist"
     expire_in: 1 days
 
 build_docker:

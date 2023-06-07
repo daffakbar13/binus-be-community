@@ -19,7 +19,7 @@ spec:
         image: __IMAGE__:__VERSION__
         envFrom:
         ports:
-        - containerPort: 80
+        - containerPort: 2205
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: __CI_PROJECT_NAME__-vol

@@ -1,0 +1,32 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "tsconfig.json",
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint", "import", "prettier"],
+  "extends": ["airbnb-base"],
+  "root": true,
+  "rules": {
+    "no-unused-vars": "warn",
+    "import/no-cycle": 0,
+    "import/named": 0,
+    "no-undef": 0,
+    "eol-last": 0,
+    "import/prefer-default-export": 0,
+    "no-empty-pattern": 0,
+    "import/no-named-as-default": 0,
+    "import/no-unresolved": 0,
+    "linebreak-style": 0,
+    "implicit-arrow-linebreak": 0,
+    "object-curly-newline": 0,
+    "semi": 0,
+    "indent": 1,
+    "import/no-extraneous-dependencies": 0,
+    "import/extensions": 0,
+    "no-unused-expressions": 1,
+    "function-paren-newline": 0,
+    "no-use-before-define": 0,
+    "camelcase": 0
+  }
+}

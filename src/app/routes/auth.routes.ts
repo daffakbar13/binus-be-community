@@ -5,6 +5,6 @@ import { AuthDto } from 'app/dto/auth.dto'
 
 const router = Router()
 
-router.post('/login', AuthDto.Login, ErrorMiddleware.DtoValidator, AuthController.login)
+router.post('/login', AuthDto.Login, ErrorMiddleware.DtoValidator, AuthController.Login)
 
 export const AuthRouter = Router().use('/auth', router)

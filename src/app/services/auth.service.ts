@@ -7,28 +7,28 @@ import { AuthDto } from 'app/dto/auth.dto'
 import { UserService } from './user.service'
 
 export namespace AuthService {
-  export function generateToken<T extends jwt.JwtPayload>(payload: T) {
+  export function GenerateToken<T extends jwt.JwtPayload>(payload: T) {
     return jwt.sign(payload, getEnv('JWT_SECRET_KEY'), {
       expiresIn: getEnv('JWT_EXPIRATION'),
     })
   }
 
-  export async function loginByEmail(email: string) {
-    const user = await UserService.getUserByEmail(email)
+  export async function LoginByEmail(email: string) {
+    const user = await UserService.GetUserByEmail(email)
 
     if (user) {
-      return baseResponse('Ok', { token: generateToken(user.dataValues) })
+      return baseResponse('Ok', { token: GenerateToken(user.dataValues) })
     }
     return baseResponse('Unauthorized')
   }
 
-  export async function loginByBinusianId(binusian_id: string, password: string) {
-    const user = await UserService.getUserByBinusianId(binusian_id)
+  export async function LoginByBinusianId(binusian_id: string, password: string) {
+    const user = await UserService.GetUserByBinusianId(binusian_id)
 
     if (user) {
       const authorized = bcrypt.compareSync(password, user.password)
       if (authorized) {
-        const token = generateToken(user)
+        const token = GenerateToken(user)
         return baseResponse('Ok', { token })
       }
     }
@@ -36,18 +36,18 @@ export namespace AuthService {
     return baseResponse('Unauthorized')
   }
 
-  export async function login(payload: AuthDto.LoginType) {
+  export async function Login(payload: AuthDto.LoginType) {
     const { email, binusian_id, password } = payload
     if (email) {
-      return loginByEmail(email)
+      return LoginByEmail(email)
     }
     if (binusian_id && password) {
-      return loginByBinusianId(binusian_id, password)
+      return LoginByBinusianId(binusian_id, password)
     }
     return baseResponse('BadRequest')
   }
 
-  export function verifyToken(headers: Request['headers']) {
+  export function VerifyToken(headers: Request['headers']) {
     const { authorization } = headers
 
     if (authorization && authorization.startsWith('Bearer')) {

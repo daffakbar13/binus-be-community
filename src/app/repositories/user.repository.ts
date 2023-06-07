@@ -3,7 +3,7 @@ import { UserRoles } from 'app/models/user_roles'
 import { Users } from 'app/models/users'
 
 export namespace UserRepository {
-  export function getUserByEmail(email: string) {
+  export function GetUserByEmail(email: string) {
     return Users.findOne({
       attributes: {
         exclude: ['id', 'user_role_id', 'password'],
@@ -24,7 +24,7 @@ export namespace UserRepository {
     })
   }
 
-  export function getUserByBinusianId(binusian_id: string) {
+  export function GetUserByBinusianId(binusian_id: string) {
     return Users.findOne({
       where: { binusian_id },
       include: [

@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: __CI_PROJECT_NAME__-__CI_ENVIRONMENT_SLUG__-ingress
+  annotations:
+    #nginx.ingress.kubernetes.io/auth-type: basic
+    # name of the secret that contains the user/password definitions
+    #nginx.ingress.kubernetes.io/auth-secret: git-http-auth
+    # message to display with an appropriate context why the authentication is required
+    #nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required - wgs'     
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-body-size: "1000m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+
+spec:
+  tls:
+  - secretName: stagingapps.net
+  rules:
+  - host: __URL_STAGING__
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: __CI_PROJECT_NAME__-__CI_ENVIRONMENT_SLUG__
+            port: 
+              number: 80

@@ -1,0 +1,37 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: __CI_PROJECT_NAME__-__CI_ENVIRONMENT_SLUG__
+spec:
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: __CI_PROJECT_NAME__-__CI_ENVIRONMENT_SLUG__
+  replicas: 1 
+  template: 
+    metadata:
+      labels:
+        app: __CI_PROJECT_NAME__-__CI_ENVIRONMENT_SLUG__
+    spec:
+      containers:
+      - name: __CI_PROJECT_NAME__-__CI_ENVIRONMENT_SLUG__
+        image: __IMAGE__:__VERSION__
+        envFrom:
+        ports:
+        - containerPort: 2205
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: __CI_PROJECT_NAME__-vol
+          mountPath: /usr/src/app/
+          subPath: app
+        - name: __CI_PROJECT_NAME__-vol
+          mountPath: /usr/src/app/node_modules/
+          subPath: node_modules
+      restartPolicy: Always
+      volumes:
+      - name: __CI_PROJECT_NAME__-vol
+        persistentVolumeClaim:
+         claimName: __CI_PROJECT_NAME__-pv-claim
+      imagePullSecrets:
+      - name: regcred

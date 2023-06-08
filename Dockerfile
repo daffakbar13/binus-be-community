@@ -3,7 +3,7 @@ WORKDIR /usr/src/app
 COPY ./package.json /usr/src/app/
 RUN yarn install --no-lockfile
 COPY . /usr/src/app/
-COPY /src/configs/database/tsconfig.json  /usr/src/app/database/tsconfig.json
+COPY /src/configs/database/tsconfig.json  /usr/src/app/src/configs/database/tsconfig.json
 RUN yarn run build 
 COPY ./dist /usr/src/app/
 EXPOSE 2205

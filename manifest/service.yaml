@@ -9,7 +9,7 @@ spec:
   - name: http
     port: 80
     protocol: TCP
-    targetPort: 2205
+    targetPort: 80
   selector:
     app: __CI_PROJECT_NAME__-__CI_ENVIRONMENT_SLUG__
   type: ClusterIP

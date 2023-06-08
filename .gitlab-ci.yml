@@ -1,5 +1,4 @@
 stages:
-  - prepare
   - build_docker
   - deploy_microk8s
 cache:
@@ -7,20 +6,6 @@ cache:
   untracked: true
   paths:
     - node_modules/
-
-prepare:
-  stage: prepare
-  image: registry.stagingapps.net/build/node:16
-  script:
-    - yarn install
-    - CI=false yarn build
-    - ls -lah
-  only:
-    - staging
-  artifacts:
-    paths:
-      - 'dist'
-    expire_in: 1 days
 
 build_docker:
   stage: build_docker

@@ -1,5 +1,8 @@
-FROM nginx:1.17.1-alpine
-WORKDIR /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY dist/ /usr/share/nginx/html
-COPY $ENV_FILE /.env
+FROM node:16-alpine
+WORKDIR /usr/src/app
+COPY ./package.json /package.json
+RUN yarn install --no-lockfile
+COPY . .
+EXPOSE 2205
+ENV NODE_ENV=production
+CMD [ "yarn", "start" ]

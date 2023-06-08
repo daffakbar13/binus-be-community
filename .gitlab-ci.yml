@@ -1,11 +1,6 @@
 stages:
   - build_docker
   - deploy_microk8s
-cache:
-  key: '$CI_BUILD_REF_NAME'
-  untracked: true
-  paths:
-    - node_modules/
 
 build_docker:
   stage: build_docker

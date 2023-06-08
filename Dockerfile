@@ -1,11 +1,11 @@
 FROM node:16-alpine
 WORKDIR /usr/src/app
-COPY ./package.json /package.json
+COPY ./package.json /usr/src/app/
 RUN yarn install --no-lockfile
-COPY ./src /src
-COPY ./tsconfig.json /tsconfig.json
+COPY . /usr/src/app/
+COPY /src/configs/database/tsconfig.json  /usr/src/app/database/tsconfig.json
 RUN yarn run build 
-COPY ./dist /dist
+COPY ./dist /usr/src/app/dist/
 EXPOSE 2205
 ENV NODE_ENV=production
 CMD [ "yarn", "start" ]

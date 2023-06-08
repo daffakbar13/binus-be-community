@@ -16,8 +16,6 @@ build_docker:
     - docker push "${CI_REGISTRY_IMAGE}:$CI_BUILD_REF"
   only:
     - staging
-  tags:
-    - new-shared
 
 deploy_microk8s:
   stage: deploy_microk8s
@@ -60,5 +58,3 @@ deploy_microk8s:
     - kubectl get all,ing  -n "${namespace}"
   only:
     - staging
-  tags:
-    - new-shared

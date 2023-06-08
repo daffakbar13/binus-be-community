@@ -11,10 +11,9 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/data/wgs/binus-be"
+    path: '/mnt/data/wgs/binus-be'
 
 ---
-
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:

@@ -3,8 +3,8 @@ stages:
   - build_docker
   - deploy_microk8s
 cache:
-  key: "$CI_BUILD_REF_NAME"
-  untracked: true    
+  key: '$CI_BUILD_REF_NAME'
+  untracked: true
   paths:
     - node_modules/
 
@@ -12,14 +12,14 @@ prepare:
   stage: prepare
   image: registry.stagingapps.net/build/node:16
   script:
-   - yarn install
-   - CI=false yarn build
-   - ls -lah
+    - yarn install
+    - CI=false yarn build
+    - ls -lah
   only:
     - staging
   artifacts:
     paths:
-      - "dist"
+      - 'dist'
     expire_in: 1 days
 
 build_docker:
@@ -37,13 +37,13 @@ build_docker:
   only:
     - staging
   tags:
-    - new-shared  
+    - new-shared
 
 deploy_microk8s:
   stage: deploy_microk8s
   image:
     name: bitnami/kubectl:1.23
-    entrypoint: [""]  
+    entrypoint: ['']
   environment:
     name: stg-binus-be
   script:
@@ -59,7 +59,7 @@ deploy_microk8s:
           kubectl create secret tls stagingapps.net   --cert=stagingappsnet.ca-bundle --key=stagingappsnet.key  -n ${namespace} || exit 1
       else
          kubectl create secret tls stagingapps.net   --cert=stagingappsnet.ca-bundle --key=stagingappsnet.key -n ${namespace} || exit 1
-      fi 
+      fi
     - |
       if kubectl get secret -n ${namespace} | grep regcred; then
           echo "already exist"

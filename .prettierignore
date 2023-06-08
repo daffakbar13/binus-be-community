@@ -1,6 +1,14 @@
 .cache
+dist
 package-lock.json
 public
 node_modules
 yarn.lock
 commitlint.config.js
+.prettierrc
+manifest
+.eslintrc.*
+.gitlab-ci.yml
+nodemon.*
+package.json
+tsconfig.json

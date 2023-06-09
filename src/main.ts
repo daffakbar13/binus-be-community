@@ -31,7 +31,7 @@ createTerminus(server, {
 })
 
 // eslint-disable-next-line no-console
-dbSokrates.sync({ alter: true, force: true }).catch(console.error)
+dbSokrates.sync().catch(console.error)
 
 server.listen(getEnv('API_PORT'), () => {
   // eslint-disable-next-line no-console

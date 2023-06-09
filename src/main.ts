@@ -40,4 +40,5 @@ server.listen(getEnv('API_PORT'), () => {
   console.info(`Sokrates listening at ${getEnv('API_HOST')}:${getEnv('API_PORT')}`)
 })
 
+// Satryo : Try push to WGS Repo
 // Hans : Try push to WGS Repo

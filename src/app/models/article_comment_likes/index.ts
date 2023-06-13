@@ -6,8 +6,6 @@ import {
   CreationOptional,
   DataTypes,
 } from 'sequelize'
-import { Users } from '../users'
-import { ArticleComments } from '../article_comments'
 
 export class ArticleCommentLikes extends Model<
   InferAttributes<ArticleCommentLikes>,
@@ -18,6 +16,10 @@ export class ArticleCommentLikes extends Model<
   declare user_id: number
 
   declare article_comment_id: number
+
+  // declare liked_by: NonAttribute<Users>
+
+  // declare article_comment: NonAttribute<ArticleComments>
 }
 
 try {
@@ -30,17 +32,17 @@ try {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: Users,
-          key: 'id',
-        },
+        // references: {
+        //   model: Users,
+        //   key: 'id',
+        // },
       },
       article_comment_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: ArticleComments,
-          key: 'id',
-        },
+        // references: {
+        //   model: ArticleComments,
+        //   key: 'id',
+        // },
       },
     },
     {
@@ -50,25 +52,25 @@ try {
     },
   )
 
-  Users.hasMany(ArticleCommentLikes, {
-    foreignKey: 'user_id',
-    as: 'article_comment_likes',
-  })
+  // Users.hasMany(ArticleCommentLikes, {
+  //   foreignKey: 'user_id',
+  //   as: 'article_comment_likes',
+  // })
 
-  ArticleComments.hasMany(ArticleCommentLikes, {
-    foreignKey: 'article_comment_id',
-    as: 'article_comment_likes',
-  })
+  // ArticleComments.hasMany(ArticleCommentLikes, {
+  //   foreignKey: 'article_comment_id',
+  //   as: 'article_comment_likes',
+  // })
 
-  ArticleCommentLikes.belongsTo(Users, {
-    foreignKey: 'user_id',
-    as: 'liked_by',
-  })
+  // ArticleCommentLikes.belongsTo(Users, {
+  //   foreignKey: 'user_id',
+  //   as: 'liked_by',
+  // })
 
-  ArticleCommentLikes.belongsTo(ArticleComments, {
-    foreignKey: 'article_comment_id',
-    as: 'article_comment',
-  })
+  // ArticleCommentLikes.belongsTo(ArticleComments, {
+  //   foreignKey: 'article_comment_id',
+  //   as: 'article_comment',
+  // })
 } catch (error) {
   /* eslint-disable no-console */
   console.error(error)

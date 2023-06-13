@@ -6,7 +6,6 @@ import {
   CreationOptional,
   DataTypes,
 } from 'sequelize'
-import { Users } from '../users'
 
 export class Videos extends Model<InferAttributes<Videos>, InferCreationAttributes<Videos>> {
   declare id: CreationOptional<number>
@@ -38,10 +37,10 @@ try {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: Users,
-          key: 'id',
-        },
+        // references: {
+        //   model: Users,
+        //   key: 'id',
+        // },
       },
       title: DataTypes.STRING,
       video_url: DataTypes.STRING,
@@ -59,15 +58,15 @@ try {
     },
   )
 
-  Users.hasMany(Videos, {
-    foreignKey: 'user_id',
-    as: 'videos',
-  })
+  // Users.hasMany(Videos, {
+  //   foreignKey: 'user_id',
+  //   as: 'videos',
+  // })
 
-  Videos.belongsTo(Users, {
-    foreignKey: 'user_id',
-    as: 'created_by',
-  })
+  // Videos.belongsTo(Users, {
+  //   foreignKey: 'user_id',
+  //   as: 'created_by',
+  // })
 } catch (error) {
   /* eslint-disable no-console */
   console.error(error)

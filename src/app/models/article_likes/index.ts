@@ -6,8 +6,6 @@ import {
   CreationOptional,
   DataTypes,
 } from 'sequelize'
-import { Users } from '../users'
-import { Articles } from '../articles'
 
 export class ArticleLikes extends Model<
   InferAttributes<ArticleLikes>,
@@ -18,6 +16,10 @@ export class ArticleLikes extends Model<
   declare user_id: number
 
   declare article_id: number
+
+  // declare liked_by: NonAttribute<Users>
+
+  // declare article: NonAttribute<Articles>
 }
 
 try {
@@ -30,17 +32,17 @@ try {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: Users,
-          key: 'id',
-        },
+        // references: {
+        //   model: Users,
+        //   key: 'id',
+        // },
       },
       article_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: Articles,
-          key: 'id',
-        },
+        // references: {
+        //   model: Articles,
+        //   key: 'id',
+        // },
       },
     },
     {
@@ -50,25 +52,25 @@ try {
     },
   )
 
-  Users.hasMany(ArticleLikes, {
-    foreignKey: 'user_id',
-    as: 'article_likes',
-  })
+  // Users.hasMany(ArticleLikes, {
+  //   foreignKey: 'user_id',
+  //   as: 'article_likes',
+  // })
 
-  Articles.hasMany(ArticleLikes, {
-    foreignKey: 'article_id',
-    as: 'article_likes',
-  })
+  // Articles.hasMany(ArticleLikes, {
+  //   foreignKey: 'article_id',
+  //   as: 'article_likes',
+  // })
 
-  ArticleLikes.belongsTo(Users, {
-    foreignKey: 'user_id',
-    as: 'liked_by',
-  })
+  // ArticleLikes.belongsTo(Users, {
+  //   foreignKey: 'user_id',
+  //   as: 'liked_by',
+  // })
 
-  ArticleLikes.belongsTo(Articles, {
-    foreignKey: 'article_id',
-    as: 'article',
-  })
+  // ArticleLikes.belongsTo(Articles, {
+  //   foreignKey: 'article_id',
+  //   as: 'article',
+  // })
 } catch (error) {
   /* eslint-disable no-console */
   console.error(error)

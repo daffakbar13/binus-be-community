@@ -3,7 +3,6 @@ import http from 'http'
 import { HealthCheckError, createTerminus } from '@godaddy/terminus'
 import app from 'app'
 import { getEnv } from 'configs/env'
-import 'app/models'
 import { dbSokrates } from 'configs/database'
 
 dotenv.config()

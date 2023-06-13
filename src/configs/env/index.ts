@@ -13,6 +13,7 @@ type EnvKeys =
   | 'GOOGLE_OAUTH_TOKEN_URI'
   | 'JWT_SECRET_KEY'
   | 'JWT_EXPIRATION'
+  | 'SESSION_SECRET_KEY'
 
 export function getEnv(key: EnvKeys) {
   return process.env[key] as string

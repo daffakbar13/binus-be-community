@@ -6,8 +6,6 @@ import {
   CreationOptional,
   DataTypes,
 } from 'sequelize'
-import { Users } from '../users'
-import { ThreadComments } from '../thread_comments'
 
 export class ThreadCommentLikes extends Model<
   InferAttributes<ThreadCommentLikes>,
@@ -30,17 +28,17 @@ try {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: Users,
-          key: 'id',
-        },
+        // references: {
+        //   model: Users,
+        //   key: 'id',
+        // },
       },
       thread_comment_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: ThreadComments,
-          key: 'id',
-        },
+        // references: {
+        //   model: ThreadComments,
+        //   key: 'id',
+        // },
       },
     },
     {
@@ -50,25 +48,25 @@ try {
     },
   )
 
-  Users.hasMany(ThreadCommentLikes, {
-    foreignKey: 'user_id',
-    as: 'thread_comment_likes',
-  })
+  // Users.hasMany(ThreadCommentLikes, {
+  //   foreignKey: 'user_id',
+  //   as: 'thread_comment_likes',
+  // })
 
-  ThreadComments.hasMany(ThreadCommentLikes, {
-    foreignKey: 'thread_comment_id',
-    as: 'thread_comment_likes',
-  })
+  // ThreadComments.hasMany(ThreadCommentLikes, {
+  //   foreignKey: 'thread_comment_id',
+  //   as: 'thread_comment_likes',
+  // })
 
-  ThreadCommentLikes.belongsTo(Users, {
-    foreignKey: 'user_id',
-    as: 'liked_by',
-  })
+  // ThreadCommentLikes.belongsTo(Users, {
+  //   foreignKey: 'user_id',
+  //   as: 'liked_by',
+  // })
 
-  ThreadCommentLikes.belongsTo(ThreadComments, {
-    foreignKey: 'thread_comment_id',
-    as: 'thread_comment',
-  })
+  // ThreadCommentLikes.belongsTo(ThreadComments, {
+  //   foreignKey: 'thread_comment_id',
+  //   as: 'thread_comment',
+  // })
 } catch (error) {
   /* eslint-disable no-console */
   console.error(error)

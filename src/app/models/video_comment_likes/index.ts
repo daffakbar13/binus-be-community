@@ -6,8 +6,6 @@ import {
   CreationOptional,
   DataTypes,
 } from 'sequelize'
-import { Users } from '../users'
-import { VideoComments } from '../video_comments'
 
 export class VideoCommentLikes extends Model<
   InferAttributes<VideoCommentLikes>,
@@ -30,17 +28,17 @@ try {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: Users,
-          key: 'id',
-        },
+        // references: {
+        //   model: Users,
+        //   key: 'id',
+        // },
       },
       video_comment_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: VideoComments,
-          key: 'id',
-        },
+        // references: {
+        //   model: VideoComments,
+        //   key: 'id',
+        // },
       },
     },
     {
@@ -50,25 +48,25 @@ try {
     },
   )
 
-  Users.hasMany(VideoCommentLikes, {
-    foreignKey: 'user_id',
-    as: 'video_comment_likes',
-  })
+  // Users.hasMany(VideoCommentLikes, {
+  //   foreignKey: 'user_id',
+  //   as: 'video_comment_likes',
+  // })
 
-  VideoComments.hasMany(VideoCommentLikes, {
-    foreignKey: 'video_comment_id',
-    as: 'video_comment_likes',
-  })
+  // VideoComments.hasMany(VideoCommentLikes, {
+  //   foreignKey: 'video_comment_id',
+  //   as: 'video_comment_likes',
+  // })
 
-  VideoCommentLikes.belongsTo(Users, {
-    foreignKey: 'user_id',
-    as: 'liked_by',
-  })
+  // VideoCommentLikes.belongsTo(Users, {
+  //   foreignKey: 'user_id',
+  //   as: 'liked_by',
+  // })
 
-  VideoCommentLikes.belongsTo(VideoComments, {
-    foreignKey: 'video_comment_id',
-    as: 'video_comment',
-  })
+  // VideoCommentLikes.belongsTo(VideoComments, {
+  //   foreignKey: 'video_comment_id',
+  //   as: 'video_comment',
+  // })
 } catch (error) {
   /* eslint-disable no-console */
   console.error(error)

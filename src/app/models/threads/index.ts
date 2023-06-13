@@ -6,7 +6,6 @@ import {
   CreationOptional,
   DataTypes,
 } from 'sequelize'
-import { Users } from '../users'
 
 export class Threads extends Model<InferAttributes<Threads>, InferCreationAttributes<Threads>> {
   declare id: CreationOptional<number>
@@ -36,10 +35,10 @@ try {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: Users,
-          key: 'id',
-        },
+        // references: {
+        //   model: Users,
+        //   key: 'id',
+        // },
       },
       content: DataTypes.STRING,
       views: DataTypes.INTEGER,
@@ -56,15 +55,15 @@ try {
     },
   )
 
-  Users.hasMany(Threads, {
-    foreignKey: 'user_id',
-    as: 'threads',
-  })
+  // Users.hasMany(Threads, {
+  //   foreignKey: 'user_id',
+  //   as: 'threads',
+  // })
 
-  Threads.belongsTo(Users, {
-    foreignKey: 'user_id',
-    as: 'created_by',
-  })
+  // Threads.belongsTo(Users, {
+  //   foreignKey: 'user_id',
+  //   as: 'created_by',
+  // })
 } catch (error) {
   /* eslint-disable no-console */
   console.error(error)

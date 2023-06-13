@@ -27,9 +27,31 @@ export class Users extends Model<InferAttributes<Users>, InferCreationAttributes
 
   declare password: string
 
+  declare is_active: CreationOptional<boolean>
+
   declare created_at: CreationOptional<Date>
 
   declare updated_at: CreationOptional<Date>
+
+  // declare role: NonAttribute<UserRoles>
+
+  // declare emails: NonAttribute<UserEmails[]>
+
+  // declare articles: NonAttribute<Articles[]>
+
+  // declare article_comments: NonAttribute<ArticleComments[]>
+
+  // declare article_likes: NonAttribute<ArticleLikes[]>
+
+  // declare article_comment_likes: NonAttribute<ArticleCommentLikes[]>
+
+  // declare threads: NonAttribute<Threads[]>
+
+  // declare thread_comments: NonAttribute<ThreadComments[]>
+
+  // declare thread_likes: NonAttribute<ThreadLikes[]>
+
+  // declare thread_comment_likes: NonAttribute<ThreadCommentLikes[]>
 }
 
 try {
@@ -54,6 +76,10 @@ try {
       birth_date: DataTypes.STRING,
       address: DataTypes.STRING,
       password: DataTypes.STRING,
+      is_active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
     },

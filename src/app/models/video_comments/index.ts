@@ -6,8 +6,6 @@ import {
   CreationOptional,
   DataTypes,
 } from 'sequelize'
-import { Users } from '../users'
-import { Videos } from '../videos'
 
 export class VideoComments extends Model<
   InferAttributes<VideoComments>,
@@ -36,17 +34,17 @@ try {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: Users,
-          key: 'id',
-        },
+        // references: {
+        //   model: Users,
+        //   key: 'id',
+        // },
       },
       video_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: Videos,
-          key: 'id',
-        },
+        // references: {
+        //   model: Videos,
+        //   key: 'id',
+        // },
       },
       comment: DataTypes.STRING,
       created_at: DataTypes.DATE,
@@ -60,25 +58,25 @@ try {
     },
   )
 
-  Users.hasMany(VideoComments, {
-    foreignKey: 'user_id',
-    as: 'video_comments',
-  })
+  // Users.hasMany(VideoComments, {
+  //   foreignKey: 'user_id',
+  //   as: 'video_comments',
+  // })
 
-  Videos.hasMany(VideoComments, {
-    foreignKey: 'video_id',
-    as: 'video_comments',
-  })
+  // Videos.hasMany(VideoComments, {
+  //   foreignKey: 'video_id',
+  //   as: 'video_comments',
+  // })
 
-  VideoComments.belongsTo(Users, {
-    foreignKey: 'user_id',
-    as: 'commented_by',
-  })
+  // VideoComments.belongsTo(Users, {
+  //   foreignKey: 'user_id',
+  //   as: 'commented_by',
+  // })
 
-  VideoComments.belongsTo(Videos, {
-    foreignKey: 'video_id',
-    as: 'video',
-  })
+  // VideoComments.belongsTo(Videos, {
+  //   foreignKey: 'video_id',
+  //   as: 'video',
+  // })
 } catch (error) {
   /* eslint-disable no-console */
   console.error(error)

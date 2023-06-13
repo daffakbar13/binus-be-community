@@ -6,8 +6,6 @@ import {
   CreationOptional,
   DataTypes,
 } from 'sequelize'
-import { Users } from '../users'
-import { Articles } from '../articles'
 
 export class ArticleComments extends Model<
   InferAttributes<ArticleComments>,
@@ -24,6 +22,12 @@ export class ArticleComments extends Model<
   declare created_at: CreationOptional<Date>
 
   declare updated_at: CreationOptional<Date>
+
+  // declare commented_by: NonAttribute<Users>
+
+  // declare article: NonAttribute<Articles>
+
+  // declare article_comment_likes: NonAttribute<ArticleCommentLikes[]>
 }
 
 try {
@@ -36,17 +40,17 @@ try {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: Users,
-          key: 'id',
-        },
+        // references: {
+        //   model: Users,
+        //   key: 'id',
+        // },
       },
       article_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: Articles,
-          key: 'id',
-        },
+        // references: {
+        //   model: Articles,
+        //   key: 'id',
+        // },
       },
       comment: DataTypes.STRING,
       created_at: DataTypes.DATE,
@@ -60,25 +64,25 @@ try {
     },
   )
 
-  Users.hasMany(ArticleComments, {
-    foreignKey: 'user_id',
-    as: 'article_comments',
-  })
+  // Users.hasMany(ArticleComments, {
+  //   foreignKey: 'user_id',
+  //   as: 'article_comments',
+  // })
 
-  Articles.hasMany(ArticleComments, {
-    foreignKey: 'article_id',
-    as: 'article_comments',
-  })
+  // Articles.hasMany(ArticleComments, {
+  //   foreignKey: 'article_id',
+  //   as: 'article_comments',
+  // })
 
-  ArticleComments.belongsTo(Users, {
-    foreignKey: 'user_id',
-    as: 'commented_by',
-  })
+  // ArticleComments.belongsTo(Users, {
+  //   foreignKey: 'user_id',
+  //   as: 'commented_by',
+  // })
 
-  ArticleComments.belongsTo(Articles, {
-    foreignKey: 'article_id',
-    as: 'article',
-  })
+  // ArticleComments.belongsTo(Articles, {
+  //   foreignKey: 'article_id',
+  //   as: 'article',
+  // })
 } catch (error) {
   /* eslint-disable no-console */
   console.error(error)

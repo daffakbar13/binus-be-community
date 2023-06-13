@@ -1,3 +1,4 @@
+import { Users } from 'app/models/users'
 import { checkExact, body } from 'express-validator'
 
 export namespace AuthDto {
@@ -11,4 +12,8 @@ export namespace AuthDto {
     body('email').optional().isEmail(),
     body(['binusian_id', 'password']).optional().isString(),
   ])
+  export interface DecodedToken extends Users {
+    iat?: number
+    exp?: number
+  }
 }

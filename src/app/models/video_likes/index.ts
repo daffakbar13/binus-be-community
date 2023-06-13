@@ -6,8 +6,6 @@ import {
   CreationOptional,
   DataTypes,
 } from 'sequelize'
-import { Users } from '../users'
-import { Videos } from '../videos'
 
 export class VideoLikes extends Model<
   InferAttributes<VideoLikes>,
@@ -30,17 +28,17 @@ try {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: Users,
-          key: 'id',
-        },
+        // references: {
+        //   model: Users,
+        //   key: 'id',
+        // },
       },
       video_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: Videos,
-          key: 'id',
-        },
+        // references: {
+        //   model: Videos,
+        //   key: 'id',
+        // },
       },
     },
     {
@@ -50,25 +48,25 @@ try {
     },
   )
 
-  Users.hasMany(VideoLikes, {
-    foreignKey: 'user_id',
-    as: 'video_likes',
-  })
+  // Users.hasMany(VideoLikes, {
+  //   foreignKey: 'user_id',
+  //   as: 'video_likes',
+  // })
 
-  Videos.hasMany(VideoLikes, {
-    foreignKey: 'video_id',
-    as: 'video_likes',
-  })
+  // Videos.hasMany(VideoLikes, {
+  //   foreignKey: 'video_id',
+  //   as: 'video_likes',
+  // })
 
-  VideoLikes.belongsTo(Users, {
-    foreignKey: 'user_id',
-    as: 'liked_by',
-  })
+  // VideoLikes.belongsTo(Users, {
+  //   foreignKey: 'user_id',
+  //   as: 'liked_by',
+  // })
 
-  VideoLikes.belongsTo(Videos, {
-    foreignKey: 'video_id',
-    as: 'video',
-  })
+  // VideoLikes.belongsTo(Videos, {
+  //   foreignKey: 'video_id',
+  //   as: 'video',
+  // })
 } catch (error) {
   /* eslint-disable no-console */
   console.error(error)

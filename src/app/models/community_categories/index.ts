@@ -6,7 +6,6 @@ import {
   CreationOptional,
   DataTypes,
 } from 'sequelize'
-import { Users } from '../users'
 
 export class CommunityCategories extends Model<
   InferAttributes<CommunityCategories>,
@@ -33,10 +32,10 @@ try {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: Users,
-          key: 'id',
-        },
+        // references: {
+        //   model: Users,
+        //   key: 'id',
+        // },
       },
       name: DataTypes.STRING,
       created_at: DataTypes.DATE,
@@ -50,15 +49,15 @@ try {
     },
   )
 
-  Users.hasMany(CommunityCategories, {
-    foreignKey: 'user_id',
-    as: 'community_categories',
-  })
+  // Users.hasMany(CommunityCategories, {
+  //   foreignKey: 'user_id',
+  //   as: 'community_categories',
+  // })
 
-  CommunityCategories.belongsTo(Users, {
-    foreignKey: 'user_id',
-    as: 'created_by',
-  })
+  // CommunityCategories.belongsTo(Users, {
+  //   foreignKey: 'user_id',
+  //   as: 'created_by',
+  // })
 } catch (error) {
   /* eslint-disable no-console */
   console.error(error)

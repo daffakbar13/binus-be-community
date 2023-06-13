@@ -14,6 +14,8 @@ export class UserRoles extends Model<
   declare id: CreationOptional<number>
 
   declare role: string
+
+  // declare users: NonAttribute<Users[]>
 }
 
 try {

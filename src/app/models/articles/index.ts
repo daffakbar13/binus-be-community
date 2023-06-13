@@ -6,7 +6,6 @@ import {
   CreationOptional,
   DataTypes,
 } from 'sequelize'
-import { Users } from '../users'
 
 export class Articles extends Model<InferAttributes<Articles>, InferCreationAttributes<Articles>> {
   declare id: CreationOptional<number>
@@ -32,6 +31,12 @@ export class Articles extends Model<InferAttributes<Articles>, InferCreationAttr
   declare created_at: CreationOptional<Date>
 
   declare updated_at: CreationOptional<Date>
+
+  // declare created_by: NonAttribute<Users>
+
+  // declare article_comments: NonAttribute<ArticleComments[]>
+
+  // declare article_likes: NonAttribute<ArticleLikes[]>
 }
 
 try {
@@ -44,10 +49,10 @@ try {
       },
       user_id: {
         type: DataTypes.INTEGER,
-        references: {
-          model: Users,
-          key: 'id',
-        },
+        // references: {
+        //   model: Users,
+        //   key: 'id',
+        // },
       },
       title: DataTypes.STRING,
       hero_image: DataTypes.STRING,
@@ -68,15 +73,15 @@ try {
     },
   )
 
-  Users.hasMany(Articles, {
-    foreignKey: 'user_id',
-    as: 'articles',
-  })
+  // Users.hasMany(Articles, {
+  //   foreignKey: 'user_id',
+  //   as: 'articles',
+  // })
 
-  Articles.belongsTo(Users, {
-    foreignKey: 'user_id',
-    as: 'created_by',
-  })
+  // Articles.belongsTo(Users, {
+  //   foreignKey: 'user_id',
+  //   as: 'created_by',
+  // })
 } catch (error) {
   /* eslint-disable no-console */
   console.error(error)

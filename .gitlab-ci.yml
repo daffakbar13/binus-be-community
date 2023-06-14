@@ -23,7 +23,7 @@ deploy_microk8s:
     name: bitnami/kubectl:1.23
     entrypoint: ['']
   environment:
-    name: stg-binus-be
+    name: stg-binus-be-community
   script:
     - kubectl config get-contexts
     - kubectl config use-context wgs/binus/binus-be:binus-be

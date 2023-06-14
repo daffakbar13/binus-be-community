@@ -6,6 +6,11 @@ import { Request, Response } from 'express'
 export namespace AuthController {
   export async function SSOCheck(req: Request<{}, {}, AuthDto.LoginType>, res: Response) {
     const result = AuthService.SSOCheck(req.ip)
+    // const {
+    //   ip,
+    //   socket: { localAddress, remoteAddress },
+    // } = req
+    // console.log({ ip, localAddress, remoteAddress })
 
     return sendResponse(res, result)
   }

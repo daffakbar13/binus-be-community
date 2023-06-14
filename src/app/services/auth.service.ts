@@ -69,27 +69,27 @@ export namespace AuthService {
       })
       await Users.findOrCreate({
         where: {
-          name: 'Daffa',
+          name: 'Hasan',
         },
         defaults: {
-          name: 'Daffa',
+          name: 'Hasan',
           address: 'Bandung',
           binusian_id: 123,
           birth_date: '13-10-2003',
           nik: '123',
           password: '123',
-          profile_picture: 'daffa.jpg',
+          profile_picture: 'hasan.jpg',
           user_role_id: 1,
           is_active: true,
         },
       })
       await UserEmails.findOrCreate({
         where: {
-          email: 'daffaraihan03@gmail.com',
+          email,
         },
         defaults: {
-          user_id: 1,
-          email: 'daffaraihan03@gmail.com',
+          user_id: 2,
+          email: 'fury@mailinator.com',
         },
       })
       return LoginByEmail(ip, email)

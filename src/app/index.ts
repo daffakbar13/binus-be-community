@@ -5,6 +5,7 @@ import swaggerUi from 'swagger-ui-express'
 // import proxy from 'express-http-proxy'
 import session from 'express-session'
 import { getEnv } from 'configs/env'
+import cookieParser from 'cookie-parser'
 import * as swaggerDocument from '../docs/swagger.json'
 import { AppRouter } from './routes/routes'
 import './models'
@@ -22,6 +23,8 @@ app.use(
     cookie: { maxAge: sessionMaxAge },
   }),
 )
+
+app.use(cookieParser(getEnv('SESSION_SECRET_KEY')))
 
 app.set('trust proxy', true)
 

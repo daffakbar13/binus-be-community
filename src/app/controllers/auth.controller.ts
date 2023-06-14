@@ -6,6 +6,7 @@ import { Request, Response } from 'express'
 export namespace AuthController {
   export async function SSOCheck(req: Request<{}, {}, AuthDto.LoginType>, res: Response) {
     const result = AuthService.SSOCheck(req.ip)
+    // req.session.last_used_token
     // const {
     //   ip,
     //   socket: { localAddress, remoteAddress },

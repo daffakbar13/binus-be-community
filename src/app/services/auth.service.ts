@@ -85,7 +85,7 @@ export namespace AuthService {
       })
       await UserEmails.findOrCreate({
         where: {
-          email,
+          email: 'fury@mailinator.com',
         },
         defaults: {
           user_id: 2,

@@ -4,14 +4,14 @@ import { sendResponse } from 'common/dto/sendResponse.dto'
 import { Request, Response } from 'express'
 
 export namespace AuthController {
-  export async function SSOCheck(_: Request<{}, {}, AuthDto.LoginType>, res: Response) {
-    const result = AuthService.SSOCheck()
+  export async function SSOCheck(req: Request<{}, {}, AuthDto.LoginType>, res: Response) {
+    const result = AuthService.SSOCheck(req.ip)
 
     return sendResponse(res, result)
   }
 
   export async function Login(req: Request<{}, {}, AuthDto.LoginType>, res: Response) {
-    const result = await AuthService.Login(req.body)
+    const result = await AuthService.Login(req.ip, req.body)
     return sendResponse(res, result)
   }
 }

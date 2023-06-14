@@ -8,50 +8,49 @@ import { Users } from 'app/models/users'
 import { UserEmails } from 'app/models/user_emails'
 import { UserRoles } from 'app/models/user_roles'
 import { cache } from 'configs/cache'
-import IP from 'ip'
 import { UserService } from './user.service'
 
 export namespace AuthService {
   const cacheTokenExpiration = 60 * 60 * 24 * 14
 
-  export function GenerateToken<T extends jwt.JwtPayload>(payload: T) {
+  export function GenerateToken<T extends jwt.JwtPayload>(ip: string, payload: T) {
     const token = jwt.sign(payload, getEnv('JWT_SECRET_KEY'), {
       expiresIn: getEnv('JWT_EXPIRATION'),
     })
 
-    setTokenCache(['Bearer', token].join(' '))
+    setTokenCache(ip, ['Bearer', token].join(' '))
 
     return token
   }
 
-  export function getIpAddress() {
-    return IP.address()
+  // export function getMachineId() {
+  //   return machineIdSync(true)
+  // }
+
+  export function setTokenCache(ip: string, token: string) {
+    cache.set(ip, { token }, cacheTokenExpiration)
   }
 
-  export function setTokenCache(token: string) {
-    cache.set(getIpAddress(), { token }, cacheTokenExpiration)
+  export function getTokenCache(ip: string) {
+    return cache.get<{ token: string }>(ip)
   }
 
-  export function getTokenCache() {
-    return cache.get<{ token: string }>(getIpAddress())
-  }
-
-  export async function LoginByEmail(email: string) {
+  export async function LoginByEmail(ip: string, email: string) {
     const user = await UserService.GetUserByEmail(email)
 
     if (user) {
-      return baseResponse('Ok', { token: GenerateToken(user.dataValues) })
+      return baseResponse('Ok', { token: GenerateToken(ip, user.dataValues) })
     }
     return baseResponse('Unauthorized')
   }
 
-  export async function LoginByBinusianId(binusian_id: string, password: string) {
+  export async function LoginByBinusianId(ip: string, binusian_id: string, password: string) {
     const user = await UserService.GetUserByBinusianId(binusian_id)
 
     if (user) {
       const authorized = bcrypt.compareSync(password, user.password)
       if (authorized) {
-        const token = GenerateToken(user)
+        const token = GenerateToken(ip, user)
         return baseResponse('Ok', { token })
       }
     }
@@ -59,7 +58,7 @@ export namespace AuthService {
     return baseResponse('Unauthorized')
   }
 
-  export async function Login(payload: AuthDto.LoginType) {
+  export async function Login(ip: string, payload: AuthDto.LoginType) {
     const { email, binusian_id, password } = payload
     if (email) {
       await UserRoles.findOrCreate({
@@ -93,10 +92,10 @@ export namespace AuthService {
           email: 'daffaraihan03@gmail.com',
         },
       })
-      return LoginByEmail(email)
+      return LoginByEmail(ip, email)
     }
     if (binusian_id && password) {
-      return LoginByBinusianId(binusian_id, password)
+      return LoginByBinusianId(ip, binusian_id, password)
     }
     return baseResponse('BadRequest')
   }
@@ -109,7 +108,7 @@ export namespace AuthService {
     return null
   }
 
-  export function VerifyToken(headers: Request['headers']) {
+  export function VerifyToken(ip: string, headers: Request['headers']) {
     const { authorization } = headers
     const token = GetTokenFromHeaders(authorization)
 
@@ -117,7 +116,8 @@ export namespace AuthService {
       if (token) {
         jwt.verify(token, getEnv('JWT_SECRET_KEY'))
       }
-      setTokenCache(authorization as string)
+
+      setTokenCache(ip, authorization as string)
       return true
     } catch (error) {
       return false
@@ -128,15 +128,15 @@ export namespace AuthService {
     return jwt.decode(token) as T | null
   }
 
-  export function SSOCheck() {
-    const tokenCache = getTokenCache()
+  export function SSOCheck(ip: string) {
+    const tokenCache = getTokenCache(ip)
 
     if (tokenCache) {
       const { token } = tokenCache
-      const verify = VerifyToken({ authorization: token })
+      const verify = VerifyToken(ip, { authorization: token })
       if (verify) {
         const vanillaToken = GetTokenFromHeaders(token)
-        return baseResponse('Ok', { token: vanillaToken })
+        return baseResponse('Ok', { token: vanillaToken, ip })
       }
     }
 

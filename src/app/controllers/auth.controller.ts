@@ -5,19 +5,13 @@ import { Request, Response } from 'express'
 
 export namespace AuthController {
   export async function SSOCheck(req: Request<{}, {}, AuthDto.LoginType>, res: Response) {
-    const result = AuthService.SSOCheck(req.ip)
-    // req.session.last_used_token
-    // const {
-    //   ip,
-    //   socket: { localAddress, remoteAddress },
-    // } = req
-    // console.log({ ip, localAddress, remoteAddress })
+    const result = AuthService.SSOCheck(req.session)
 
     return sendResponse(res, result)
   }
 
   export async function Login(req: Request<{}, {}, AuthDto.LoginType>, res: Response) {
-    const result = await AuthService.Login(req.ip, req.body)
+    const result = await AuthService.Login(req.body, req.session)
     return sendResponse(res, result)
   }
 }

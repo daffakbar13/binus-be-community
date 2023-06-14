@@ -7,50 +7,55 @@ import { AuthDto } from 'app/dto/auth.dto'
 import { Users } from 'app/models/users'
 import { UserEmails } from 'app/models/user_emails'
 import { UserRoles } from 'app/models/user_roles'
-import { cache } from 'configs/cache'
 import { UserService } from './user.service'
 
 export namespace AuthService {
-  const cacheTokenExpiration = 60 * 60 * 24 * 14
+  type SessionType = Request['session']
 
-  export function GenerateToken<T extends jwt.JwtPayload>(ip: string, payload: T) {
+  interface MySession extends SessionType {
+    last_token?: string
+  }
+
+  export function GenerateToken<T extends jwt.JwtPayload>(payload: T, session: MySession) {
     const token = jwt.sign(payload, getEnv('JWT_SECRET_KEY'), {
       expiresIn: getEnv('JWT_EXPIRATION'),
     })
 
-    setTokenCache(ip, ['Bearer', token].join(' '))
+    setTokenSession(session, ['Bearer', token].join(' '))
 
     return token
   }
 
-  // export function getMachineId() {
-  //   return machineIdSync(true)
-  // }
-
-  export function setTokenCache(ip: string, token: string) {
-    cache.set(ip, { token }, cacheTokenExpiration)
+  export function getTokenSession(session: MySession) {
+    return (session as any).last_token
   }
 
-  export function getTokenCache(ip: string) {
-    return cache.get<{ token: string }>(ip)
+  export function setTokenSession(session: MySession & { last_token?: string }, token: string) {
+    // eslint-disable-next-line no-param-reassign
+    session.last_token = token
+    session.save()
   }
 
-  export async function LoginByEmail(ip: string, email: string) {
+  export async function LoginByEmail(email: string, session: MySession) {
     const user = await UserService.GetUserByEmail(email)
 
     if (user) {
-      return baseResponse('Ok', { token: GenerateToken(ip, user.dataValues) })
+      return baseResponse('Ok', { token: GenerateToken(user.dataValues, session) })
     }
     return baseResponse('Unauthorized')
   }
 
-  export async function LoginByBinusianId(ip: string, binusian_id: string, password: string) {
+  export async function LoginByBinusianId(
+    binusian_id: string,
+    password: string,
+    session: MySession,
+  ) {
     const user = await UserService.GetUserByBinusianId(binusian_id)
 
     if (user) {
       const authorized = bcrypt.compareSync(password, user.password)
       if (authorized) {
-        const token = GenerateToken(ip, user)
+        const token = GenerateToken(user, session)
         return baseResponse('Ok', { token })
       }
     }
@@ -58,7 +63,7 @@ export namespace AuthService {
     return baseResponse('Unauthorized')
   }
 
-  export async function Login(ip: string, payload: AuthDto.LoginType) {
+  export async function Login(payload: AuthDto.LoginType, session: MySession) {
     const { email, binusian_id, password } = payload
     if (email) {
       await UserRoles.findOrCreate({
@@ -85,17 +90,17 @@ export namespace AuthService {
       })
       await UserEmails.findOrCreate({
         where: {
-          email: 'fury@mailinator.com',
+          email: 'alvavadev@outlook.com',
         },
         defaults: {
           user_id: 2,
-          email: 'fury@mailinator.com',
+          email: 'alvavadev@outlook.com',
         },
       })
-      return LoginByEmail(ip, email)
+      return LoginByEmail(email, session)
     }
     if (binusian_id && password) {
-      return LoginByBinusianId(ip, binusian_id, password)
+      return LoginByBinusianId(binusian_id, password, session)
     }
     return baseResponse('BadRequest')
   }
@@ -108,7 +113,10 @@ export namespace AuthService {
     return null
   }
 
-  export function VerifyToken(ip: string, headers: Request['headers']) {
+  export function VerifyToken(
+    headers: Request['headers'],
+    session: MySession & { last_token?: string },
+  ) {
     const { authorization } = headers
     const token = GetTokenFromHeaders(authorization)
 
@@ -117,7 +125,8 @@ export namespace AuthService {
         jwt.verify(token, getEnv('JWT_SECRET_KEY'))
       }
 
-      setTokenCache(ip, authorization as string)
+      setTokenSession(session, authorization as string)
+
       return true
     } catch (error) {
       return false
@@ -128,15 +137,14 @@ export namespace AuthService {
     return jwt.decode(token) as T | null
   }
 
-  export function SSOCheck(ip: string) {
-    const tokenCache = getTokenCache(ip)
+  export function SSOCheck(session: MySession) {
+    const token = getTokenSession(session)
 
-    if (tokenCache) {
-      const { token } = tokenCache
-      const verify = VerifyToken(ip, { authorization: token })
+    if (token) {
+      const verify = VerifyToken({ authorization: token }, session)
       if (verify) {
         const vanillaToken = GetTokenFromHeaders(token)
-        return baseResponse('Ok', { token: vanillaToken, ip })
+        return baseResponse('Ok', { token: vanillaToken })
       }
     }
 

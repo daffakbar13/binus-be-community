@@ -6,6 +6,8 @@ import swaggerUi from 'swagger-ui-express'
 import session from 'express-session'
 import { getEnv } from 'configs/env'
 import cookieParser from 'cookie-parser'
+import { baseResponse } from 'common/dto/baseResponse.dto'
+import { sendResponse } from 'common/dto/sendResponse.dto'
 import * as swaggerDocument from '../docs/swagger.json'
 import { AppRouter } from './routes/routes'
 import './models'
@@ -34,8 +36,10 @@ app.use(morgan('dev'))
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
-// app.use('/user', proxy('https://user.binus.stagingapps.net'))
-
 app.use(AppRouter)
+
+app.use('*', (_, res) => {
+  sendResponse(res, baseResponse('NotFound'))
+})
 
 export default app

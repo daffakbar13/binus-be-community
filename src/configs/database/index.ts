@@ -1,21 +1,13 @@
+import { getEnv } from 'configs/env'
 import { Dialect, Sequelize } from 'sequelize'
 
-const sokratesConfig = {
-  dbName: 'binusdb',
-  username: 'binus',
-  password: 'aksds5shw21ld09n',
-  host: '192.168.0.25',
-  port: 5454,
-  dialect: 'postgres' as Dialect,
-}
-
-export const dbSokrates = new Sequelize(
-  sokratesConfig.dbName,
-  sokratesConfig.username,
-  sokratesConfig.password,
+export const dbBinusCommunity = new Sequelize(
+  getEnv('DB_NAME_BINUS_COMMUNITY'),
+  getEnv('DB_USERNAME'),
+  getEnv('DB_PASSWORD'),
   {
-    host: sokratesConfig.host,
-    port: sokratesConfig.port,
-    dialect: sokratesConfig.dialect,
+    host: getEnv('DB_HOST'),
+    port: Number(getEnv('DB_PORT')),
+    dialect: getEnv('DB_DIALECT') as Dialect,
   },
 )

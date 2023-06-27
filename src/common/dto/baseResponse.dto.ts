@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-export function baseResponse<T extends string | object | null = null>(
+type Data = string | object | null
+
+export function baseResponse<T extends Data = null>(
   httpStatus: keyof typeof axios.HttpStatusCode,
   data?: T,
 ) {
@@ -10,3 +12,5 @@ export function baseResponse<T extends string | object | null = null>(
     message: httpStatus,
   }
 }
+
+export type BaseResponse<T extends Data = null> = ReturnType<typeof baseResponse<T>>

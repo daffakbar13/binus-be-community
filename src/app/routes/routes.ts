@@ -1,11 +1,11 @@
 import { Router } from 'express'
-import { AuthRouter } from './auth.routes'
-import { UserRouter } from './user.routes'
+import { BannerRouter } from './banner.routes'
+import { ThreadRouter } from './thread.routes'
 
 const router = Router()
 
-router.use(AuthRouter)
+router.use(BannerRouter)
 
-router.use(UserRouter)
+router.use(ThreadRouter)
 
-export const AppRouter = Router().use('/v1', router)
+export const AppRouter = router

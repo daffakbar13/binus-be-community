@@ -7,53 +7,53 @@ import {
   DataTypes,
   NonAttribute,
 } from 'sequelize'
-import { Threads } from '../threads'
+import { Banners } from '../banners'
 
-export class ThreadLikes extends Model<
-  InferAttributes<ThreadLikes>,
-  InferCreationAttributes<ThreadLikes>
+export class BannerTenants extends Model<
+  InferAttributes<BannerTenants>,
+  InferCreationAttributes<BannerTenants>
 > {
   declare id: CreationOptional<number>
 
-  declare user_id: number
+  declare banner_id: number
 
-  declare thread_id: number
+  declare tenant_id: number
 
-  declare thread: NonAttribute<Threads>
+  declare banner: NonAttribute<Banners>
 }
 
 try {
-  ThreadLikes.init(
+  BannerTenants.init(
     {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      user_id: DataTypes.INTEGER,
-      thread_id: {
+      banner_id: {
         type: DataTypes.INTEGER,
         references: {
-          model: Threads,
+          model: Banners,
           key: 'id',
         },
       },
+      tenant_id: DataTypes.INTEGER,
     },
     {
-      tableName: 'thread_likes',
+      tableName: 'banner_tenants',
       sequelize: dbBinusCommunity,
       timestamps: false,
     },
   )
 
-  Threads.hasMany(ThreadLikes, {
-    foreignKey: 'thread_id',
-    as: 'likes',
+  Banners.hasMany(BannerTenants, {
+    foreignKey: 'banner_id',
+    as: 'tenants',
   })
 
-  ThreadLikes.belongsTo(Threads, {
-    foreignKey: 'thread_id',
-    as: 'thread',
+  BannerTenants.belongsTo(Banners, {
+    foreignKey: 'banner_id',
+    as: 'banner',
   })
 } catch (error) {
   /* eslint-disable no-console */

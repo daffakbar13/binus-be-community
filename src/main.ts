@@ -3,7 +3,7 @@ import http from 'http'
 import { HealthCheckError, createTerminus } from '@godaddy/terminus'
 import app from 'app'
 import { getEnv } from 'configs/env'
-import { dbSokrates } from 'configs/database'
+import { dbBinusCommunity } from 'configs/database'
 
 dotenv.config()
 
@@ -14,7 +14,7 @@ createTerminus(server, {
     '/health': async () => {
       const errors: Array<any> = []
       return Promise.all(
-        [dbSokrates.authenticate()].map((c) =>
+        [dbBinusCommunity.authenticate()].map((c) =>
           c.catch((error) => {
             errors.push(error)
             return undefined
@@ -30,14 +30,11 @@ createTerminus(server, {
 })
 
 // eslint-disable-next-line no-console
-dbSokrates.sync().catch(console.error)
+dbBinusCommunity.sync().catch(console.error)
 
 server.listen(getEnv('API_PORT'), () => {
   // eslint-disable-next-line no-console
-  dbSokrates.authenticate().catch(console.error)
+  dbBinusCommunity.authenticate().catch(console.error)
   // eslint-disable-next-line no-console
   console.info(`Sokrates listening at ${getEnv('API_HOST')}:${getEnv('API_PORT')}`)
 })
-
-// Satryo : Try push to WGS Repo
-// Hans : Try push to WGS Repo

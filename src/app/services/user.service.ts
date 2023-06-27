@@ -1,31 +1,24 @@
-import { UserRepository } from 'app/repositories/user.repository'
-import { baseResponse } from 'common/dto/baseResponse.dto'
-import { AuthDto } from 'app/dto/auth.dto'
-import { AuthService } from './auth.service'
+import axios from 'axios'
+import { BaseResponse, baseResponse } from 'common/dto/baseResponse.dto'
+import { getEnv } from 'configs/env'
+import { Request } from 'express'
 
 export namespace UserService {
-  export async function GetUserByEmail(email: string) {
-    const result = await UserRepository.GetUserByEmail(email)
-    return result
+  const instance = () => {
+    const axiosInstance = axios.create({ baseURL: `${getEnv('API_GATEWAY_HOST')}/v1/users` })
+    axiosInstance.interceptors.response.use((res) => res.data)
+    return axiosInstance
   }
+  const authService = instance()
 
-  export async function GetUserByBinusianId(binusian_id: string) {
-    const result = await UserRepository.GetUserByBinusianId(binusian_id)
-    return result
-  }
-
-  export async function UserInfo(authorization?: string) {
-    const token = AuthService.GetTokenFromHeaders(authorization)
-
-    if (token) {
-      const decodedToken = AuthService.DecodeToken<AuthDto.DecodedToken>(token)
-      if (decodedToken) {
-        delete decodedToken.iat
-        delete decodedToken.exp
-
-        return baseResponse('Ok', decodedToken)
-      }
+  export async function UserInfo(req: Request) {
+    try {
+      const result = await authService.get<null, BaseResponse<{ id: number }>>('/info', {
+        headers: { Authorization: req.headers.authorization },
+      })
+      return result
+    } catch (err) {
+      return baseResponse('InternalServerError')
     }
-    return baseResponse('Unauthorized')
   }
 }

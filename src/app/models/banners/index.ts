@@ -1,22 +1,28 @@
-import { dbSokrates } from 'configs/database'
+import { dbBinusCommunity } from 'configs/database'
 import {
   Model,
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
   DataTypes,
+  NonAttribute,
 } from 'sequelize'
+import { Communities } from '../communities'
 
 export class Banners extends Model<InferAttributes<Banners>, InferCreationAttributes<Banners>> {
   declare id: CreationOptional<number>
 
   declare user_id: number
 
+  declare community_id: number
+
   declare title: string
 
   declare description: string
 
   declare image_url: string
+
+  declare image_key: string
 
   declare external_url: string
 
@@ -29,6 +35,8 @@ export class Banners extends Model<InferAttributes<Banners>, InferCreationAttrib
   declare created_at: CreationOptional<Date>
 
   declare updated_at: CreationOptional<Date>
+
+  declare community: NonAttribute<Communities>
 }
 
 try {
@@ -39,16 +47,19 @@ try {
         autoIncrement: true,
         primaryKey: true,
       },
-      user_id: {
+      user_id: DataTypes.INTEGER,
+      community_id: {
         type: DataTypes.INTEGER,
-        // references: {
-        //   model: Users,
-        //   key: 'id',
-        // },
+        references: {
+          model: Communities,
+          key: 'id',
+        },
+        allowNull: true,
       },
       title: DataTypes.STRING,
       description: DataTypes.STRING,
       image_url: DataTypes.STRING,
+      image_key: DataTypes.STRING,
       external_url: DataTypes.STRING,
       is_active: DataTypes.BOOLEAN,
       start_date: DataTypes.DATE,
@@ -58,21 +69,21 @@ try {
     },
     {
       tableName: 'banners',
-      sequelize: dbSokrates,
+      sequelize: dbBinusCommunity,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
     },
   )
 
-  // Users.hasMany(Banners, {
-  //   foreignKey: 'user_id',
-  //   as: 'banners',
-  // })
+  Communities.hasMany(Banners, {
+    foreignKey: 'community_id',
+    as: 'banners',
+  })
 
-  // Banners.belongsTo(Users, {
-  //   foreignKey: 'user_id',
-  //   as: 'created_by',
-  // })
+  Banners.belongsTo(Communities, {
+    foreignKey: 'community_id',
+    as: 'community',
+  })
 } catch (error) {
   /* eslint-disable no-console */
   console.error(error)

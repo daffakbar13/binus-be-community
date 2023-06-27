@@ -1,16 +1,25 @@
-import { dbSokrates } from 'configs/database'
+import { dbBinusCommunity } from 'configs/database'
 import {
   Model,
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
   DataTypes,
+  NonAttribute,
 } from 'sequelize'
+import { Communities } from '../communities'
+import { SubCommunities } from '../sub_communities'
+import { ThreadLikes } from '../thread_likes'
+import { ThreadComments } from '../thread_comments'
 
 export class Threads extends Model<InferAttributes<Threads>, InferCreationAttributes<Threads>> {
   declare id: CreationOptional<number>
 
   declare user_id: number
+
+  declare community_id: number
+
+  declare sub_community_id: number
 
   declare content: string
 
@@ -20,9 +29,19 @@ export class Threads extends Model<InferAttributes<Threads>, InferCreationAttrib
 
   declare is_allow_comment: boolean
 
+  declare is_pinned: boolean
+
   declare created_at: CreationOptional<Date>
 
   declare updated_at: CreationOptional<Date>
+
+  declare likes: NonAttribute<ThreadLikes[]>
+
+  declare comments: NonAttribute<ThreadComments[]>
+
+  declare community: NonAttribute<Communities>
+
+  declare sub_community: NonAttribute<SubCommunities>
 }
 
 try {
@@ -33,37 +52,68 @@ try {
         autoIncrement: true,
         primaryKey: true,
       },
-      user_id: {
+      user_id: DataTypes.INTEGER,
+      community_id: {
         type: DataTypes.INTEGER,
-        // references: {
-        //   model: Users,
-        //   key: 'id',
-        // },
+        references: {
+          model: Communities,
+          key: 'id',
+        },
+      },
+      sub_community_id: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: SubCommunities,
+          key: 'id',
+        },
       },
       content: DataTypes.STRING,
-      views: DataTypes.INTEGER,
-      is_approved: DataTypes.BOOLEAN,
-      is_allow_comment: DataTypes.BOOLEAN,
+      views: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+      is_approved: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      is_allow_comment: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+      },
+      is_pinned: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
     },
     {
       tableName: 'threads',
-      sequelize: dbSokrates,
+      sequelize: dbBinusCommunity,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
     },
   )
 
-  // Users.hasMany(Threads, {
-  //   foreignKey: 'user_id',
-  //   as: 'threads',
-  // })
+  Communities.hasMany(Threads, {
+    foreignKey: 'community_id',
+    as: 'threads',
+  })
 
-  // Threads.belongsTo(Users, {
-  //   foreignKey: 'user_id',
-  //   as: 'created_by',
-  // })
+  Threads.belongsTo(Communities, {
+    foreignKey: 'community_id',
+    as: 'community',
+  })
+
+  SubCommunities.hasMany(Threads, {
+    foreignKey: 'community_id',
+    as: 'threads',
+  })
+
+  Threads.belongsTo(SubCommunities, {
+    foreignKey: 'community_id',
+    as: 'sub_community',
+  })
 } catch (error) {
   /* eslint-disable no-console */
   console.error(error)

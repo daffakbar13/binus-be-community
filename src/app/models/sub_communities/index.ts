@@ -7,29 +7,29 @@ import {
   DataTypes,
   NonAttribute,
 } from 'sequelize'
-import { Threads } from '../threads'
+import { Communities } from '../communities'
 
-export class ThreadComments extends Model<
-  InferAttributes<ThreadComments>,
-  InferCreationAttributes<ThreadComments>
+export class SubCommunities extends Model<
+  InferAttributes<SubCommunities>,
+  InferCreationAttributes<SubCommunities>
 > {
   declare id: CreationOptional<number>
 
   declare user_id: number
 
-  declare thread_id: number
+  declare community_id: number
 
-  declare comment: string
+  declare name: string
 
   declare created_at: CreationOptional<Date>
 
   declare updated_at: CreationOptional<Date>
 
-  declare thread: NonAttribute<Threads>
+  declare community: NonAttribute<Communities>
 }
 
 try {
-  ThreadComments.init(
+  SubCommunities.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -37,33 +37,33 @@ try {
         primaryKey: true,
       },
       user_id: DataTypes.INTEGER,
-      thread_id: {
+      community_id: {
         type: DataTypes.INTEGER,
         references: {
-          model: Threads,
+          model: Communities,
           key: 'id',
         },
       },
-      comment: DataTypes.STRING,
+      name: DataTypes.STRING,
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
     },
     {
-      tableName: 'thread_comments',
+      tableName: 'sub_communities',
       sequelize: dbBinusCommunity,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
     },
   )
 
-  Threads.hasMany(ThreadComments, {
-    foreignKey: 'thread_id',
-    as: 'comments',
+  Communities.hasMany(SubCommunities, {
+    foreignKey: 'community_id',
+    as: 'sub_communities',
   })
 
-  ThreadComments.belongsTo(Threads, {
-    foreignKey: 'thread_id',
-    as: 'thread',
+  SubCommunities.belongsTo(Communities, {
+    foreignKey: 'community_id',
+    as: 'community',
   })
 } catch (error) {
   /* eslint-disable no-console */

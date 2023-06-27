@@ -5,38 +5,28 @@ import {
   InferCreationAttributes,
   CreationOptional,
   DataTypes,
-  NonAttribute,
 } from 'sequelize'
 import { Threads } from '../threads'
 
-export class ThreadComments extends Model<
-  InferAttributes<ThreadComments>,
-  InferCreationAttributes<ThreadComments>
+export class ThreadTenants extends Model<
+  InferAttributes<ThreadTenants>,
+  InferCreationAttributes<ThreadTenants>
 > {
   declare id: CreationOptional<number>
 
-  declare user_id: number
-
   declare thread_id: number
 
-  declare comment: string
-
-  declare created_at: CreationOptional<Date>
-
-  declare updated_at: CreationOptional<Date>
-
-  declare thread: NonAttribute<Threads>
+  declare tenant_id: number
 }
 
 try {
-  ThreadComments.init(
+  ThreadTenants.init(
     {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      user_id: DataTypes.INTEGER,
       thread_id: {
         type: DataTypes.INTEGER,
         references: {
@@ -44,24 +34,21 @@ try {
           key: 'id',
         },
       },
-      comment: DataTypes.STRING,
-      created_at: DataTypes.DATE,
-      updated_at: DataTypes.DATE,
+      tenant_id: DataTypes.INTEGER,
     },
     {
-      tableName: 'thread_comments',
+      tableName: 'thread_tenants',
       sequelize: dbBinusCommunity,
-      createdAt: 'created_at',
-      updatedAt: 'updated_at',
+      timestamps: false,
     },
   )
 
-  Threads.hasMany(ThreadComments, {
+  Threads.hasMany(ThreadTenants, {
     foreignKey: 'thread_id',
-    as: 'comments',
+    as: 'tenants',
   })
 
-  ThreadComments.belongsTo(Threads, {
+  ThreadTenants.belongsTo(ThreadTenants, {
     foreignKey: 'thread_id',
     as: 'thread',
   })

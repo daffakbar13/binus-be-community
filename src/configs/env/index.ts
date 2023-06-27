@@ -1,19 +1,21 @@
+import { config } from 'dotenv'
+
+config({
+  path: process.env.NODE_ENV === 'production' ? '.env' : '.env.development',
+})
+
 type EnvKeys =
   | 'API_PORT'
   | 'API_HOST'
-  | 'DB_SOKRATES_NAME'
-  | 'DB_SOKRATES_HOST'
-  | 'DB_SOKRATES_DIALECT'
-  | 'DB_SOKRATES_USERNAME'
-  | 'DB_SOKRATES_PASSWORD'
-  | 'GOOGLE_OAUTH_REDIRECT_URI'
-  | 'GOOGLE_OAUTH_AUTH_URI'
-  | 'GOOGLE_OAUTH_CLIENT_ID'
-  | 'GOOGLE_OAUTH_CLIENT_SECRET'
-  | 'GOOGLE_OAUTH_TOKEN_URI'
-  | 'JWT_SECRET_KEY'
-  | 'JWT_EXPIRATION'
+  | 'API_GATEWAY_HOST'
+  | 'DB_HOST'
+  | 'DB_PORT'
+  | 'DB_DIALECT'
+  | 'DB_USERNAME'
+  | 'DB_PASSWORD'
+  | 'DB_NAME_BINUS_COMMUNITY'
   | 'SESSION_SECRET_KEY'
+  | 'BUCKET_NAME'
 
 export function getEnv(key: EnvKeys) {
   return process.env[key] as string

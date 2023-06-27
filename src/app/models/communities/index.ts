@@ -1,63 +1,60 @@
-import { dbSokrates } from 'configs/database'
+import { dbBinusCommunity } from 'configs/database'
 import {
   Model,
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
   DataTypes,
+  NonAttribute,
 } from 'sequelize'
+import { SubCommunities } from '../sub_communities'
+import { Banners } from '../banners'
+import { Threads } from '../threads'
 
-export class CommunityCategories extends Model<
-  InferAttributes<CommunityCategories>,
-  InferCreationAttributes<CommunityCategories>
+export class Communities extends Model<
+  InferAttributes<Communities>,
+  InferCreationAttributes<Communities>
 > {
   declare id: CreationOptional<number>
 
   declare user_id: number
+
+  declare tenant_id: number
 
   declare name: string
 
   declare created_at: CreationOptional<Date>
 
   declare updated_at: CreationOptional<Date>
+
+  declare sub_communities: NonAttribute<SubCommunities[]>
+
+  declare banners: NonAttribute<Banners[]>
+
+  declare threads: NonAttribute<Threads[]>
 }
 
 try {
-  CommunityCategories.init(
+  Communities.init(
     {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      user_id: {
-        type: DataTypes.INTEGER,
-        // references: {
-        //   model: Users,
-        //   key: 'id',
-        // },
-      },
+      user_id: DataTypes.INTEGER,
+      tenant_id: DataTypes.INTEGER,
       name: DataTypes.STRING,
       created_at: DataTypes.DATE,
       updated_at: DataTypes.DATE,
     },
     {
-      tableName: 'community_categories',
-      sequelize: dbSokrates,
+      tableName: 'communities',
+      sequelize: dbBinusCommunity,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
     },
   )
-
-  // Users.hasMany(CommunityCategories, {
-  //   foreignKey: 'user_id',
-  //   as: 'community_categories',
-  // })
-
-  // CommunityCategories.belongsTo(Users, {
-  //   foreignKey: 'user_id',
-  //   as: 'created_by',
-  // })
 } catch (error) {
   /* eslint-disable no-console */
   console.error(error)

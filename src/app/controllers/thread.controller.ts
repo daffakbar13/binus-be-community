@@ -27,4 +27,14 @@ export namespace ThreadController {
     const result = await ThreadService.DeleteThread(req)
     return sendResponse(res, result)
   }
+
+  export async function Like(req: Request, res: Response) {
+    const result = await ThreadService.LikeThread(req)
+    return sendResponse(res, result)
+  }
+
+  export async function Unlike(req: Request, res: Response) {
+    const result = await ThreadService.UnlikeThread(req)
+    return sendResponse(res, result)
+  }
 }

@@ -31,9 +31,11 @@ export class Threads extends Model<InferAttributes<Threads>, InferCreationAttrib
 
   declare is_pinned: boolean
 
-  declare created_at: CreationOptional<Date>
+  declare created_at: NonAttribute<Date>
 
-  declare updated_at: CreationOptional<Date>
+  declare updated_at: NonAttribute<Date>
+
+  declare deleted_at: NonAttribute<Date>
 
   declare likes: NonAttribute<ThreadLikes[]>
 
@@ -84,14 +86,14 @@ try {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
-      created_at: DataTypes.DATE,
-      updated_at: DataTypes.DATE,
     },
     {
       tableName: 'threads',
       sequelize: dbBinusCommunity,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
+      paranoid: true,
+      deletedAt: 'deleted_at',
     },
   )
 

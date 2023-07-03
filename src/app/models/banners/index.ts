@@ -32,9 +32,11 @@ export class Banners extends Model<InferAttributes<Banners>, InferCreationAttrib
 
   declare end_date: Date
 
-  declare created_at: CreationOptional<Date>
+  declare created_at: NonAttribute<Date>
 
-  declare updated_at: CreationOptional<Date>
+  declare updated_at: NonAttribute<Date>
+
+  declare deleted_at: NonAttribute<Date>
 
   declare community: NonAttribute<Communities>
 }
@@ -64,8 +66,6 @@ try {
       is_active: DataTypes.BOOLEAN,
       start_date: DataTypes.DATE,
       end_date: DataTypes.DATE,
-      created_at: DataTypes.DATE,
-      updated_at: DataTypes.DATE,
     },
     {
       tableName: 'banners',

@@ -3,9 +3,11 @@ import { ThreadDto } from 'app/dto/thread.dto'
 import { AuthMiddleware } from 'app/middlewares/auth.middleware'
 import { ErrorMiddleware } from 'app/middlewares/error.middleware'
 import { Router } from 'express'
+import { ThreadCommentRouter } from './thread_comment.routes'
+import { ThreadLikeRouter } from './thread_like.routes'
 
-const router = Router()
 const baseUrl = '/threads'
+const router = Router()
 
 router.get('/list', ThreadController.GetListThread)
 
@@ -32,4 +34,10 @@ router.put(
 
 router.delete('/delete/:id', ThreadController.Delete)
 
-export const ThreadRouter = Router().use(baseUrl, AuthMiddleware.checkAuthenticate, router)
+export const ThreadRouter = Router().use(
+  baseUrl,
+  AuthMiddleware.checkAuthenticate,
+  ThreadCommentRouter,
+  ThreadLikeRouter,
+  router,
+)

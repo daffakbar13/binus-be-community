@@ -23,9 +23,11 @@ export class Communities extends Model<
 
   declare name: string
 
-  declare created_at: CreationOptional<Date>
+  declare created_at: NonAttribute<Date>
 
-  declare updated_at: CreationOptional<Date>
+  declare updated_at: NonAttribute<Date>
+
+  declare deleted_at: NonAttribute<Date>
 
   declare sub_communities: NonAttribute<SubCommunities[]>
 
@@ -45,14 +47,14 @@ try {
       user_id: DataTypes.INTEGER,
       tenant_id: DataTypes.INTEGER,
       name: DataTypes.STRING,
-      created_at: DataTypes.DATE,
-      updated_at: DataTypes.DATE,
     },
     {
       tableName: 'communities',
       sequelize: dbBinusCommunity,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
+      paranoid: true,
+      deletedAt: 'deleted_at',
     },
   )
 } catch (error) {

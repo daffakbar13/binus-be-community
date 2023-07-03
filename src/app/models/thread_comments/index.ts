@@ -21,9 +21,9 @@ export class ThreadComments extends Model<
 
   declare comment: string
 
-  declare created_at: CreationOptional<Date>
+  declare created_at: NonAttribute<Date>
 
-  declare updated_at: CreationOptional<Date>
+  declare updated_at: NonAttribute<Date>
 
   declare thread: NonAttribute<Threads>
 }
@@ -45,8 +45,6 @@ try {
         },
       },
       comment: DataTypes.STRING,
-      created_at: DataTypes.DATE,
-      updated_at: DataTypes.DATE,
     },
     {
       tableName: 'thread_comments',

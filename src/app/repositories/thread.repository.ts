@@ -2,16 +2,17 @@ import { Threads } from 'app/models/threads'
 import { Attributes, CreationAttributes, WhereOptions } from 'sequelize'
 
 export namespace ThreadRepository {
+  const relations = ['tenants', 'community', 'sub_community', 'comments', 'likes']
   export function GetListThread() {
     return Threads.findAll({
-      include: ['tenants', 'community', 'sub_community', 'comments', 'likes'],
+      include: relations,
     })
   }
 
   export function GetDetailThread(where: WhereOptions<Threads>) {
     return Threads.findOne({
       where,
-      include: ['tenants', 'community', 'sub_community', 'comments', 'likes'],
+      include: relations,
     })
   }
 

@@ -1,19 +1,25 @@
+import { ThreadComments } from 'app/models/thread_comments'
 import { Threads } from 'app/models/threads'
 import { Attributes, CreationAttributes, WhereOptions } from 'sequelize'
 
 export namespace ThreadRepository {
-  const relations = ['tenants', 'community', 'sub_community', 'comments', 'likes']
+  const relations = [
+    'tenants',
+    'community',
+    'sub_community',
+    'likes',
+    {
+      model: ThreadComments,
+      as: 'comments',
+      include: ['likes'],
+    },
+  ]
   export function GetListThread() {
-    return Threads.findAll({
-      include: relations,
-    })
+    return Threads.findAll({ include: relations })
   }
 
   export function GetDetailThread(where: WhereOptions<Threads>) {
-    return Threads.findOne({
-      where,
-      include: relations,
-    })
+    return Threads.findOne({ where, include: relations })
   }
 
   export function CreateThread(payload: CreationAttributes<Threads>) {

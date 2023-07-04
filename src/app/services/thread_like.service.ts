@@ -9,17 +9,11 @@ export namespace ThreadLikeService {
       const { id } = req.params
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        const isLiked = await ThreadLikeRepository.GetDetailThreadLike({
-          thread_id: id,
+        const result = await ThreadLikeRepository.CreateThreadLike({
+          thread_id: Number(id),
           user_id: user.data.id,
         })
-        if (!isLiked) {
-          await ThreadLikeRepository.CreateThreadLike({
-            thread_id: Number(id),
-            user_id: user.data.id,
-          })
-        }
-        return baseResponse('Ok')
+        return baseResponse('Ok', result)
       }
       return baseResponse('Unauthorized')
     } catch (err) {

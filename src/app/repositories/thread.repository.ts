@@ -1,6 +1,7 @@
 import { ThreadComments } from 'app/models/thread_comments'
 import { Threads } from 'app/models/threads'
-import { Attributes, CreationAttributes, WhereOptions } from 'sequelize'
+import { PaginationDto } from 'common/dto/pagination.dto'
+import { Attributes, CreationAttributes, Order, WhereOptions } from 'sequelize'
 
 export namespace ThreadRepository {
   const relations = [
@@ -14,8 +15,15 @@ export namespace ThreadRepository {
       include: ['likes'],
     },
   ]
-  export function GetListThread() {
-    return Threads.findAll({ include: relations })
+  export async function GetListThread(
+    pagination?: PaginationDto.PaginationObjectType,
+    order?: Order,
+    where?: WhereOptions,
+  ) {
+    return {
+      count: await Threads.count(),
+      rows: await Threads.findAll({ include: relations, ...pagination, order, where }),
+    }
   }
 
   export function GetDetailThread(where: WhereOptions<Threads>) {

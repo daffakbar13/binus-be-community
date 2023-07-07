@@ -3,8 +3,8 @@ import { sendResponse } from 'common/dto/sendResponse.dto'
 import { Request, Response } from 'express'
 
 export namespace ThreadController {
-  export async function GetListThread(_: Request, res: Response) {
-    const result = await ThreadService.GetListThread()
+  export async function GetListThread(req: Request, res: Response) {
+    const result = await ThreadService.GetListThread(req)
     return sendResponse(res, result)
   }
 
@@ -25,16 +25,6 @@ export namespace ThreadController {
 
   export async function Delete(req: Request, res: Response) {
     const result = await ThreadService.DeleteThread(req)
-    return sendResponse(res, result)
-  }
-
-  export async function Like(req: Request, res: Response) {
-    const result = await ThreadService.LikeThread(req)
-    return sendResponse(res, result)
-  }
-
-  export async function Unlike(req: Request, res: Response) {
-    const result = await ThreadService.UnlikeThread(req)
     return sendResponse(res, result)
   }
 }

@@ -9,4 +9,8 @@ export namespace ThreadCommentLikeRepository {
   export function DeleteThreadCommentLike(where: WhereOptions<ThreadCommentLikes>) {
     return ThreadCommentLikes.destroy({ where })
   }
+
+  export function CountThreadCommentLike(where: WhereOptions<ThreadCommentLikes>) {
+    return ThreadCommentLikes.count({ where })
+  }
 }

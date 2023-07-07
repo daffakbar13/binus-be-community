@@ -19,7 +19,7 @@ export class ThreadCommentLikes extends Model<
 
   declare thread_comment_id: number
 
-  declare thread_comment: NonAttribute<ThreadComments>
+  declare comment: NonAttribute<ThreadComments>
 }
 
 try {

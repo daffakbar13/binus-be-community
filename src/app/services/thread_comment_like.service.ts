@@ -6,14 +6,15 @@ import { UserService } from './user.service'
 export namespace ThreadCommentLikeService {
   export async function LikeThreadComment(req: Request) {
     try {
-      const { id } = req.params
+      const id = Number(req.params.id)
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        const result = await ThreadCommentLikeRepository.CreateThreadCommentLike({
-          thread_comment_id: Number(id),
+        await ThreadCommentLikeRepository.CreateThreadCommentLike({
+          thread_comment_id: id,
           user_id: user.data.id,
         })
-        return baseResponse('Ok', result)
+        const count = await CountLike(id)
+        return baseResponse('Ok', { count })
       }
       return baseResponse('Unauthorized')
     } catch (err) {
@@ -23,18 +24,25 @@ export namespace ThreadCommentLikeService {
 
   export async function UnlikeThreadComment(req: Request) {
     try {
-      const { id } = req.params
+      const id = Number(req.params.id)
       const user = await UserService.UserInfo(req)
       if (user.data) {
         await ThreadCommentLikeRepository.DeleteThreadCommentLike({
           user_id: user.data.id,
           thread_comment_id: id,
         })
-        return baseResponse('Ok')
+        const count = await CountLike(id)
+        return baseResponse('Ok', { count })
       }
       return baseResponse('Unauthorized')
     } catch (err) {
       return baseResponse('InternalServerError')
     }
+  }
+
+  export function CountLike(thread_comment_id: number) {
+    return ThreadCommentLikeRepository.CountThreadCommentLike({
+      thread_comment_id,
+    })
   }
 }

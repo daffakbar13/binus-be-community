@@ -28,11 +28,16 @@ router.post(
 router.put(
   '/update/:id',
   UploadMiddleware.uploadFile('.png', '.jpg').single('image'),
-  BannerDto.CreateBanner,
+  BannerDto.UpdateBanner,
   ErrorMiddleware.DtoValidator,
   BannerController.Update,
 )
 
-router.delete('/delete/:id', BannerController.Delete)
+router.delete(
+  '/delete/:id',
+  BannerDto.DeleteBanner,
+  ErrorMiddleware.DtoValidator,
+  BannerController.Delete,
+)
 
 export const BannerRouter = Router().use(baseUrl, AuthMiddleware.checkAuthenticate, router)

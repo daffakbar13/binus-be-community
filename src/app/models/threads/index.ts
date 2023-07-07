@@ -11,6 +11,7 @@ import { Communities } from '../communities'
 import { SubCommunities } from '../sub_communities'
 import { ThreadLikes } from '../thread_likes'
 import { ThreadComments } from '../thread_comments'
+import { ThreadTenants } from '../thread_tenants'
 
 export class Threads extends Model<InferAttributes<Threads>, InferCreationAttributes<Threads>> {
   declare id: CreationOptional<number>
@@ -21,7 +22,11 @@ export class Threads extends Model<InferAttributes<Threads>, InferCreationAttrib
 
   declare sub_community_id: number
 
+  declare title: string
+
   declare content: string
+
+  declare tags: string
 
   declare views: CreationOptional<number>
 
@@ -44,6 +49,8 @@ export class Threads extends Model<InferAttributes<Threads>, InferCreationAttrib
   declare community: NonAttribute<Communities>
 
   declare sub_community: NonAttribute<SubCommunities>
+
+  declare tenants: NonAttribute<ThreadTenants[]>
 }
 
 try {
@@ -69,7 +76,9 @@ try {
           key: 'id',
         },
       },
+      title: DataTypes.STRING,
       content: DataTypes.STRING,
+      tags: DataTypes.STRING,
       views: {
         type: DataTypes.INTEGER,
         defaultValue: 0,

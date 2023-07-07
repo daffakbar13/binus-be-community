@@ -1,5 +1,5 @@
-import { param } from 'express-validator'
+import { checkExact, param } from 'express-validator'
 
 export namespace ThreadLikeDto {
-  export const LikeThread = param('id').isFloat()
+  export const LikeThread = checkExact([param('id').isFloat({ min: 1 })])
 }

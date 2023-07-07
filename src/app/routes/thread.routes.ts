@@ -9,7 +9,12 @@ import { ThreadLikeRouter } from './thread_like.routes'
 const baseUrl = '/threads'
 const router = Router()
 
-router.get('/list', ThreadController.GetListThread)
+router.get(
+  '/list',
+  ThreadDto.ListThread,
+  ErrorMiddleware.DtoValidator,
+  ThreadController.GetListThread,
+)
 
 router.get(
   '/detail/:id',
@@ -27,12 +32,17 @@ router.post(
 
 router.put(
   '/update/:id',
-  ThreadDto.CreateThread,
+  ThreadDto.UpdateThread,
   ErrorMiddleware.DtoValidator,
   ThreadController.Update,
 )
 
-router.delete('/delete/:id', ThreadController.Delete)
+router.delete(
+  '/delete/:id',
+  ThreadDto.DeleteThread,
+  ErrorMiddleware.DtoValidator,
+  ThreadController.Delete,
+)
 
 export const ThreadRouter = Router().use(
   baseUrl,

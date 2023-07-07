@@ -8,6 +8,7 @@ import {
   NonAttribute,
 } from 'sequelize'
 import { Threads } from '../threads'
+import { ThreadLikes } from '../thread_likes'
 
 export class ThreadComments extends Model<
   InferAttributes<ThreadComments>,
@@ -26,6 +27,8 @@ export class ThreadComments extends Model<
   declare updated_at: NonAttribute<Date>
 
   declare thread: NonAttribute<Threads>
+
+  declare likes: NonAttribute<ThreadLikes[]>
 }
 
 try {

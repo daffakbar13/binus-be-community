@@ -9,4 +9,8 @@ export namespace ThreadLikeRepository {
   export function DeleteThreadLike(where: WhereOptions<ThreadLikes>) {
     return ThreadLikes.destroy({ where })
   }
+
+  export function CountThreadLike(where: WhereOptions<ThreadLikes>) {
+    return ThreadLikes.count({ where })
+  }
 }

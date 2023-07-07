@@ -5,6 +5,7 @@ import {
   InferCreationAttributes,
   CreationOptional,
   DataTypes,
+  NonAttribute,
 } from 'sequelize'
 import { Threads } from '../threads'
 
@@ -17,6 +18,8 @@ export class ThreadTenants extends Model<
   declare thread_id: number
 
   declare tenant_id: number
+
+  declare thread: NonAttribute<Threads>
 }
 
 try {

@@ -16,11 +16,16 @@ router.post(
 
 router.put(
   '/update/:id',
-  ThreadCommentDto.CreateThreadComment,
+  ThreadCommentDto.UpdateThreadComment,
   ErrorMiddleware.DtoValidator,
   ThreadCommentController.UpdateThreadComment,
 )
 
-router.delete('/delete/:id', ThreadCommentController.DeleteThreadComment)
+router.delete(
+  '/delete/:id',
+  ThreadCommentDto.DeleteThreadComment,
+  ErrorMiddleware.DtoValidator,
+  ThreadCommentController.DeleteThreadComment,
+)
 
 export const ThreadCommentRouter = Router().use(baseUrl, router, ThreadCommentLikeRouter)

@@ -2,15 +2,33 @@ import { ThreadRepository } from 'app/repositories/thread.repository'
 import { baseResponse } from 'common/dto/baseResponse.dto'
 import { Request } from 'express'
 import { ThreadTenantRepository } from 'app/repositories/thread_tenant.repository'
-import { ThreadLikeRepository } from 'app/repositories/thread_like.repository'
+import { Threads } from 'app/models/threads'
+import { paginationObject, responseWithPagination } from 'utils/helpers/pagination'
+import { searchRequest } from 'utils/helpers/search'
+import { sortRequest } from 'utils/helpers/sort'
 import { UserService } from './user.service'
 import { ThreadTenantService } from './thread_tenant.service'
 
 export namespace ThreadService {
-  export async function GetListThread() {
+  export async function GetListThread(req: Request) {
     try {
-      const result = await ThreadRepository.GetListThread()
-      return baseResponse('Ok', { results: result })
+      const user = await UserService.UserInfo(req)
+      if (user.data) {
+        const { query } = req
+        const pagination = paginationObject(query)
+        const sort = sortRequest(query)
+        const search = searchRequest<Threads>(['tags', 'title'], query.search as string)
+        const { count, rows } = await ThreadRepository.GetListThread(pagination, sort, search)
+        return baseResponse(
+          'Ok',
+          responseWithPagination({
+            count,
+            rows: MappingThread(rows, user.data.id),
+            ...pagination,
+          }),
+        )
+      }
+      return baseResponse('Unauthorized')
     } catch (err) {
       return baseResponse('InternalServerError')
     }
@@ -75,40 +93,24 @@ export namespace ThreadService {
     }
   }
 
-  export async function LikeThread(req: Request) {
-    try {
-      const { id } = req.params
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
-        const isLiked = await ThreadLikeRepository.GetDetailThreadLike({
-          thread_id: id,
-          user_id: user.data.id,
-        })
-        if (!isLiked) {
-          await ThreadLikeRepository.CreateThreadLike({
-            thread_id: Number(id),
-            user_id: user.data.id,
-          })
-        }
-        return baseResponse('Ok')
-      }
-      return baseResponse('Unauthorized')
-    } catch (err) {
-      return baseResponse('InternalServerError')
-    }
+  export function MappingThread(data: Threads[], id: number) {
+    return data.map((e) => ThreadMapCallback(e, id))
   }
 
-  export async function UnlikeThread(req: Request) {
-    try {
-      const { id } = req.params
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
-        await ThreadLikeRepository.DeleteThreadLike({ user_id: user.data.id, thread_id: id })
-        return baseResponse('Ok')
+  export function ThreadMapCallback(data: Threads | null, id: number) {
+    if (data) {
+      return {
+        ...data.dataValues,
+        comments: data.comments.map((c) => ({
+          ...c.dataValues,
+          total_likes: c.likes.length,
+          is_liked: c.likes.map((l) => l.user_id).includes(id),
+        })),
+        total_likes: data.likes.length,
+        total_comments: data.comments.length,
+        is_liked: data.likes.map((l) => l.user_id).includes(id),
       }
-      return baseResponse('Unauthorized')
-    } catch (err) {
-      return baseResponse('InternalServerError')
     }
+    return null
   }
 }

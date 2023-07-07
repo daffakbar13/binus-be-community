@@ -23,6 +23,14 @@ export class Communities extends Model<
 
   declare name: string
 
+  declare description: string
+
+  declare image_url: string
+
+  declare image_key: string
+
+  declare is_active: boolean
+
   declare created_at: NonAttribute<Date>
 
   declare updated_at: NonAttribute<Date>
@@ -47,6 +55,13 @@ try {
       user_id: DataTypes.INTEGER,
       tenant_id: DataTypes.INTEGER,
       name: DataTypes.STRING,
+      description: DataTypes.STRING,
+      image_url: DataTypes.STRING,
+      image_key: DataTypes.STRING,
+      is_active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+      },
     },
     {
       tableName: 'communities',

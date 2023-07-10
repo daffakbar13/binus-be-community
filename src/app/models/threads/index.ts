@@ -36,6 +36,8 @@ export class Threads extends Model<InferAttributes<Threads>, InferCreationAttrib
 
   declare is_pinned: boolean
 
+  declare is_active: boolean
+
   declare created_at: NonAttribute<Date>
 
   declare updated_at: NonAttribute<Date>
@@ -94,6 +96,10 @@ try {
       is_pinned: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
+      },
+      is_active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
       },
     },
     {

@@ -8,6 +8,7 @@ export namespace ThreadDto {
     ...PaginationDto.RequestPagination,
     ...SortDto.RequestSort('id', 'views'),
     SearchDto.SearchRequest,
+    query('is_active').optional({ values: 'falsy' }).isBoolean(),
   ])
 
   export const DetailThread = checkExact([

@@ -15,7 +15,10 @@ export namespace CommunityService {
       const { query } = req
       const pagination = paginationObject(query)
       const search = searchRequest<Communities>(['name'], query.search as string)
-      const result = await CommunityRepository.GetListCommunity(pagination, search)
+      const result = await CommunityRepository.GetListCommunity(pagination, {
+        ...search,
+        ...(query.is_active && { is_active: query.is_active }),
+      })
       return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
     } catch (err) {
       return baseResponse('InternalServerError')

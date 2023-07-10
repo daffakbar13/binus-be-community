@@ -26,7 +26,7 @@ deploy_microk8s:
     name: stg-binus-be-community
   script:
     - kubectl config get-contexts
-    - kubectl config use-context wgs/binus/binus-be-community:binus-be-community
+    - kubectl config use-context wgs/binus/gitlab-agent:binus
     - kubectl version
     - cd manifest/
     - kubectl create namespace ${namespace} --dry-run=client -o yaml | kubectl apply -f -

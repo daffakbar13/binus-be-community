@@ -21,7 +21,7 @@ export namespace ThreadRepository {
     where?: WhereOptions,
   ) {
     return {
-      count: await Threads.count(),
+      count: await Threads.count({ where }),
       rows: await Threads.findAll({ include: relations, ...pagination, order, where }),
     }
   }

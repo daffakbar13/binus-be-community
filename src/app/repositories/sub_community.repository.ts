@@ -10,7 +10,7 @@ export namespace SubCommunityRepository {
     where?: WhereOptions,
   ) {
     return {
-      count: await SubCommunities.count(),
+      count: await SubCommunities.count({ where }),
       rows: await SubCommunities.findAll({ include: relations, ...pagination, where }),
     }
   }

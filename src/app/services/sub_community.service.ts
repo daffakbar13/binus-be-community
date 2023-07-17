@@ -18,7 +18,11 @@ export namespace SubCommunityService {
         const { query } = req
         const pagination = paginationObject(query)
         const search = searchRequest<Communities>(['name'], query.search as string)
-        const { count, rows } = await SubCommunityRepository.GetListSubCommunity(pagination, search)
+        const { count, rows } = await SubCommunityRepository.GetListSubCommunity(pagination, {
+          ...search,
+          ...(query.is_active && { is_active: query.is_active }),
+          ...(query.community_id && { community_id: query.community_id }),
+        })
         return baseResponse(
           'Ok',
           responseWithPagination({

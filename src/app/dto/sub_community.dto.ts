@@ -1,11 +1,12 @@
 import { PaginationDto } from 'common/dto/pagination.dto'
 import { SearchDto } from 'common/dto/search'
-import { body, checkExact, param } from 'express-validator'
+import { body, checkExact, param, query } from 'express-validator'
 
 export namespace SubCommunityDto {
   export const ListSubCommunity = checkExact([
     ...PaginationDto.RequestPagination,
     SearchDto.SearchRequest,
+    query('is_active').optional({ values: 'falsy' }).isBoolean(),
   ])
 
   export const DetailSubCommunity = checkExact([param('id').isFloat({ min: 1 })])

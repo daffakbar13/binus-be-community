@@ -8,6 +8,7 @@ import {
   NonAttribute,
 } from 'sequelize'
 import { Communities } from '../communities'
+import { SubCommunityMembers } from '../sub_community_members'
 
 export class SubCommunities extends Model<
   InferAttributes<SubCommunities>,
@@ -36,6 +37,8 @@ export class SubCommunities extends Model<
   declare deleted_at: NonAttribute<Date>
 
   declare community: NonAttribute<Communities>
+
+  declare members: NonAttribute<SubCommunityMembers[]>
 }
 
 try {

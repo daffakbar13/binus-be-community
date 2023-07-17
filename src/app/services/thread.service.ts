@@ -21,6 +21,9 @@ export namespace ThreadService {
         const { count, rows } = await ThreadRepository.GetListThread(pagination, sort, {
           ...search,
           ...(query.is_active && { is_active: query.is_active }),
+          ...(query.is_pinned && { is_pinned: query.is_pinned }),
+          ...(query.is_my_thread && { user_id: user.data.id }),
+          ...(query.sub_community_id && { sub_community_id: query.sub_community_id }),
         })
         return baseResponse(
           'Ok',
@@ -112,6 +115,7 @@ export namespace ThreadService {
         total_likes: data.likes.length,
         total_comments: data.comments.length,
         is_liked: data.likes.map((l) => l.user_id).includes(id),
+        is_my_thread: data.user_id === id,
       }
     }
     return null

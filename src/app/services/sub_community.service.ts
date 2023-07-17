@@ -7,16 +7,28 @@ import { searchRequest } from 'utils/helpers/search'
 import { DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { getEnv } from 'configs/env'
 import { s3 } from 'configs/aws'
+import { SubCommunities } from 'app/models/sub_communities'
 import { UserService } from './user.service'
 
 export namespace SubCommunityService {
   export async function GetListSubCommunity(req: Request) {
     try {
-      const { query } = req
-      const pagination = paginationObject(query)
-      const search = searchRequest<Communities>(['name'], query.search as string)
-      const result = await SubCommunityRepository.GetListSubCommunity(pagination, search)
-      return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
+      const user = await UserService.UserInfo(req)
+      if (user.data) {
+        const { query } = req
+        const pagination = paginationObject(query)
+        const search = searchRequest<Communities>(['name'], query.search as string)
+        const { count, rows } = await SubCommunityRepository.GetListSubCommunity(pagination, search)
+        return baseResponse(
+          'Ok',
+          responseWithPagination({
+            count,
+            rows: MappingSubCommunity(rows, user.data.id),
+            ...pagination,
+          }),
+        )
+      }
+      return baseResponse('Unauthorized')
     } catch (err) {
       return baseResponse('InternalServerError')
     }
@@ -24,8 +36,12 @@ export namespace SubCommunityService {
 
   export async function GetDetailSubCommunity(req: Request) {
     try {
-      const result = await SubCommunityRepository.GetDetailSubCommunity({ id: req.params.id })
-      return baseResponse('Ok', result)
+      const user = await UserService.UserInfo(req)
+      if (user.data) {
+        const result = await SubCommunityRepository.GetDetailSubCommunity({ id: req.params.id })
+        return baseResponse('Ok', SubCommunityMapCallback(result, user.data.id))
+      }
+      return baseResponse('Unauthorized')
     } catch (err) {
       return baseResponse('InternalServerError')
     }
@@ -97,5 +113,20 @@ export namespace SubCommunityService {
       })
       await s3.send(deleteCmd)
     }
+  }
+
+  export function MappingSubCommunity(data: SubCommunities[], id: number) {
+    return data.map((e) => SubCommunityMapCallback(e, id))
+  }
+
+  export function SubCommunityMapCallback(data: SubCommunities | null, id: number) {
+    if (data) {
+      return {
+        ...data.dataValues,
+        total_members: data.members.length,
+        is_my_sub_community: data.members.map((m) => m.user_id).includes(id),
+      }
+    }
+    return null
   }
 }

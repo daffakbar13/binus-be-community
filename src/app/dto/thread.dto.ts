@@ -9,6 +9,9 @@ export namespace ThreadDto {
     ...SortDto.RequestSort('id', 'views'),
     SearchDto.SearchRequest,
     query('is_active').optional({ values: 'falsy' }).isBoolean(),
+    query('is_pinned').optional({ values: 'falsy' }).isBoolean(),
+    query('is_my_thread').optional({ values: 'falsy' }).isBoolean(),
+    query('sub_community_id').optional({ values: 'falsy' }).isFloat({ min: 1 }),
   ])
 
   export const DetailThread = checkExact([

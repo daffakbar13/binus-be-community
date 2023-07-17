@@ -29,7 +29,7 @@ export namespace ThreadDto {
     body(['title', 'content', 'tags']).optional({ values: 'falsy' }).isString(),
     body(['community_id', 'sub_community_id']).optional({ values: 'falsy' }).isFloat({ min: 1 }),
     body('tenant_ids').optional({ values: 'falsy' }).isArray(),
-    body(['is_approved', 'is_allow_comment']).optional({ values: 'falsy' }).isBoolean(),
+    body(['is_approved', 'is_allow_comment', 'is_active']).optional({ values: 'falsy' }).isBoolean(),
   ])
 
   export const DeleteThread = checkExact([param('id').isFloat({ min: 1 })])

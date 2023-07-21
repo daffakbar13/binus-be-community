@@ -13,13 +13,20 @@ export namespace CommunityService {
   export async function GetListCommunity(req: Request) {
     try {
       const { query } = req
-      const pagination = paginationObject(query)
-      const search = searchRequest<Communities>(['name'], query.search as string)
-      const result = await CommunityRepository.GetListCommunity(pagination, {
-        ...search,
-        ...(query.is_active && { is_active: query.is_active }),
-      })
-      return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
+      const user = await UserService.UserInfo(req)
+      if (user.data) {
+        const pagination = paginationObject(query)
+        const search = searchRequest<Communities>(['name'], query.search as string)
+        const result = await CommunityRepository.GetListCommunity(user.data.id, {
+          ...pagination,
+          where: {
+            ...search,
+            ...(query.is_active && { is_active: query.is_active }),
+          },
+        })
+        return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
+      }
+      return baseResponse('Unauthorized')
     } catch (err) {
       return baseResponse('InternalServerError')
     }
@@ -27,8 +34,13 @@ export namespace CommunityService {
 
   export async function GetDetailCommunity(req: Request) {
     try {
-      const result = await CommunityRepository.GetDetailCommunity({ id: req.params.id })
-      return baseResponse('Ok', result)
+      const { id } = req.params
+      const user = await UserService.UserInfo(req)
+      if (user.data) {
+        const result = await CommunityRepository.GetDetailCommunity(user.data.id, { id })
+        return baseResponse('Ok', result)
+      }
+      return baseResponse('Unauthorized')
     } catch (err) {
       return baseResponse('InternalServerError')
     }
@@ -62,7 +74,7 @@ export namespace CommunityService {
       const file = req.file as any
       if (user.data) {
         if (file) {
-          await DeleteImageFromAWS(Number(req.params.id))
+          await DeleteImageFromAWS(user.data.id, Number(req.params.id))
         }
         await CommunityRepository.UpdateCommunity(Number(req.params.id), {
           ...req.body,
@@ -83,16 +95,20 @@ export namespace CommunityService {
   export async function DeleteCommunity(req: Request) {
     try {
       const { id } = req.params
-      await CommunityRepository.DeleteCommunity({ id })
-      await DeleteImageFromAWS(Number(id))
-      return baseResponse('Ok')
+      const user = await UserService.UserInfo(req)
+      if (user.data) {
+        await CommunityRepository.DeleteCommunity({ id })
+        await DeleteImageFromAWS(user.data.id, Number(id))
+        return baseResponse('Ok')
+      }
+      return baseResponse('Unauthorized')
     } catch (err) {
       return baseResponse('InternalServerError')
     }
   }
 
-  export async function DeleteImageFromAWS(id: number) {
-    const oldData = await CommunityRepository.GetDetailCommunity({ id })
+  export async function DeleteImageFromAWS(user_id: number, id: number) {
+    const oldData = await CommunityRepository.GetDetailCommunity(user_id, { id })
     if (oldData) {
       const deleteCmd = new DeleteObjectCommand({
         Bucket: getEnv('BUCKET_NAME'),

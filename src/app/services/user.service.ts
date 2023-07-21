@@ -5,7 +5,7 @@ import { Request } from 'express'
 
 export namespace UserService {
   const instance = () => {
-    const axiosInstance = axios.create({ baseURL: `${getEnv('API_GATEWAY_HOST')}/v1/users` })
+    const axiosInstance = axios.create({ baseURL: `${getEnv('API_HOST_SOKRATES')}/auth-http/v2` })
     axiosInstance.interceptors.response.use((res) => res.data)
     return axiosInstance
   }
@@ -13,9 +13,12 @@ export namespace UserService {
 
   export async function UserInfo(req: Request) {
     try {
-      const result = await authService.get<null, BaseResponse<{ id: number }>>('/info', {
-        headers: { Authorization: req.headers.authorization },
-      })
+      const result = await authService.get<null, BaseResponse<{ id: number }>>(
+        '/superapps/user-info',
+        {
+          headers: { Authorization: req.headers.authorization },
+        },
+      )
       return result
     } catch (err) {
       return baseResponse('InternalServerError')

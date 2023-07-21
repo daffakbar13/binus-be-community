@@ -7,7 +7,6 @@ import { searchRequest } from 'utils/helpers/search'
 import { DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { getEnv } from 'configs/env'
 import { s3 } from 'configs/aws'
-import { SubCommunities } from 'app/models/sub_communities'
 import { UserService } from './user.service'
 
 export namespace SubCommunityService {
@@ -18,19 +17,15 @@ export namespace SubCommunityService {
         const { query } = req
         const pagination = paginationObject(query)
         const search = searchRequest<Communities>(['name'], query.search as string)
-        const { count, rows } = await SubCommunityRepository.GetListSubCommunity(pagination, {
-          ...search,
-          ...(query.is_active && { is_active: query.is_active }),
-          ...(query.community_id && { community_id: query.community_id }),
+        const result = await SubCommunityRepository.GetListSubCommunity(user.data.id, {
+          ...pagination,
+          where: {
+            ...search,
+            ...(query.is_active && { is_active: query.is_active }),
+            ...(query.community_id && { community_id: query.community_id }),
+          },
         })
-        return baseResponse(
-          'Ok',
-          responseWithPagination({
-            count,
-            rows: MappingSubCommunity(rows, user.data.id),
-            ...pagination,
-          }),
-        )
+        return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
       }
       return baseResponse('Unauthorized')
     } catch (err) {
@@ -40,10 +35,11 @@ export namespace SubCommunityService {
 
   export async function GetDetailSubCommunity(req: Request) {
     try {
+      const { id } = req.params
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        const result = await SubCommunityRepository.GetDetailSubCommunity({ id: req.params.id })
-        return baseResponse('Ok', SubCommunityMapCallback(result, user.data.id))
+        const result = await SubCommunityRepository.GetDetailSubCommunity(user.data.id, { id })
+        return baseResponse('Ok', result)
       }
       return baseResponse('Unauthorized')
     } catch (err) {
@@ -79,7 +75,7 @@ export namespace SubCommunityService {
       const file = req.file as any
       if (user.data) {
         if (file) {
-          await DeleteImageFromAWS(Number(req.params.id))
+          await DeleteImageFromAWS(user.data.id, Number(req.params.id))
         }
         await SubCommunityRepository.UpdateSubCommunity(Number(req.params.id), {
           ...req.body,
@@ -100,16 +96,20 @@ export namespace SubCommunityService {
   export async function DeleteSubCommunity(req: Request) {
     try {
       const { id } = req.params
-      await SubCommunityRepository.DeleteSubCommunity({ id })
-      await DeleteImageFromAWS(Number(id))
-      return baseResponse('Ok')
+      const user = await UserService.UserInfo(req)
+      if (user.data) {
+        await SubCommunityRepository.DeleteSubCommunity({ id })
+        await DeleteImageFromAWS(user.data.id, Number(id))
+        return baseResponse('Ok')
+      }
+      return baseResponse('Unauthorized')
     } catch (err) {
       return baseResponse('InternalServerError')
     }
   }
 
-  export async function DeleteImageFromAWS(id: number) {
-    const oldData = await SubCommunityRepository.GetDetailSubCommunity({ id })
+  export async function DeleteImageFromAWS(user_id: number, id: number) {
+    const oldData = await SubCommunityRepository.GetDetailSubCommunity(user_id, { id })
     if (oldData) {
       const deleteCmd = new DeleteObjectCommand({
         Bucket: getEnv('BUCKET_NAME'),
@@ -117,20 +117,5 @@ export namespace SubCommunityService {
       })
       await s3.send(deleteCmd)
     }
-  }
-
-  export function MappingSubCommunity(data: SubCommunities[], id: number) {
-    return data.map((e) => SubCommunityMapCallback(e, id))
-  }
-
-  export function SubCommunityMapCallback(data: SubCommunities | null, id: number) {
-    if (data) {
-      return {
-        ...data.dataValues,
-        total_members: data.members.length,
-        is_my_sub_community: data.members.map((m) => m.user_id).includes(id),
-      }
-    }
-    return null
   }
 }

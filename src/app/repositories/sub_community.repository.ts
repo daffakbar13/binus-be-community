@@ -1,22 +1,79 @@
 import { SubCommunities } from 'app/models/sub_communities'
-import { PaginationDto } from 'common/dto/pagination.dto'
-import { Attributes, CreationAttributes, WhereOptions } from 'sequelize'
+import { Attributes, CreationAttributes, ProjectionAlias, Sequelize, WhereOptions } from 'sequelize'
 
 export namespace SubCommunityRepository {
   const relations = ['community', 'threads', 'members']
 
+  const includeable = (user_id: number): (string | ProjectionAlias)[] => [
+    [
+      Sequelize.cast(
+        Sequelize.literal(`(
+          SELECT COUNT(*)
+          FROM "sub_community_members" as "members"
+          WHERE 
+            "members"."sub_community_id" = "SubCommunities"."id"
+            AND "members"."is_approved" = true
+        )`),
+        'int',
+      ),
+      'total_members',
+    ],
+    [
+      Sequelize.cast(
+        Sequelize.literal(`(
+          SELECT COUNT(*)
+          FROM "threads" as "threads"
+          WHERE 
+            "threads"."sub_community_id" = "SubCommunities"."id"
+            AND "threads"."deleted_at" IS NULL
+        )`),
+        'int',
+      ),
+      'total_threads',
+    ],
+    [
+      Sequelize.cast(
+        Sequelize.literal(`(
+          SELECT CASE WHEN EXISTS (
+            SELECT * FROM "sub_community_members" as "members"
+            WHERE 
+              "members"."user_id" = ${user_id}
+              AND "members"."sub_community_id" = "SubCommunities"."id"
+              AND "members"."is_approved" = true
+          )
+          THEN true
+          ELSE false
+          END
+        )`),
+        'boolean',
+      ),
+      'is_member',
+    ],
+  ]
+
   export async function GetListSubCommunity(
-    pagination?: PaginationDto.PaginationObjectType,
-    where?: WhereOptions,
+    user_id: number,
+    props: Parameters<typeof SubCommunities.findAll>[0],
   ) {
-    return {
-      count: await SubCommunities.count({ where }),
-      rows: await SubCommunities.findAll({ include: relations, ...pagination, where }),
-    }
+    return Promise.all([
+      SubCommunities.count({ where: props?.where }),
+      SubCommunities.findAll({
+        ...props,
+        include: relations,
+        attributes: { include: includeable(user_id) },
+      }),
+    ]).then((res) => {
+      const [count, rows] = res
+      return { count, rows }
+    })
   }
 
-  export function GetDetailSubCommunity(where: WhereOptions<SubCommunities>) {
-    return SubCommunities.findOne({ where, include: relations })
+  export function GetDetailSubCommunity(user_id: number, where: WhereOptions<SubCommunities>) {
+    return SubCommunities.findOne({
+      include: relations,
+      attributes: { include: includeable(user_id) },
+      where,
+    })
   }
 
   export function CreateSubCommunity(payload: CreationAttributes<SubCommunities>) {

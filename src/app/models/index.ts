@@ -1,6 +1,7 @@
 import './banners'
 import './banner_tenants'
 import './communities'
+import './community_members'
 import './sub_communities'
 import './sub_community_members'
 import './threads'

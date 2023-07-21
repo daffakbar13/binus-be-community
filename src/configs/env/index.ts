@@ -8,6 +8,7 @@ type EnvKeys =
   | 'API_PORT'
   | 'API_HOST'
   | 'API_GATEWAY_HOST'
+  | 'API_HOST_SOKRATES'
   | 'DB_HOST'
   | 'DB_PORT'
   | 'DB_DIALECT'

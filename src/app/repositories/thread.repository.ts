@@ -16,11 +16,11 @@ export namespace ThreadRepository {
     [
       Sequelize.cast(
         Sequelize.literal(`(
-              SELECT COUNT(*)
-              FROM "thread_tenants" as "tenants"
-              WHERE 
-                "tenants"."thread_id" = "Threads"."id"
-            )`),
+          SELECT COUNT(*)
+          FROM "thread_tenants" as "tenants"
+          WHERE 
+            "tenants"."thread_id" = "Threads"."id"
+        )`),
         'int',
       ),
       'total_tenants',
@@ -28,11 +28,11 @@ export namespace ThreadRepository {
     [
       Sequelize.cast(
         Sequelize.literal(`(
-              SELECT COUNT(*)
-              FROM "thread_likes" as "likes"
-              WHERE 
-                "likes"."thread_id" = "Threads"."id"
-            )`),
+          SELECT COUNT(*)
+          FROM "thread_likes" as "likes"
+          WHERE 
+            "likes"."thread_id" = "Threads"."id"
+        )`),
         'int',
       ),
       'total_likes',
@@ -40,11 +40,11 @@ export namespace ThreadRepository {
     [
       Sequelize.cast(
         Sequelize.literal(`(
-              SELECT COUNT(*)
-              FROM "thread_comments" as "comments"
-              WHERE 
-                "comments"."thread_id" = "Threads"."id"
-            )`),
+          SELECT COUNT(*)
+          FROM "thread_comments" as "comments"
+          WHERE 
+            "comments"."thread_id" = "Threads"."id"
+        )`),
         'int',
       ),
       'total_comments',
@@ -52,16 +52,16 @@ export namespace ThreadRepository {
     [
       Sequelize.cast(
         Sequelize.literal(`(
-              SELECT CASE WHEN EXISTS (
-                SELECT * FROM "thread_likes" as "likes"
-                WHERE 
-                  "likes"."user_id" = ${user_id}
-                  AND "likes"."thread_id" = "Threads"."id"
-              )
-              THEN true
-              ELSE false
-              END
-            )`),
+          SELECT CASE WHEN EXISTS (
+            SELECT * FROM "thread_likes" as "likes"
+            WHERE 
+              "likes"."user_id" = ${user_id}
+              AND "likes"."thread_id" = "Threads"."id"
+          )
+          THEN true
+          ELSE false
+          END
+        )`),
         'boolean',
       ),
       'is_liked',
@@ -71,14 +71,59 @@ export namespace ThreadRepository {
     user_id: number,
     props: Parameters<typeof Threads.findAll>[0],
   ) {
-    return {
-      count: await Threads.count({ where: props?.where }),
-      rows: await Threads.findAll({
+    return Promise.all([
+      Threads.count({ where: props?.where }),
+      Threads.findAll({
         ...props,
         include: relations,
         attributes: { include: includeableThreads(user_id) },
       }),
-    }
+    ]).then((res) => {
+      const [count, rows] = res
+      return { count, rows }
+    })
+  }
+
+  export function GetMyThreads(where: WhereOptions<Threads>) {
+    return SubCommunities.findAll({
+      include: [
+        {
+          model: Communities,
+          as: 'community',
+          where: { is_active: true },
+          attributes: [],
+          order: [['community.id', 'ASC']],
+        },
+        { model: Threads, as: 'threads', where: { ...where, is_active: true } },
+      ],
+      attributes: [
+        'id',
+        [
+          Sequelize.literal(`(
+            SELECT CONCAT("community"."name", ' - ', "SubCommunities"."name")
+            FROM "communities" AS "community"
+            WHERE
+              "community"."id" = "SubCommunities"."community_id"
+          )`),
+          'name',
+        ],
+        [
+          Sequelize.cast(
+            Sequelize.literal(`(
+              SELECT COUNT(*)
+              FROM "threads"
+              WHERE 
+                "threads"."sub_community_id" = "SubCommunities"."id"
+                AND "threads"."deleted_at" IS NULL
+            )`),
+            'int',
+          ),
+          'total_threads',
+        ],
+        'image_url',
+      ],
+      where: { is_active: true },
+    })
   }
 
   export function GetDetailThread(user_id: number, where: WhereOptions<Threads>) {
@@ -106,47 +151,5 @@ export namespace ThreadRepository {
 
   export function IncrementThreadView(where: WhereOptions<Threads>) {
     return Threads.increment({ views: 1 }, { where })
-  }
-
-  export function GetMyThreads(where: WhereOptions<Threads>) {
-    return SubCommunities.findAll({
-      include: [
-        {
-          model: Communities,
-          as: 'community',
-          where: { is_active: true },
-          attributes: [],
-          order: [['community.id', 'ASC']],
-        },
-        { model: Threads, as: 'threads', where: { ...where, is_active: true } },
-      ],
-      attributes: [
-        'id',
-        [
-          Sequelize.literal(`(
-          SELECT CONCAT("community"."name", ' - ', "SubCommunities"."name")
-          FROM "communities" AS "community"
-          WHERE
-            "community"."id" = "SubCommunities"."community_id"
-          )`),
-          'name',
-        ],
-        [
-          Sequelize.cast(
-            Sequelize.literal(`(
-              SELECT COUNT(*)
-              FROM "threads"
-              WHERE 
-                "threads"."sub_community_id" = "SubCommunities"."id"
-                AND "threads"."deleted_at" IS NULL
-            )`),
-            'int',
-          ),
-          'total_threads',
-        ],
-        'image_url',
-      ],
-      where: { is_active: true },
-    })
   }
 }

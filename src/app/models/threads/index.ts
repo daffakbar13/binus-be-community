@@ -123,12 +123,12 @@ try {
   })
 
   SubCommunities.hasMany(Threads, {
-    foreignKey: 'community_id',
+    foreignKey: 'sub_community_id',
     as: 'threads',
   })
 
   Threads.belongsTo(SubCommunities, {
-    foreignKey: 'community_id',
+    foreignKey: 'sub_community_id',
     as: 'sub_community',
   })
 } catch (error) {

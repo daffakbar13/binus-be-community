@@ -8,6 +8,11 @@ export namespace ThreadController {
     return sendResponse(res, result)
   }
 
+  export async function GetMyThreads(req: Request, res: Response) {
+    const result = await ThreadService.GetMyThreads(req)
+    return sendResponse(res, result)
+  }
+
   export async function GetDetailThread(req: Request, res: Response) {
     const result = await ThreadService.GetDetailThread(req)
     return sendResponse(res, result)

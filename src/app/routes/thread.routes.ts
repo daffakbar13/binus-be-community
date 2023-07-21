@@ -16,6 +16,8 @@ router.get(
   ThreadController.GetListThread,
 )
 
+router.get('/my-threads/list', ThreadController.GetMyThreads)
+
 router.get(
   '/detail/:id',
   ThreadDto.DetailThread,

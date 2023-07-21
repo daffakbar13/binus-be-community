@@ -1,7 +1,6 @@
 import { ThreadRepository } from 'app/repositories/thread.repository'
 import { baseResponse } from 'common/dto/baseResponse.dto'
 import { Request } from 'express'
-import { ThreadTenantRepository } from 'app/repositories/thread_tenant.repository'
 import { Threads } from 'app/models/threads'
 import { paginationObject, responseWithPagination } from 'utils/helpers/pagination'
 import { searchRequest } from 'utils/helpers/search'
@@ -18,21 +17,31 @@ export namespace ThreadService {
         const pagination = paginationObject(query)
         const sort = sortRequest(query)
         const search = searchRequest<Threads>(['tags', 'title'], query.search as string)
-        const { count, rows } = await ThreadRepository.GetListThread(pagination, sort, {
-          ...search,
-          ...(query.is_active && { is_active: query.is_active }),
-          ...(query.is_pinned && { is_pinned: query.is_pinned }),
-          ...(query.is_my_thread && { user_id: user.data.id }),
-          ...(query.sub_community_id && { sub_community_id: query.sub_community_id }),
+        const result = await ThreadRepository.GetListThread(user.data.id, {
+          ...pagination,
+          ...sort,
+          where: {
+            ...search,
+            ...(query.is_active && { is_active: query.is_active }),
+            ...(query.is_pinned && { is_pinned: query.is_pinned }),
+            ...(query.is_my_thread && { user_id: user.data.id }),
+            ...(query.sub_community_id && { sub_community_id: query.sub_community_id }),
+          },
         })
-        return baseResponse(
-          'Ok',
-          responseWithPagination({
-            count,
-            rows: MappingThread(rows, user.data.id),
-            ...pagination,
-          }),
-        )
+        return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
+      }
+      return baseResponse('Unauthorized')
+    } catch (err) {
+      return baseResponse('InternalServerError')
+    }
+  }
+
+  export async function GetMyThreads(req: Request) {
+    try {
+      const user = await UserService.UserInfo(req)
+      if (user.data) {
+        const data = await ThreadRepository.GetMyThreads({ user_id: user.data.id })
+        return baseResponse('Ok', data)
       }
       return baseResponse('Unauthorized')
     } catch (err) {
@@ -42,11 +51,15 @@ export namespace ThreadService {
 
   export async function GetDetailThread(req: Request) {
     try {
-      if (req.query.increase_view === 'true') {
-        await ThreadRepository.IncrementThreadView({ id: req.params.id })
+      const user = await UserService.UserInfo(req)
+      if (user.data) {
+        if (req.query.increase_view === 'true') {
+          await ThreadRepository.IncrementThreadView({ id: req.params.id })
+        }
+        const result = await ThreadRepository.GetDetailThread(user.data.id, { id: req.params.id })
+        return baseResponse('Ok', result)
       }
-      const result = await ThreadRepository.GetDetailThread({ id: req.params.id })
-      return baseResponse('Ok', result)
+      return baseResponse('Unauthorized')
     } catch (err) {
       return baseResponse('InternalServerError')
     }
@@ -92,32 +105,9 @@ export namespace ThreadService {
     try {
       const { id } = req.params
       await ThreadRepository.DeleteThread({ id })
-      await ThreadTenantRepository.DeleteThreadTenant({ thread_id: id })
       return baseResponse('Ok')
     } catch (err) {
       return baseResponse('InternalServerError')
     }
-  }
-
-  export function MappingThread(data: Threads[], id: number) {
-    return data.map((e) => ThreadMapCallback(e, id))
-  }
-
-  export function ThreadMapCallback(data: Threads | null, id: number) {
-    if (data) {
-      return {
-        ...data.dataValues,
-        comments: data.comments.map((c) => ({
-          ...c.dataValues,
-          total_likes: c.likes.length,
-          is_liked: c.likes.map((l) => l.user_id).includes(id),
-        })),
-        total_likes: data.likes.length,
-        total_comments: data.comments.length,
-        is_liked: data.likes.map((l) => l.user_id).includes(id),
-        is_my_thread: data.user_id === id,
-      }
-    }
-    return null
   }
 }

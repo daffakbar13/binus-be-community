@@ -3,7 +3,7 @@ import { PaginationDto } from 'common/dto/pagination.dto'
 import { Attributes, CreationAttributes, WhereOptions } from 'sequelize'
 
 export namespace CommunityRepository {
-  const relations = ['sub_communities']
+  const relations = ['sub_communities', 'banners', 'threads']
 
   export async function GetListCommunity(
     pagination?: PaginationDto.PaginationObjectType,

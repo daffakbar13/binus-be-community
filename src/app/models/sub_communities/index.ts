@@ -9,6 +9,7 @@ import {
 } from 'sequelize'
 import { Communities } from '../communities'
 import { SubCommunityMembers } from '../sub_community_members'
+import { Threads } from '../threads'
 
 export class SubCommunities extends Model<
   InferAttributes<SubCommunities>,
@@ -39,6 +40,8 @@ export class SubCommunities extends Model<
   declare community: NonAttribute<Communities>
 
   declare members: NonAttribute<SubCommunityMembers[]>
+
+  declare threads: NonAttribute<Threads[]>
 }
 
 try {

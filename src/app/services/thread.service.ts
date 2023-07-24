@@ -75,6 +75,7 @@ export namespace ThreadService {
           ...req.body,
           user_id: user.data.id,
           status_id: 1,
+          ...(tenant_ids && { is_pinned: true }),
         })
         if (tenant_ids) {
           await ThreadTenantService.CreateThreadTenant(result.id, tenant_ids)

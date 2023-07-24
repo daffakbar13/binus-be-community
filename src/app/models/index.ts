@@ -1,3 +1,5 @@
+import './master_status'
+import './master_status_type'
 import './banners'
 import './banner_tenants'
 import './communities'

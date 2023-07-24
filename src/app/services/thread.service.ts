@@ -25,6 +25,7 @@ export namespace ThreadService {
             ...(query.is_active && { is_active: query.is_active }),
             ...(query.is_pinned && { is_pinned: query.is_pinned }),
             ...(query.is_my_thread && { user_id: user.data.id }),
+            ...(query.status_id && { status_id: query.status_id }),
             ...(query.sub_community_id && { sub_community_id: query.sub_community_id }),
           },
         })
@@ -73,6 +74,7 @@ export namespace ThreadService {
         const result = await ThreadRepository.CreateThread({
           ...req.body,
           user_id: user.data.id,
+          status_id: 1,
         })
         if (tenant_ids) {
           await ThreadTenantService.CreateThreadTenant(result.id, tenant_ids)
@@ -96,6 +98,17 @@ export namespace ThreadService {
         return baseResponse('Ok')
       }
       return baseResponse('Unauthorized')
+    } catch (err) {
+      return baseResponse('InternalServerError')
+    }
+  }
+
+  export async function ThreadApproval(req: Request) {
+    try {
+      const [, [result]] = await ThreadRepository.UpdateThread(Number(req.params.id), {
+        ...req.body,
+      })
+      return baseResponse('Ok', result)
     } catch (err) {
       return baseResponse('InternalServerError')
     }

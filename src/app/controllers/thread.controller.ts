@@ -23,6 +23,11 @@ export namespace ThreadController {
     return sendResponse(res, result)
   }
 
+  export async function ThreadApproval(req: Request, res: Response) {
+    const result = await ThreadService.ThreadApproval(req)
+    return sendResponse(res, result)
+  }
+
   export async function Update(req: Request, res: Response) {
     const result = await ThreadService.UpdateThread(req)
     return sendResponse(res, result)

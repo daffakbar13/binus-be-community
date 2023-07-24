@@ -11,8 +11,24 @@ import {
 } from 'sequelize'
 
 export namespace ThreadRepository {
-  const relations: Includeable[] = ['tenants', 'community', 'sub_community', 'likes', 'comments']
+  const relations: Includeable[] = [
+    'tenants',
+    'community',
+    'sub_community',
+    'status',
+    'likes',
+    'comments',
+  ]
   const includeableThreads = (user_id?: number): (string | ProjectionAlias)[] => [
+    [
+      Sequelize.literal(`(
+        SELECT status
+        FROM "master_statuses" as "status"
+        WHERE 
+          "status"."id" = "Threads"."status_id"
+      )`),
+      'status_name',
+    ],
     [
       Sequelize.cast(
         Sequelize.literal(`(
@@ -142,7 +158,7 @@ export namespace ThreadRepository {
     id: number,
     payload: { [key in keyof Attributes<Threads>]?: Attributes<Threads>[key] },
   ) {
-    return Threads.update(payload, { where: { id } })
+    return Threads.update(payload, { where: { id }, returning: true })
   }
 
   export function DeleteThread(where: WhereOptions<Threads>) {

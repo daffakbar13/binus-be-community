@@ -12,6 +12,7 @@ import { SubCommunities } from '../sub_communities'
 import { ThreadLikes } from '../thread_likes'
 import { ThreadComments } from '../thread_comments'
 import { ThreadTenants } from '../thread_tenants'
+import { MasterStatus } from '../master_status'
 
 export class Threads extends Model<InferAttributes<Threads>, InferCreationAttributes<Threads>> {
   declare id: CreationOptional<number>
@@ -22,6 +23,8 @@ export class Threads extends Model<InferAttributes<Threads>, InferCreationAttrib
 
   declare sub_community_id: number
 
+  declare status_id: number
+
   declare title: string
 
   declare content: string
@@ -29,8 +32,6 @@ export class Threads extends Model<InferAttributes<Threads>, InferCreationAttrib
   declare tags: string
 
   declare views: CreationOptional<number>
-
-  declare is_approved: boolean
 
   declare is_allow_comment: boolean
 
@@ -51,6 +52,8 @@ export class Threads extends Model<InferAttributes<Threads>, InferCreationAttrib
   declare community: NonAttribute<Communities>
 
   declare sub_community: NonAttribute<SubCommunities>
+
+  declare status: NonAttribute<MasterStatus>
 
   declare tenants: NonAttribute<ThreadTenants[]>
 }
@@ -78,16 +81,19 @@ try {
           key: 'id',
         },
       },
+      status_id: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: MasterStatus,
+          key: 'id',
+        },
+      },
       title: DataTypes.STRING,
       content: DataTypes.STRING,
       tags: DataTypes.STRING,
       views: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
-      },
-      is_approved: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
       },
       is_allow_comment: {
         type: DataTypes.BOOLEAN,
@@ -130,6 +136,16 @@ try {
   Threads.belongsTo(SubCommunities, {
     foreignKey: 'sub_community_id',
     as: 'sub_community',
+  })
+
+  MasterStatus.hasMany(Threads, {
+    foreignKey: 'status_id',
+    as: 'threads',
+  })
+
+  Threads.belongsTo(MasterStatus, {
+    foreignKey: 'status_id',
+    as: 'status',
   })
 } catch (error) {
   /* eslint-disable no-console */

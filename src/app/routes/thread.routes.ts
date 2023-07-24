@@ -32,6 +32,13 @@ router.post(
   ThreadController.CreateThread,
 )
 
+router.post(
+  '/:id/approval',
+  ThreadDto.ThreadApproval,
+  ErrorMiddleware.DtoValidator,
+  ThreadController.ThreadApproval,
+)
+
 router.put(
   '/update/:id',
   ThreadDto.UpdateThread,

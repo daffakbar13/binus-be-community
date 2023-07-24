@@ -15,11 +15,11 @@ export namespace ThreadService {
       if (user.data) {
         const { query } = req
         const pagination = paginationObject(query)
-        const sort = sortRequest(query)
+        const order = sortRequest(query)
         const search = searchRequest<Threads>(['tags', 'title'], query.search as string)
         const result = await ThreadRepository.GetListThread(user.data.id, {
           ...pagination,
-          ...sort,
+          order,
           where: {
             ...search,
             ...(query.is_active && { is_active: query.is_active }),

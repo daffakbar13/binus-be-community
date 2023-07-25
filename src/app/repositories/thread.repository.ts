@@ -82,6 +82,7 @@ export namespace ThreadRepository {
       ),
       'is_liked',
     ],
+    [ Sequelize.cast( Sequelize.literal(`( SELECT CASE WHEN EXISTS ( SELECT * FROM "threads" as "t" WHERE "t"."user_id" = ${user_id} AND "t"."id" = "Threads"."id" ) THEN true ELSE false END )`), 'boolean', ), 'is_my_thread', ], 
   ]
   export async function GetListThread(
     user_id: number,

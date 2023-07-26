@@ -37,6 +37,7 @@ export namespace ThreadCommentService {
         const result = await ThreadCommentRepository.CreateThreadComment({
           ...req.body,
           user_id: user.data.id,
+          status_id: 1,
         })
         return baseResponse('Ok', result)
       }

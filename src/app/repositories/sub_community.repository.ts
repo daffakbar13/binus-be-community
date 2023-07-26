@@ -84,7 +84,7 @@ export namespace SubCommunityRepository {
     id: number,
     payload: { [key in keyof Attributes<SubCommunities>]?: Attributes<SubCommunities>[key] },
   ) {
-    return SubCommunities.update(payload, { where: { id } })
+    return SubCommunities.update(payload, { where: { id }, returning: true })
   }
 
   export function DeleteSubCommunity(where: WhereOptions<SubCommunities>) {

@@ -5,6 +5,7 @@ import { Threads } from 'app/models/threads'
 import { paginationObject, responseWithPagination } from 'utils/helpers/pagination'
 import { searchRequest } from 'utils/helpers/search'
 import { sortRequest } from 'utils/helpers/sort'
+import { MasterStatusRepository } from 'app/repositories/master_status.repository'
 import { UserService } from './user.service'
 import { ThreadTenantService } from './thread_tenant.service'
 
@@ -106,10 +107,15 @@ export namespace ThreadService {
 
   export async function ThreadApproval(req: Request) {
     try {
-      const [, [result]] = await ThreadRepository.UpdateThread(Number(req.params.id), {
-        ...req.body,
-      })
-      return baseResponse('Ok', result)
+      const { status_id } = req.body
+      const status = await MasterStatusRepository.GetDetailMasterStatus({ id: status_id })
+      if (status) {
+        const [, [result]] = await ThreadRepository.UpdateThread(Number(req.params.id), {
+          ...req.body,
+        })
+        return baseResponse('Ok', result)
+      }
+      return baseResponse('BadRequest')
     } catch (err) {
       return baseResponse('InternalServerError')
     }

@@ -1,9 +1,34 @@
 import { ThreadCommentRepository } from 'app/repositories/thread_comment.repository'
 import { baseResponse } from 'common/dto/baseResponse.dto'
 import { Request } from 'express'
+import { paginationObject, responseWithPagination } from 'utils/helpers/pagination'
+import { sortRequest } from 'utils/helpers/sort'
 import { UserService } from './user.service'
 
 export namespace ThreadCommentService {
+  export async function GetListThreadComment(req: Request) {
+    try {
+      const user = await UserService.UserInfo(req)
+      if (user.data) {
+        const { query } = req
+        const pagination = paginationObject(query)
+        const order = sortRequest(query)
+        const result = await ThreadCommentRepository.GetListThreadComment(user.data.id, {
+          ...pagination,
+          order,
+          where: {
+            ...(query.thread_id && { thread_id: query.thread_id }),
+            ...(query.status_id && { status_id: query.status_id }),
+          },
+        })
+        return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
+      }
+      return baseResponse('Unauthorized')
+    } catch (err) {
+      return baseResponse('InternalServerError')
+    }
+  }
+
   export async function CreateThreadComment(req: Request) {
     try {
       const user = await UserService.UserInfo(req)
@@ -24,11 +49,14 @@ export namespace ThreadCommentService {
     try {
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        await ThreadCommentRepository.UpdateThreadComment(Number(req.params.id), {
-          ...req.body,
-          user_id: user.data.id,
-        })
-        return baseResponse('Ok')
+        const [, [result]] = await ThreadCommentRepository.UpdateThreadComment(
+          Number(req.params.id),
+          {
+            ...req.body,
+            user_id: user.data.id,
+          },
+        )
+        return baseResponse('Ok', result)
       }
       return baseResponse('Unauthorized')
     } catch (err) {

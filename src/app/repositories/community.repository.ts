@@ -109,7 +109,7 @@ export namespace CommunityRepository {
     id: number,
     payload: { [key in keyof Attributes<Communities>]?: Attributes<Communities>[key] },
   ) {
-    return Communities.update(payload, { where: { id } })
+    return Communities.update(payload, { where: { id }, returning: true })
   }
 
   export function DeleteCommunity(where: WhereOptions<Communities>) {

@@ -57,7 +57,7 @@ export namespace BannerService {
         if (file) {
           await DeleteImageFromAWS(Number(req.params.id))
         }
-        await BannerRepository.UpdateBanner(Number(req.params.id), {
+        const [, [result]] = await BannerRepository.UpdateBanner(Number(req.params.id), {
           ...req.body,
           user_id: user.data.id,
           ...(file && {
@@ -65,7 +65,7 @@ export namespace BannerService {
             image_key: file.key,
           }),
         })
-        return baseResponse('Ok')
+        return baseResponse('Ok', result)
       }
       return baseResponse('Unauthorized')
     } catch (err) {

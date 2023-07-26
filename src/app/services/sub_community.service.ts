@@ -77,15 +77,18 @@ export namespace SubCommunityService {
         if (file) {
           await DeleteImageFromAWS(user.data.id, Number(req.params.id))
         }
-        await SubCommunityRepository.UpdateSubCommunity(Number(req.params.id), {
-          ...req.body,
-          user_id: user.data.id,
-          ...(file && {
-            image_url: file.location,
-            image_key: file.key,
-          }),
-        })
-        return baseResponse('Ok')
+        const [, [result]] = await SubCommunityRepository.UpdateSubCommunity(
+          Number(req.params.id),
+          {
+            ...req.body,
+            user_id: user.data.id,
+            ...(file && {
+              image_url: file.location,
+              image_key: file.key,
+            }),
+          },
+        )
+        return baseResponse('Ok', result)
       }
       return baseResponse('Unauthorized')
     } catch (err) {

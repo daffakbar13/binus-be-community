@@ -76,7 +76,7 @@ export namespace CommunityService {
         if (file) {
           await DeleteImageFromAWS(user.data.id, Number(req.params.id))
         }
-        await CommunityRepository.UpdateCommunity(Number(req.params.id), {
+        const [, [result]] = await CommunityRepository.UpdateCommunity(Number(req.params.id), {
           ...req.body,
           user_id: user.data.id,
           ...(file && {
@@ -84,7 +84,7 @@ export namespace CommunityService {
             image_key: file.key,
           }),
         })
-        return baseResponse('Ok')
+        return baseResponse('Ok', result)
       }
       return baseResponse('Unauthorized')
     } catch (err) {

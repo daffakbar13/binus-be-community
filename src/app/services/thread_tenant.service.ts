@@ -32,11 +32,14 @@ export namespace ThreadTenantService {
     try {
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        await ThreadTenantRepository.UpdateThreadTenant(Number(req.params.id), {
-          ...req.body,
-          user_id: user.data.id,
-        })
-        return baseResponse('Ok')
+        const [, [result]] = await ThreadTenantRepository.UpdateThreadTenant(
+          Number(req.params.id),
+          {
+            ...req.body,
+            user_id: user.data.id,
+          },
+        )
+        return baseResponse('Ok', result)
       }
       return baseResponse('Unauthorized')
     } catch (err) {

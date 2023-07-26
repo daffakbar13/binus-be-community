@@ -18,7 +18,7 @@ export namespace ThreadTenantRepository {
     id: number,
     payload: { [key in keyof Attributes<ThreadTenants>]?: Attributes<ThreadTenants>[key] },
   ) {
-    return ThreadTenants.update(payload, { where: { id } })
+    return ThreadTenants.update(payload, { where: { id }, returning: true })
   }
 
   export function DeleteThreadTenant(where: WhereOptions<ThreadTenants>) {

@@ -18,7 +18,7 @@ export namespace BannerRepository {
     id: number,
     payload: { [key in keyof Attributes<Banners>]?: Attributes<Banners>[key] },
   ) {
-    return Banners.update(payload, { where: { id } })
+    return Banners.update(payload, { where: { id }, returning: true })
   }
 
   export function DeleteBanner(where: WhereOptions<Banners>) {

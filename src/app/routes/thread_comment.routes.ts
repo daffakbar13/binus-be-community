@@ -7,6 +7,8 @@ import { ThreadCommentLikeRouter } from './thread_comment_like.routes'
 const router = Router()
 const baseUrl = '/comments'
 
+router.get('/list', ThreadCommentController.GetListThreadComment)
+
 router.post(
   '/create',
   ThreadCommentDto.CreateThreadComment,

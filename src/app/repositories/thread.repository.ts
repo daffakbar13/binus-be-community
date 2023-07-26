@@ -17,7 +17,7 @@ export namespace ThreadRepository {
     'sub_community',
     'status',
     'likes',
-    'comments',
+    // 'comments',
   ]
   const includeableThreads = (user_id?: number): (string | ProjectionAlias)[] => [
     [
@@ -82,8 +82,17 @@ export namespace ThreadRepository {
       ),
       'is_liked',
     ],
-    [ Sequelize.cast( Sequelize.literal(`( SELECT CASE WHEN EXISTS ( SELECT * FROM "threads" as "t" WHERE "t"."user_id" = ${user_id} AND "t"."id" = "Threads"."id" ) THEN true ELSE false END )`), 'boolean', ), 'is_my_thread', ], 
+    [
+      Sequelize.cast(
+        Sequelize.literal(`( 
+          SELECT CASE WHEN EXISTS ( SELECT * FROM "threads" as "t" WHERE "t"."user_id" = ${user_id} AND "t"."id" = "Threads"."id" ) THEN true ELSE false END 
+        )`),
+        'boolean',
+      ),
+      'is_my_thread',
+    ],
   ]
+
   export async function GetListThread(
     user_id: number,
     props: Parameters<typeof Threads.findAll>[0],

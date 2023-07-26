@@ -9,14 +9,23 @@ import {
 } from 'sequelize'
 
 export namespace ThreadCommentRepository {
-  const relations: Includeable[] = ['likes']
+  const relations: Includeable[] = ['likes', 'status']
   const includeableThreadComments = (user_id?: number): (string | ProjectionAlias)[] => [
+    [
+      Sequelize.literal(`(
+        SELECT status
+        FROM "master_statuses" as "status"
+        WHERE
+          "status"."id" = "Threads"."status_id"
+      )`),
+      'status_name',
+    ],
     [
       Sequelize.cast(
         Sequelize.literal(`(
           SELECT COUNT(*)
           FROM "thread_comment_likes" as "likes"
-          WHERE 
+          WHERE
             "likes"."thread_comment_id" = "ThreadComments"."id"
         )`),
         'int',
@@ -28,7 +37,7 @@ export namespace ThreadCommentRepository {
         Sequelize.literal(`(
           SELECT CASE WHEN EXISTS (
             SELECT * FROM "thread_comment_likes" as "likes"
-            WHERE 
+            WHERE
               "likes"."user_id" = ${user_id}
               AND "likes"."thread_comment_id" = "ThreadComments"."id"
           )
@@ -42,13 +51,13 @@ export namespace ThreadCommentRepository {
     ],
     [
       Sequelize.cast(
-        Sequelize.literal(`( 
+        Sequelize.literal(`(
           SELECT CASE WHEN EXISTS (
             SELECT * FROM "thread_comments" as "t"
             WHERE "t"."user_id" = ${user_id} AND "t"."id" = "ThreadComments"."id" )
             THEN true
             ELSE false
-            END 
+            END
         )`),
         'boolean',
       ),

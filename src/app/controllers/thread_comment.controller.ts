@@ -13,6 +13,11 @@ export namespace ThreadCommentController {
     return sendResponse(res, result)
   }
 
+  export async function CommentApproval(req: Request, res: Response) {
+    const result = await ThreadCommentService.CommentApproval(req)
+    return sendResponse(res, result)
+  }
+
   export async function UpdateThreadComment(req: Request, res: Response) {
     const result = await ThreadCommentService.UpdateThreadComment(req)
     return sendResponse(res, result)

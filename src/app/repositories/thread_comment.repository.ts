@@ -16,7 +16,7 @@ export namespace ThreadCommentRepository {
         SELECT status
         FROM "master_statuses" as "status"
         WHERE
-          "status"."id" = "Threads"."status_id"
+          "status"."id" = "ThreadComments"."status_id"
       )`),
       'status_name',
     ],

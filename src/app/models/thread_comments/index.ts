@@ -79,7 +79,12 @@ try {
     as: 'thread',
   })
 
-  Threads.belongsTo(MasterStatus, {
+  MasterStatus.hasMany(ThreadComments, {
+    foreignKey: 'status_id',
+    as: 'thread_comments',
+  })
+
+  ThreadComments.belongsTo(MasterStatus, {
     foreignKey: 'status_id',
     as: 'status',
   })

@@ -82,6 +82,14 @@ export namespace ThreadCommentRepository {
     })
   }
 
+  export function GetDetailThreadComment(user_id: number, where: WhereOptions<ThreadComments>) {
+    return ThreadComments.findOne({
+      include: relations,
+      attributes: { include: includeableThreadComments(user_id) },
+      where,
+    })
+  }
+
   export function CreateThreadComment(payload: CreationAttributes<ThreadComments>) {
     return ThreadComments.create(payload)
   }

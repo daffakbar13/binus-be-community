@@ -6,6 +6,10 @@ export namespace ThreadCommentDto {
     body('thread_id').isFloat({ min: 1 }),
   ])
 
+  export const DetailThreadComment = checkExact([
+    param('id').isFloat({ min: 1 }),
+  ])
+
   export const UpdateThreadComment = checkExact([
     param('id').isFloat({ min: 1 }),
     body('comment').optional({ values: 'falsy' }).isString(),

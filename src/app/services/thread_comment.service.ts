@@ -47,6 +47,21 @@ export namespace ThreadCommentService {
     }
   }
 
+  export async function GetDetailThreadComment(req: Request) {
+    try {
+      const user = await UserService.UserInfo(req)
+      if (user.data) {
+        const result = await ThreadCommentRepository.GetDetailThreadComment(
+          user.data.id,
+          { id: req.params.id })
+        return baseResponse('Ok', result)
+      }
+      return baseResponse('Unauthorized')
+    } catch (err) {
+      return baseResponse('InternalServerError')
+    }
+  }
+
   export async function UpdateThreadComment(req: Request) {
     try {
       const user = await UserService.UserInfo(req)

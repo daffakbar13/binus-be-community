@@ -40,10 +40,15 @@ export namespace ThreadService {
 
   export async function GetMyThreads(req: Request) {
     try {
+      const { query } = req
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        const data = await ThreadRepository.GetMyThreads({ user_id: user.data.id })
-        return baseResponse('Ok', data)
+        const pagination = paginationObject(query)
+        const result = await ThreadRepository.GetMyThreads({
+          ...pagination,
+          where: { user_id: user.data.id },
+        })
+        return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
       }
       return baseResponse('Unauthorized')
     } catch (err) {

@@ -14,3 +14,11 @@ export function baseResponse<T extends Data = null>(
 }
 
 export type BaseResponse<T extends Data = null> = ReturnType<typeof baseResponse<T>>
+
+export type BaseResponseSokrates<T extends Data = null> = {
+  status: boolean
+  version: string
+  message: string
+  data: T
+  meta: any
+}

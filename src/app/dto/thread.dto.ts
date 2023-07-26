@@ -14,6 +14,8 @@ export namespace ThreadDto {
     query(['status_id', 'sub_community_id']).optional({ values: 'falsy' }).isFloat({ min: 1 }),
   ])
 
+  export const ListMyThread = checkExact([...PaginationDto.RequestPagination])
+
   export const DetailThread = checkExact([
     param('id').isFloat({ min: 1 }),
     query('increase_view').optional({ values: 'falsy' }).isBoolean(),

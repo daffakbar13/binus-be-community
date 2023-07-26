@@ -23,6 +23,13 @@ router.put(
   ThreadCommentController.UpdateThreadComment,
 )
 
+router.post(
+  '/:id/approval',
+  ThreadCommentDto.CommentApproval,
+  ErrorMiddleware.DtoValidator,
+  ThreadCommentController.CommentApproval,
+)
+
 router.delete(
   '/delete/:id',
   ThreadCommentDto.DeleteThreadComment,

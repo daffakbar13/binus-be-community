@@ -2,6 +2,7 @@ import { ThreadCommentRepository } from 'app/repositories/thread_comment.reposit
 import { baseResponse } from 'common/dto/baseResponse.dto'
 import { Request } from 'express'
 import { paginationObject, responseWithPagination } from 'utils/helpers/pagination'
+import { MasterStatusRepository } from 'app/repositories/master_status.repository'
 import { sortRequest } from 'utils/helpers/sort'
 import { UserService } from './user.service'
 
@@ -59,6 +60,24 @@ export namespace ThreadCommentService {
         return baseResponse('Ok', result)
       }
       return baseResponse('Unauthorized')
+    } catch (err) {
+      return baseResponse('InternalServerError')
+    }
+  }
+
+  export async function CommentApproval(req: Request) {
+    try {
+      const { status_id } = req.body
+      const status = await MasterStatusRepository.GetDetailMasterStatus({ id: status_id })
+      if (status) {
+        const [, [result]] = await ThreadCommentRepository.UpdateThreadComment(
+          Number(req.params.id),
+          {
+            ...req.body,
+          })
+        return baseResponse('Ok', result)
+      }
+      return baseResponse('BadRequest')
     } catch (err) {
       return baseResponse('InternalServerError')
     }

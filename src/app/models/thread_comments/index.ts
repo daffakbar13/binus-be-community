@@ -71,7 +71,7 @@ try {
 
   Threads.hasMany(ThreadComments, {
     foreignKey: 'thread_id',
-    as: 'thread_comments',
+    as: 'comments',
   })
 
   ThreadComments.belongsTo(Threads, {

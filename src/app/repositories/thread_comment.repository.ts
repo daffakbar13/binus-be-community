@@ -9,7 +9,7 @@ import {
 } from 'sequelize'
 
 export namespace ThreadCommentRepository {
-  const relations: Includeable[] = ['likes', 'status', 'threads']
+  const relations: Includeable[] = ['likes', 'status']
   const includeableThreadComments = (user_id?: number): (string | ProjectionAlias)[] => [
     [
       Sequelize.literal(`(

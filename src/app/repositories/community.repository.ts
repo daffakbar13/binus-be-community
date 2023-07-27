@@ -76,20 +76,15 @@ export namespace CommunityRepository {
     ],
   ]
 
-  export async function GetListCommunity(
+  export function GetListCommunity(
     user_id: number,
     props: Parameters<typeof Communities.findAll>[0],
   ) {
-    return Promise.all([
-      Communities.count({ where: props?.where }),
-      Communities.findAll({
-        ...props,
-        include: relations,
-        attributes: { include: includeable(user_id) },
-      }),
-    ]).then((res) => {
-      const [count, rows] = res
-      return { count, rows }
+    return Communities.findAndCountAll({
+      ...props,
+      include: relations,
+      attributes: { include: includeable(user_id) },
+      distinct: true,
     })
   }
 

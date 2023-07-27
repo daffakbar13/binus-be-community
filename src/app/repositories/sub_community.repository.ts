@@ -55,16 +55,11 @@ export namespace SubCommunityRepository {
     user_id: number,
     props: Parameters<typeof SubCommunities.findAll>[0],
   ) {
-    return Promise.all([
-      SubCommunities.count({ where: props?.where }),
-      SubCommunities.findAll({
-        ...props,
-        include: relations,
-        attributes: { include: includeable(user_id) },
-      }),
-    ]).then((res) => {
-      const [count, rows] = res
-      return { count, rows }
+    return SubCommunities.findAndCountAll({
+      ...props,
+      include: relations,
+      attributes: { include: includeable(user_id) },
+      distinct: true,
     })
   }
 

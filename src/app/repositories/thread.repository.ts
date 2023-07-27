@@ -86,75 +86,56 @@ export namespace ThreadRepository {
     ],
   ]
 
-  const relationMyThreads = (props: Parameters<typeof Threads.findAll>[0]): Includeable[] => [
-    {
-      model: Communities,
-      as: 'community',
-      where: { is_active: true },
-      attributes: [],
-      order: [['community.id', 'ASC']],
-    },
-    { model: Threads, as: 'threads', where: { ...props?.where, is_active: true } },
-  ]
-
-  export async function GetListThread(
-    user_id: number,
-    props: Parameters<typeof Threads.findAll>[0],
-  ) {
-    return Promise.all([
-      Threads.count({ where: props?.where }),
-      Threads.findAll({
-        ...props,
-        include: relations,
-        attributes: { include: includeableThreads(user_id) },
-      }),
-    ]).then((res) => {
-      const [count, rows] = res
-      return { count, rows }
+  export function GetListThread(user_id: number, props: Parameters<typeof Threads.findAll>[0]) {
+    return Threads.findAndCountAll({
+      ...props,
+      include: relations,
+      attributes: { include: includeableThreads(user_id) },
+      distinct: true,
     })
   }
 
   export async function GetMyThreads(props: Parameters<typeof Threads.findAll>[0]) {
-    return Promise.all([
-      SubCommunities.count({
-        distinct: true,
-        include: relationMyThreads(props),
-        where: { is_active: true },
-      }),
-      SubCommunities.findAll({
-        include: relationMyThreads(props),
-        attributes: [
-          'id',
-          [
-            Sequelize.literal(`(
+    return SubCommunities.findAndCountAll({
+      include: [
+        {
+          model: Communities,
+          as: 'community',
+          where: { is_active: true },
+          attributes: [],
+          order: [['community.id', 'ASC']],
+        },
+        { model: Threads, as: 'threads', where: { ...props?.where, is_active: true } },
+      ],
+      attributes: [
+        'id',
+        [
+          Sequelize.literal(`(
             SELECT CONCAT("community"."name", ' - ', "SubCommunities"."name")
             FROM "communities" AS "community"
             WHERE
               "community"."id" = "SubCommunities"."community_id"
           )`),
-            'name',
-          ],
-          [
-            Sequelize.cast(
-              Sequelize.literal(`(
+          'name',
+        ],
+        [
+          Sequelize.cast(
+            Sequelize.literal(`(
               SELECT COUNT(*)
               FROM "threads"
               WHERE 
                 "threads"."sub_community_id" = "SubCommunities"."id"
                 AND "threads"."deleted_at" IS NULL
             )`),
-              'int',
-            ),
-            'total_threads',
-          ],
-          'image_url',
+            'int',
+          ),
+          'total_threads',
         ],
-        ...props,
-        where: { is_active: true },
-      }),
-    ]).then((res) => {
-      const [count, rows] = res
-      return { count, rows }
+        'image_url',
+      ],
+      ...props,
+      where: { is_active: true },
+      distinct: true,
     })
   }
 

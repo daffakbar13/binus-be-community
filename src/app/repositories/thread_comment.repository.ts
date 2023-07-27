@@ -65,20 +65,15 @@ export namespace ThreadCommentRepository {
     ],
   ]
 
-  export async function GetListThreadComment(
+  export function GetListThreadComment(
     user_id: number,
     props: Parameters<typeof ThreadComments.findAll>[0],
   ) {
-    return Promise.all([
-      ThreadComments.count({ where: props?.where }),
-      ThreadComments.findAll({
-        ...props,
-        include: relations,
-        attributes: { include: includeableThreadComments(user_id) },
-      }),
-    ]).then((res) => {
-      const [count, rows] = res
-      return { count, rows }
+    return ThreadComments.findAndCountAll({
+      ...props,
+      include: relations,
+      attributes: { include: includeableThreadComments(user_id) },
+      distinct: true,
     })
   }
 

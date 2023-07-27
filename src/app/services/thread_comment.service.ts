@@ -14,7 +14,7 @@ export namespace ThreadCommentService {
         const { query } = req
         const pagination = paginationObject(query)
         const order = sortRequest(query)
-        const result = await ThreadCommentRepository.GetListThreadComment(user.data.id, {
+        const { count, rows } = await ThreadCommentRepository.GetListThreadComment(user.data.id, {
           ...pagination,
           order,
           where: {
@@ -22,7 +22,14 @@ export namespace ThreadCommentService {
             ...(query.status_id && { status_id: query.status_id }),
           },
         })
-        return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
+        const result = await UserService.GetMappedUsers(req, rows)
+        if (result.data) {
+          return baseResponse(
+            'Ok',
+            responseWithPagination({ count, rows: result.data, ...pagination }),
+          )
+        }
+        return result
       }
       return baseResponse('Unauthorized')
     } catch (err) {
@@ -34,12 +41,12 @@ export namespace ThreadCommentService {
     try {
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        const result = await ThreadCommentRepository.CreateThreadComment({
+        const { dataValues } = await ThreadCommentRepository.CreateThreadComment({
           ...req.body,
           user_id: user.data.id,
           status_id: 1,
         })
-        return baseResponse('Ok', result)
+        return baseResponse('Ok', { ...dataValues, user: user.data })
       }
       return baseResponse('Unauthorized')
     } catch (err) {
@@ -51,10 +58,14 @@ export namespace ThreadCommentService {
     try {
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        const result = await ThreadCommentRepository.GetDetailThreadComment(
-          user.data.id,
-          { id: req.params.id })
-        return baseResponse('Ok', result)
+        const comment = await ThreadCommentRepository.GetDetailThreadComment(user.data.id, {
+          id: req.params.id,
+        })
+        if (comment) {
+          const result = await UserService.GetMappedUsers(req, comment)
+          return result
+        }
+        return baseResponse('Ok')
       }
       return baseResponse('Unauthorized')
     } catch (err) {
@@ -66,14 +77,14 @@ export namespace ThreadCommentService {
     try {
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        const [, [result]] = await ThreadCommentRepository.UpdateThreadComment(
+        const [, [{ dataValues }]] = await ThreadCommentRepository.UpdateThreadComment(
           Number(req.params.id),
           {
             ...req.body,
             user_id: user.data.id,
           },
         )
-        return baseResponse('Ok', result)
+        return baseResponse('Ok', { ...dataValues, user: user.data })
       }
       return baseResponse('Unauthorized')
     } catch (err) {
@@ -88,9 +99,8 @@ export namespace ThreadCommentService {
       if (status) {
         const [, [result]] = await ThreadCommentRepository.UpdateThreadComment(
           Number(req.params.id),
-          {
-            ...req.body,
-          })
+          req.body,
+        )
         return baseResponse('Ok', result)
       }
       return baseResponse('BadRequest')

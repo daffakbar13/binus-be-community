@@ -2,7 +2,6 @@ import { baseResponse } from 'common/dto/baseResponse.dto'
 import { Request } from 'express'
 import { paginationObject, responseWithPagination } from 'utils/helpers/pagination'
 import { CommunityMemberRepository } from 'app/repositories/community_member.repository'
-import { CommunityMembers } from 'app/models/community_members'
 import { UserService } from './user.service'
 
 export namespace CommunityMemberService {
@@ -26,7 +25,7 @@ export namespace CommunityMemberService {
             'Ok',
             responseWithPagination({
               count,
-              rows: result.data as Array<CommunityMembers>,
+              rows: result.data,
               ...pagination,
             }),
           )

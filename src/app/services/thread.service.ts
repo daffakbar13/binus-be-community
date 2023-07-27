@@ -34,7 +34,7 @@ export namespace ThreadService {
         if (result.data) {
           return baseResponse(
             'Ok',
-            responseWithPagination({ count, rows: result.data as Array<Threads>, ...pagination }),
+            responseWithPagination({ count, rows: result.data, ...pagination }),
           )
         }
         return result

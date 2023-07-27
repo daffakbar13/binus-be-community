@@ -4,6 +4,7 @@ import { AuthMiddleware } from 'app/middlewares/auth.middleware'
 import { ErrorMiddleware } from 'app/middlewares/error.middleware'
 import { UploadMiddleware } from 'app/middlewares/upload.middleware'
 import { Router } from 'express'
+import { SubCommunityMemberRouter } from './sub_community_member.routes'
 
 const router = Router()
 const baseUrl = '/sub-communities'
@@ -45,4 +46,9 @@ router.delete(
   SubCommunityController.Delete,
 )
 
-export const SubCommunityRouter = Router().use(baseUrl, AuthMiddleware.checkAuthenticate, router)
+export const SubCommunityRouter = Router().use(
+  baseUrl,
+  AuthMiddleware.checkAuthenticate,
+  router,
+  SubCommunityMemberRouter,
+)

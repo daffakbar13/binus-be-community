@@ -98,11 +98,11 @@ export namespace ThreadService {
     try {
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        await ThreadRepository.UpdateThread(Number(req.params.id), {
+        const [, [result]] = await ThreadRepository.UpdateThread(Number(req.params.id), {
           ...req.body,
           user_id: user.data.id,
         })
-        return baseResponse('Ok')
+        return baseResponse('Ok', result)
       }
       return baseResponse('Unauthorized')
     } catch (err) {

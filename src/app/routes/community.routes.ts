@@ -44,4 +44,32 @@ router.delete(
   CommunityController.Delete,
 )
 
+router.get(
+  '/:id/members/list',
+  CommunityDto.ListCommunity,
+  ErrorMiddleware.DtoValidator,
+  CommunityController.GetListCommunity,
+)
+
+router.post(
+  '/:id/members/request',
+  CommunityDto.ListCommunity,
+  ErrorMiddleware.DtoValidator,
+  CommunityController.GetListCommunity,
+)
+
+router.post(
+  '/:id/members/approve',
+  CommunityDto.ListCommunity,
+  ErrorMiddleware.DtoValidator,
+  CommunityController.GetListCommunity,
+)
+
+router.delete(
+  '/:id/members/delete',
+  CommunityDto.ListCommunity,
+  ErrorMiddleware.DtoValidator,
+  CommunityController.GetListCommunity,
+)
+
 export const CommunityRouter = Router().use(AuthMiddleware.checkAuthenticate, router)

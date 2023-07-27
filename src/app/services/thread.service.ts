@@ -73,7 +73,7 @@ export namespace ThreadService {
         const thread = await ThreadRepository.GetDetailThread(user.data.id, { id: req.params.id })
         if (thread) {
           const result = await UserService.GetMappedUsers(req, thread)
-          return baseResponse('Ok', result)
+          return result
         }
         return baseResponse('Ok')
       }

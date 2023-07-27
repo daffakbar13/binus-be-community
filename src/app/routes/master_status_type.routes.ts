@@ -11,9 +11,9 @@ router.get('/list', MasterStatusTypeController.GetListMasterStatusType)
 
 router.get(
   '/detail/:id',
-  MasterStatusTypeDto.DetailMasterStatusType,
+  MasterStatusTypeDto.GetMasterStatusTypeDetail,
   ErrorMiddleware.DtoValidator,
-  MasterStatusTypeController.GetDetailMasterStatusType,
+  MasterStatusTypeController.GetMasterStatusTypeDetail,
 )
 
 export const MasterStatusTypeRouter = Router().use(

@@ -96,7 +96,7 @@ export namespace ThreadCommentService {
   export async function CommentApproval(req: Request) {
     try {
       const { status_id } = req.body
-      const status = await MasterStatusRepository.GetDetailMasterStatus({ id: status_id })
+      const status = await MasterStatusRepository.GetMasterStatusDetail({ id: status_id })
       if (status) {
         const [, [result]] = await ThreadCommentRepository.UpdateThreadComment(
           Number(req.params.id),

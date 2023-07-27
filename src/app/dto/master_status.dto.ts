@@ -5,5 +5,5 @@ export namespace MasterStatusDto {
     param('type').optional({ values: 'falsy' }).isString(),
   ])
 
-  export const DetailMasterStatus = checkExact([param('id').isFloat({ min: 1 })])
+  export const GetMasterStatusDetail = checkExact([param('id').isFloat({ min: 1 })])
 }

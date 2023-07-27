@@ -8,8 +8,8 @@ export namespace MasterStatusController {
     return sendResponse(res, result)
   }
 
-  export async function GetDetailMasterStatus(req: Request, res: Response) {
-    const result = await MasterStatusService.GetDetailMasterStatus(req)
+  export async function GetMasterStatusDetail(req: Request, res: Response) {
+    const result = await MasterStatusService.GetMasterStatusDetail(req)
     return sendResponse(res, result)
   }
 }

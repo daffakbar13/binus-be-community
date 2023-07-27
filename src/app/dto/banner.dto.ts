@@ -1,7 +1,13 @@
-import { body, checkExact, param } from 'express-validator'
+import { PaginationDto } from 'common/dto/pagination.dto'
+import { body, checkExact, param, query } from 'express-validator'
 
 export namespace BannerDto {
-  export const DetailBanner = checkExact([param('id').isFloat({ min: 1 })])
+  export const GetBannerList = checkExact([
+    ...PaginationDto.RequestPagination,
+    query('is_active').optional({ values: 'falsy' }).isBoolean(),
+  ])
+
+  export const GetBannerDetail = checkExact([param('id').isFloat({ min: 1 })])
 
   export const CreateBanner = checkExact([
     body(['title', 'description']).isString(),

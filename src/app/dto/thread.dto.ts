@@ -4,7 +4,7 @@ import { SortDto } from 'common/dto/sort.dto'
 import { body, checkExact, param, query } from 'express-validator'
 
 export namespace ThreadDto {
-  export const ListThread = checkExact([
+  export const GetThreadList = checkExact([
     ...PaginationDto.RequestPagination,
     ...SortDto.RequestSort('id', 'views'),
     SearchDto.SearchRequest,
@@ -14,9 +14,9 @@ export namespace ThreadDto {
     query(['status_id', 'sub_community_id']).optional({ values: 'falsy' }).isFloat({ min: 1 }),
   ])
 
-  export const ListMyThread = checkExact([...PaginationDto.RequestPagination])
+  export const GetMyThreadList = checkExact([...PaginationDto.RequestPagination])
 
-  export const DetailThread = checkExact([
+  export const GetThreadDetail = checkExact([
     param('id').isFloat({ min: 1 }),
     query('increase_view').optional({ values: 'falsy' }).isBoolean(),
   ])

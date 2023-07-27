@@ -12,9 +12,9 @@ export namespace MasterStatusTypeService {
     }
   }
 
-  export async function GetDetailMasterStatusType(req: Request) {
+  export async function GetMasterStatusTypeDetail(req: Request) {
     try {
-      const result = await MasterStatusTypeRepository.GetDetailMasterStatusType({
+      const result = await MasterStatusTypeRepository.GetMasterStatusTypeDetail({
         id: req.params.id,
       })
       return baseResponse('Ok', result)

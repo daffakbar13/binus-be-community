@@ -11,21 +11,21 @@ const router = Router()
 
 router.get(
   '/list',
-  ThreadDto.ListThread,
+  ThreadDto.GetThreadList,
   ErrorMiddleware.DtoValidator,
   ThreadController.GetListThread,
 )
 
 router.get(
   '/my-threads/list',
-  ThreadDto.ListMyThread,
+  ThreadDto.GetMyThreadList,
   ErrorMiddleware.DtoValidator,
   ThreadController.GetMyThreads,
 )
 
 router.get(
   '/detail/:id',
-  ThreadDto.DetailThread,
+  ThreadDto.GetThreadDetail,
   ErrorMiddleware.DtoValidator,
   ThreadController.GetDetailThread,
 )

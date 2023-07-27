@@ -15,9 +15,9 @@ export namespace MasterStatusService {
     }
   }
 
-  export async function GetDetailMasterStatus(req: Request) {
+  export async function GetMasterStatusDetail(req: Request) {
     try {
-      const result = await MasterStatusRepository.GetDetailMasterStatus({ id: req.params.id })
+      const result = await MasterStatusRepository.GetMasterStatusDetail({ id: req.params.id })
       return baseResponse('Ok', result)
     } catch (err) {
       return baseResponse('InternalServerError')

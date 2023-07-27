@@ -8,13 +8,18 @@ import { Router } from 'express'
 const router = Router()
 const baseUrl = '/banners'
 
-router.get('/list', BannerController.GetListBanner)
+router.get(
+  '/list',
+  BannerDto.GetBannerList,
+  ErrorMiddleware.DtoValidator,
+  BannerController.GetBannerList,
+)
 
 router.get(
   '/detail/:id',
-  BannerDto.DetailBanner,
+  BannerDto.GetBannerDetail,
   ErrorMiddleware.DtoValidator,
-  BannerController.GetDetailBanner,
+  BannerController.GetBannerDetail,
 )
 
 router.post(
@@ -30,14 +35,14 @@ router.put(
   UploadMiddleware.uploadFile('.png', '.jpg').single('image'),
   BannerDto.UpdateBanner,
   ErrorMiddleware.DtoValidator,
-  BannerController.Update,
+  BannerController.UpdateBanner,
 )
 
 router.delete(
   '/delete/:id',
   BannerDto.DeleteBanner,
   ErrorMiddleware.DtoValidator,
-  BannerController.Delete,
+  BannerController.DeleteBanner,
 )
 
 export const BannerRouter = Router().use(baseUrl, AuthMiddleware.checkAuthenticate, router)

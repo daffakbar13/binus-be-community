@@ -2,11 +2,14 @@ import { Banners } from 'app/models/banners'
 import { Attributes, CreationAttributes, WhereOptions } from 'sequelize'
 
 export namespace BannerRepository {
-  export function GetListBanner() {
-    return Banners.findAll()
+  export function GetBannerList(props: Parameters<typeof Banners.findAll>[0]) {
+    return Banners.findAndCountAll({
+      ...props,
+      distinct: true,
+    })
   }
 
-  export function GetDetailBanner(where: WhereOptions<Banners>) {
+  export function GetBannerDetail(where: WhereOptions<Banners>) {
     return Banners.findOne({ where })
   }
 

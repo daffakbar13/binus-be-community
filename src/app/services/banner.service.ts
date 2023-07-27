@@ -5,21 +5,29 @@ import { Request } from 'express'
 import { getEnv } from 'configs/env'
 import { s3 } from 'configs/aws'
 import moment from 'moment'
+import { paginationObject, responseWithPagination } from 'utils/helpers/pagination'
 import { UserService } from './user.service'
 
 export namespace BannerService {
-  export async function GetListBanner() {
+  export async function GetBannerList(req: Request) {
     try {
-      const result = await BannerRepository.GetListBanner()
-      return baseResponse('Ok', { results: result })
+      const { query } = req
+      const pagination = paginationObject(query)
+      const result = await BannerRepository.GetBannerList({
+        ...pagination,
+        where: {
+          ...(query.is_active && { is_active: query.is_active }),
+        },
+      })
+      return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
     } catch (err) {
       return baseResponse('InternalServerError')
     }
   }
 
-  export async function GetDetailBanner(req: Request) {
+  export async function GetBannerDetail(req: Request) {
     try {
-      const result = await BannerRepository.GetDetailBanner({ id: req.params.id })
+      const result = await BannerRepository.GetBannerDetail({ id: req.params.id })
       return baseResponse('Ok', result)
     } catch (err) {
       return baseResponse('InternalServerError')
@@ -31,7 +39,7 @@ export namespace BannerService {
       const user = await UserService.UserInfo(req)
       const file = req.file as any
       if (user.data) {
-        if (req.file) {
+        if (file) {
           const result = await BannerRepository.CreateBanner({
             ...req.body,
             user_id: user.data.id,
@@ -53,11 +61,12 @@ export namespace BannerService {
     try {
       const user = await UserService.UserInfo(req)
       const file = req.file as any
+      const id = Number(req.params.id)
       if (user.data) {
         if (file) {
-          await DeleteImageFromAWS(Number(req.params.id))
+          await DeleteImageFromAWS(id)
         }
-        const [, [result]] = await BannerRepository.UpdateBanner(Number(req.params.id), {
+        const [, [result]] = await BannerRepository.UpdateBanner(id, {
           ...req.body,
           user_id: user.data.id,
           ...(file && {
@@ -75,8 +84,9 @@ export namespace BannerService {
 
   export async function DeleteBanner(req: Request) {
     try {
-      await DeleteImageFromAWS(Number(req.params.id))
-      await BannerRepository.DeleteBanner({ id: req.params.id })
+      const id = Number(req.params.id)
+      await DeleteImageFromAWS(id)
+      await BannerRepository.DeleteBanner({ id })
       return baseResponse('Ok')
     } catch (err) {
       return baseResponse('InternalServerError')
@@ -84,7 +94,7 @@ export namespace BannerService {
   }
 
   export async function DeleteImageFromAWS(id: number) {
-    const oldData = await BannerRepository.GetDetailBanner({ id })
+    const oldData = await BannerRepository.GetBannerDetail({ id })
     if (oldData) {
       const deleteCmd = new DeleteObjectCommand({
         Bucket: getEnv('BUCKET_NAME'),

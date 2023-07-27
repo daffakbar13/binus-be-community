@@ -11,9 +11,9 @@ router.get('/list', MasterStatusController.GetListMasterStatus)
 
 router.get(
   '/detail/:id',
-  MasterStatusDto.DetailMasterStatus,
+  MasterStatusDto.GetMasterStatusDetail,
   ErrorMiddleware.DtoValidator,
-  MasterStatusController.GetDetailMasterStatus,
+  MasterStatusController.GetMasterStatusDetail,
 )
 
 export const MasterStatusRouter = Router().use(baseUrl, AuthMiddleware.checkAuthenticate, router)

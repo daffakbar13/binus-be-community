@@ -6,7 +6,7 @@ export namespace MasterStatusTypeRepository {
     return MasterStatusType.findAll()
   }
 
-  export function GetDetailMasterStatusType(where: WhereOptions<MasterStatusType>) {
+  export function GetMasterStatusTypeDetail(where: WhereOptions<MasterStatusType>) {
     return MasterStatusType.findOne({ where })
   }
 }

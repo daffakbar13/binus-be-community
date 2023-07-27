@@ -18,7 +18,7 @@ export namespace ThreadService {
         const pagination = paginationObject(query)
         const order = sortRequest(query)
         const search = searchRequest<Threads>(['tags', 'title'], query.search as string)
-        const result = await ThreadRepository.GetListThread(user.data.id, {
+        const { count, rows } = await ThreadRepository.GetListThread(user.data.id, {
           ...pagination,
           order,
           where: {
@@ -30,7 +30,14 @@ export namespace ThreadService {
             ...(query.sub_community_id && { sub_community_id: query.sub_community_id }),
           },
         })
-        return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
+        const result = await UserService.GetMappedUsers(req, rows)
+        if (result.data) {
+          return baseResponse(
+            'Ok',
+            responseWithPagination({ count, rows: result.data as Array<Threads>, ...pagination }),
+          )
+        }
+        return result
       }
       return baseResponse('Unauthorized')
     } catch (err) {
@@ -63,8 +70,12 @@ export namespace ThreadService {
         if (req.query.increase_view === 'true') {
           await ThreadRepository.IncrementThreadView({ id: req.params.id })
         }
-        const result = await ThreadRepository.GetDetailThread(user.data.id, { id: req.params.id })
-        return baseResponse('Ok', result)
+        const thread = await ThreadRepository.GetDetailThread(user.data.id, { id: req.params.id })
+        if (thread) {
+          const result = await UserService.GetMappedUsers(req, thread)
+          return baseResponse('Ok', result)
+        }
+        return baseResponse('Ok')
       }
       return baseResponse('Unauthorized')
     } catch (err) {
@@ -86,7 +97,7 @@ export namespace ThreadService {
         if (tenant_ids) {
           await ThreadTenantService.CreateThreadTenant(result.id, tenant_ids)
         }
-        return baseResponse('Ok', result)
+        return baseResponse('Ok', { ...result.dataValues, user: user.data })
       }
       return baseResponse('Unauthorized')
     } catch (err) {
@@ -98,11 +109,11 @@ export namespace ThreadService {
     try {
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        const [, [result]] = await ThreadRepository.UpdateThread(Number(req.params.id), {
+        const [, [{ dataValues }]] = await ThreadRepository.UpdateThread(Number(req.params.id), {
           ...req.body,
           user_id: user.data.id,
         })
-        return baseResponse('Ok', result)
+        return baseResponse('Ok', { ...dataValues, user: user.data })
       }
       return baseResponse('Unauthorized')
     } catch (err) {

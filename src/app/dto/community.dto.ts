@@ -3,13 +3,13 @@ import { SearchDto } from 'common/dto/search'
 import { body, checkExact, param, query } from 'express-validator'
 
 export namespace CommunityDto {
-  export const ListCommunity = checkExact([
+  export const GetCommunityList = checkExact([
     ...PaginationDto.RequestPagination,
     SearchDto.SearchRequest,
     query('is_active').optional({ values: 'falsy' }).isBoolean(),
   ])
 
-  export const DetailCommunity = checkExact([param('id').isFloat({ min: 1 })])
+  export const GetCommunityDetail = checkExact([param('id').isFloat({ min: 1 })])
 
   export const CreateCommunity = checkExact([body(['name', 'description']).isString()])
 

@@ -10,7 +10,7 @@ import { s3 } from 'configs/aws'
 import { UserService } from './user.service'
 
 export namespace CommunityService {
-  export async function GetListCommunity(req: Request) {
+  export async function GetCommunityList(req: Request) {
     try {
       const { query } = req
       const user = await UserService.UserInfo(req)
@@ -32,7 +32,7 @@ export namespace CommunityService {
     }
   }
 
-  export async function GetDetailCommunity(req: Request) {
+  export async function GetCommunityDetail(req: Request) {
     try {
       const { id } = req.params
       const user = await UserService.UserInfo(req)

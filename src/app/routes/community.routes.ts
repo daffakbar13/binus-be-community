@@ -4,21 +4,22 @@ import { AuthMiddleware } from 'app/middlewares/auth.middleware'
 import { ErrorMiddleware } from 'app/middlewares/error.middleware'
 import { UploadMiddleware } from 'app/middlewares/upload.middleware'
 import { Router } from 'express'
+import { CommunityMemberRouter } from './community_member.routes'
 
 const router = Router()
 
 router.get(
   '/list',
-  CommunityDto.ListCommunity,
+  CommunityDto.GetCommunityList,
   ErrorMiddleware.DtoValidator,
-  CommunityController.GetListCommunity,
+  CommunityController.GetCommunityList,
 )
 
 router.get(
   '/detail/:id',
-  CommunityDto.DetailCommunity,
+  CommunityDto.GetCommunityDetail,
   ErrorMiddleware.DtoValidator,
-  CommunityController.GetDetailCommunity,
+  CommunityController.GetCommunityDetail,
 )
 
 router.post(
@@ -34,42 +35,18 @@ router.put(
   UploadMiddleware.uploadFile('.svg').single('image'),
   CommunityDto.UpdateCommunity,
   ErrorMiddleware.DtoValidator,
-  CommunityController.Update,
+  CommunityController.UpdateCommunity,
 )
 
 router.delete(
   '/delete/:id',
   CommunityDto.DeleteCommunity,
   ErrorMiddleware.DtoValidator,
-  CommunityController.Delete,
+  CommunityController.DeleteCommunity,
 )
 
-router.get(
-  '/:id/members/list',
-  CommunityDto.ListCommunity,
-  ErrorMiddleware.DtoValidator,
-  CommunityController.GetListCommunity,
+export const CommunityRouter = Router().use(
+  AuthMiddleware.checkAuthenticate,
+  router,
+  CommunityMemberRouter,
 )
-
-router.post(
-  '/:id/members/request',
-  CommunityDto.ListCommunity,
-  ErrorMiddleware.DtoValidator,
-  CommunityController.GetListCommunity,
-)
-
-router.post(
-  '/:id/members/approve',
-  CommunityDto.ListCommunity,
-  ErrorMiddleware.DtoValidator,
-  CommunityController.GetListCommunity,
-)
-
-router.delete(
-  '/:id/members/delete',
-  CommunityDto.ListCommunity,
-  ErrorMiddleware.DtoValidator,
-  CommunityController.GetListCommunity,
-)
-
-export const CommunityRouter = Router().use(AuthMiddleware.checkAuthenticate, router)

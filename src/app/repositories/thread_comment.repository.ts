@@ -9,7 +9,7 @@ import {
 } from 'sequelize'
 
 export namespace ThreadCommentRepository {
-  const relations: Includeable[] = ['likes', 'status']
+  const relations: Includeable[] = ['likes', 'status', 'thread']
   const includeableThreadComments = (user_id?: number): (string | ProjectionAlias)[] => [
     [
       Sequelize.literal(`(
@@ -79,6 +79,14 @@ export namespace ThreadCommentRepository {
     ]).then((res) => {
       const [count, rows] = res
       return { count, rows }
+    })
+  }
+
+  export function GetDetailThreadComment(user_id: number, where: WhereOptions<ThreadComments>) {
+    return ThreadComments.findOne({
+      include: relations,
+      attributes: { include: includeableThreadComments(user_id) },
+      where,
     })
   }
 

@@ -23,6 +23,13 @@ router.put(
   ThreadCommentController.UpdateThreadComment,
 )
 
+router.get(
+  '/detail/:id',
+  ThreadCommentDto.DetailThreadComment,
+  ErrorMiddleware.DtoValidator,
+  ThreadCommentController.GetDetailThreadComment,
+)
+
 router.post(
   '/:id/approval',
   ThreadCommentDto.CommentApproval,

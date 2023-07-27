@@ -21,11 +21,10 @@ export namespace CommunityMemberRepository {
     })
   }
 
-  export function RequestCommunityMember(defaults: CreationAttributes<CommunityMembers>) {
-    const { user_id, community_id } = defaults
+  export function RequestCommunityMember(payload: CreationAttributes<CommunityMembers>) {
     return CommunityMembers.findOrCreate({
-      where: { user_id, community_id },
-      defaults,
+      where: payload,
+      defaults: payload,
       returning: true,
     })
   }
@@ -37,7 +36,13 @@ export namespace CommunityMemberRepository {
     )
   }
 
-  export function DeleteCommunityMember(where: WhereOptions<CommunityMembers>) {
+  export function DeleteCommunityMember(community_id: number, user_ids: number[]) {
+    return CommunityMembers.destroy({
+      where: { community_id, user_id: { [Op.or]: user_ids } },
+    })
+  }
+
+  export function LeaveCommunityMember(where: CreationAttributes<CommunityMembers>) {
     return CommunityMembers.destroy({ where })
   }
 }

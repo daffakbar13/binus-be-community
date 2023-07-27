@@ -2,7 +2,7 @@ import { SubCommunities } from 'app/models/sub_communities'
 import { Attributes, CreationAttributes, ProjectionAlias, Sequelize, WhereOptions } from 'sequelize'
 
 export namespace SubCommunityRepository {
-  const relations = ['community', 'threads', 'members']
+  const relations = ['community']
 
   const includeable = (user_id: number): (string | ProjectionAlias)[] => [
     [
@@ -35,7 +35,7 @@ export namespace SubCommunityRepository {
       Sequelize.cast(
         Sequelize.literal(`(
           SELECT CASE WHEN EXISTS (
-            SELECT * FROM "sub_community_members" as "members"
+            SELECT "members"."id" FROM "sub_community_members" as "members"
             WHERE 
               "members"."user_id" = ${user_id}
               AND "members"."sub_community_id" = "SubCommunities"."id"
@@ -48,6 +48,24 @@ export namespace SubCommunityRepository {
         'boolean',
       ),
       'is_member',
+    ],
+    [
+      Sequelize.cast(
+        Sequelize.literal(`(
+          SELECT CASE WHEN EXISTS (
+            SELECT "members"."id" FROM "sub_community_members" as "members"
+            WHERE 
+              "members"."user_id" = ${user_id}
+              AND "members"."sub_community_id" = "SubCommunities"."id"
+              AND "members"."is_approved" = false
+          )
+          THEN true
+          ELSE false
+          END
+        )`),
+        'boolean',
+      ),
+      'is_request_member',
     ],
   ]
 

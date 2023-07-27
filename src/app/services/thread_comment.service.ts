@@ -77,14 +77,15 @@ export namespace ThreadCommentService {
     try {
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        const [, [{ dataValues }]] = await ThreadCommentRepository.UpdateThreadComment(
+        const [isUpdated, [result]] = await ThreadCommentRepository.UpdateThreadComment(
           Number(req.params.id),
           {
             ...req.body,
             user_id: user.data.id,
           },
         )
-        return baseResponse('Ok', { ...dataValues, user: user.data })
+
+        return baseResponse('Ok', isUpdated ? { ...result.dataValues, user: user.data } : null)
       }
       return baseResponse('Unauthorized')
     } catch (err) {

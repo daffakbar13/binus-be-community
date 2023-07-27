@@ -19,7 +19,7 @@ export class CommunityMembers extends Model<
 
   declare community_id: number
 
-  declare is_approved: boolean
+  declare is_approved: CreationOptional<boolean>
 
   declare community: NonAttribute<Communities>
 }

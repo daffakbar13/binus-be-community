@@ -1,8 +1,15 @@
 import { Communities } from 'app/models/communities'
-import { Attributes, CreationAttributes, ProjectionAlias, Sequelize, WhereOptions } from 'sequelize'
+import {
+  Attributes,
+  CreationAttributes,
+  Includeable,
+  ProjectionAlias,
+  Sequelize,
+  WhereOptions,
+} from 'sequelize'
 
 export namespace CommunityRepository {
-  const relations = ['sub_communities', 'banners', 'threads']
+  const relations: Includeable[] = []
 
   const includeable = (user_id: number): (string | ProjectionAlias)[] => [
     [
@@ -60,7 +67,7 @@ export namespace CommunityRepository {
       Sequelize.cast(
         Sequelize.literal(`(
           SELECT CASE WHEN EXISTS (
-            SELECT * FROM "community_members" as "members"
+            SELECT "members"."id" FROM "community_members" as "members"
             WHERE 
               "members"."user_id" = ${user_id}
               AND "members"."community_id" = "Communities"."id"
@@ -73,6 +80,24 @@ export namespace CommunityRepository {
         'boolean',
       ),
       'is_member',
+    ],
+    [
+      Sequelize.cast(
+        Sequelize.literal(`(
+          SELECT CASE WHEN EXISTS (
+            SELECT "members"."id" FROM "community_members" as "members"
+            WHERE 
+              "members"."user_id" = ${user_id}
+              AND "members"."community_id" = "Communities"."id"
+              AND "members"."is_approved" = false
+          )
+          THEN true
+          ELSE false
+          END
+        )`),
+        'boolean',
+      ),
+      'is_request_member',
     ],
   ]
 

@@ -46,7 +46,6 @@ export namespace SubCommunityMemberService {
         const [{ dataValues }] = await SubCommunityMemberRepository.RequestSubCommunityMember({
           sub_community_id,
           user_id: user.data.id,
-          is_approved: false,
         })
         return baseResponse('Ok', { ...dataValues, user: user.data })
       }
@@ -76,9 +75,20 @@ export namespace SubCommunityMemberService {
   export async function DeleteSubCommunityMember(req: Request) {
     try {
       const sub_community_id = Number(req.params.id)
+      const { user_ids } = req.body
+      await SubCommunityMemberRepository.DeleteSubCommunityMember(sub_community_id, user_ids)
+      return baseResponse('Ok')
+    } catch (err) {
+      return baseResponse('InternalServerError')
+    }
+  }
+
+  export async function LeaveSubCommunityMember(req: Request) {
+    try {
+      const sub_community_id = Number(req.params.id)
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        await SubCommunityMemberRepository.DeleteSubCommunityMember({
+        await SubCommunityMemberRepository.LeaveSubCommunityMember({
           sub_community_id,
           user_id: user.data.id,
         })

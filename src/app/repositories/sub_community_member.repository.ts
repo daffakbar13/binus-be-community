@@ -21,11 +21,10 @@ export namespace SubCommunityMemberRepository {
     })
   }
 
-  export function RequestSubCommunityMember(defaults: CreationAttributes<SubCommunityMembers>) {
-    const { user_id, sub_community_id } = defaults
+  export function RequestSubCommunityMember(payload: CreationAttributes<SubCommunityMembers>) {
     return SubCommunityMembers.findOrCreate({
-      where: { user_id, sub_community_id },
-      defaults,
+      where: payload,
+      defaults: payload,
       returning: true,
     })
   }
@@ -37,7 +36,13 @@ export namespace SubCommunityMemberRepository {
     )
   }
 
-  export function DeleteSubCommunityMember(where: WhereOptions<SubCommunityMembers>) {
+  export function DeleteSubCommunityMember(sub_community_id: number, user_ids: number[]) {
+    return SubCommunityMembers.destroy({
+      where: { sub_community_id, user_id: { [Op.or]: user_ids } },
+    })
+  }
+
+  export function LeaveSubCommunityMember(where: CreationAttributes<SubCommunityMembers>) {
     return SubCommunityMembers.destroy({ where })
   }
 }

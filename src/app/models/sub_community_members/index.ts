@@ -19,7 +19,7 @@ export class SubCommunityMembers extends Model<
 
   declare sub_community_id: number
 
-  declare is_approved: boolean
+  declare is_approved: CreationOptional<boolean>
 
   declare sub_community: NonAttribute<SubCommunities>
 }

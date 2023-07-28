@@ -8,6 +8,7 @@ export namespace SubCommunityDto {
     SearchDto.SearchRequest,
     query('is_active').optional({ values: 'falsy' }).isBoolean(),
     query('community_id').optional({ values: 'falsy' }).isFloat({ min: 1 }),
+    query('tenant_id').isFloat({ min: 1 }),
   ])
 
   export const DetailSubCommunity = checkExact([param('id').isFloat({ min: 1 })])

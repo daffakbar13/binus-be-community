@@ -21,6 +21,7 @@ export namespace CommunityService {
           ...pagination,
           where: {
             ...search,
+            ...(query.tenant_id && { tenant_id: query.tenant_id }),
             ...(query.is_active && { is_active: query.is_active }),
           },
         })

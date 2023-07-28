@@ -17,14 +17,20 @@ export namespace SubCommunityService {
         const { query } = req
         const pagination = paginationObject(query)
         const search = searchRequest<Communities>(['name'], query.search as string)
-        const result = await SubCommunityRepository.GetListSubCommunity(user.data.id, {
-          ...pagination,
-          where: {
-            ...search,
-            ...(query.is_active && { is_active: query.is_active }),
-            ...(query.community_id && { community_id: query.community_id }),
+        const result = await SubCommunityRepository.GetListSubCommunity(
+          user.data.id,
+          {
+            ...pagination,
+            where: {
+              ...search,
+              ...(query.is_active && { is_active: query.is_active }),
+              ...(query.community_id && { community_id: query.community_id }),
+            },
           },
-        })
+          {
+            ...(query.tenant_id && { tenant_id: Number(query.tenant_id) }),
+          },
+        )
         return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
       }
       return baseResponse('Unauthorized')

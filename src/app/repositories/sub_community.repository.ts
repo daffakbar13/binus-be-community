@@ -1,8 +1,22 @@
+import { Communities } from 'app/models/communities'
 import { SubCommunities } from 'app/models/sub_communities'
-import { Attributes, CreationAttributes, ProjectionAlias, Sequelize, WhereOptions } from 'sequelize'
+import {
+  Attributes,
+  CreationAttributes,
+  Includeable,
+  ProjectionAlias,
+  Sequelize,
+  WhereOptions,
+} from 'sequelize'
 
 export namespace SubCommunityRepository {
-  const relations = ['community']
+  const relations = (where?: WhereOptions<Communities>): Includeable[] => [
+    {
+      model: Communities,
+      as: 'community',
+      where,
+    },
+  ]
 
   const includeable = (user_id: number): (string | ProjectionAlias)[] => [
     [
@@ -72,18 +86,23 @@ export namespace SubCommunityRepository {
   export async function GetListSubCommunity(
     user_id: number,
     props: Parameters<typeof SubCommunities.findAll>[0],
+    whereCommunity?: WhereOptions<Communities>,
   ) {
     return SubCommunities.findAndCountAll({
       ...props,
-      include: relations,
+      include: relations(whereCommunity),
       attributes: { include: includeable(user_id) },
       distinct: true,
     })
   }
 
-  export function GetDetailSubCommunity(user_id: number, where: WhereOptions<SubCommunities>) {
+  export function GetDetailSubCommunity(
+    user_id: number,
+    where: WhereOptions<SubCommunities>,
+    whereCommunity?: WhereOptions<Communities>,
+  ) {
     return SubCommunities.findOne({
-      include: relations,
+      include: relations(whereCommunity),
       attributes: { include: includeable(user_id) },
       where,
     })

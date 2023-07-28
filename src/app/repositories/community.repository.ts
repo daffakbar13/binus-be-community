@@ -42,18 +42,6 @@ export namespace CommunityRepository {
       Sequelize.cast(
         Sequelize.literal(`(
           SELECT COUNT(*)
-          FROM "banners" AS "b"
-          WHERE 
-            "b"."community_id" = "Communities"."id"
-        )`),
-        'int',
-      ),
-      'total_banners',
-    ],
-    [
-      Sequelize.cast(
-        Sequelize.literal(`(
-          SELECT COUNT(*)
           FROM "threads" AS "t"
           WHERE 
             "t"."community_id" = "Communities"."id"

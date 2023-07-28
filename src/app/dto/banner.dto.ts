@@ -4,6 +4,7 @@ import { body, checkExact, param, query } from 'express-validator'
 export namespace BannerDto {
   export const GetBannerList = checkExact([
     ...PaginationDto.RequestPagination,
+    query('tenant_id').optional({ values: 'falsy' }).isFloat({ min: 1 }),
     query('is_active').optional({ values: 'falsy' }).isBoolean(),
   ])
 
@@ -11,7 +12,7 @@ export namespace BannerDto {
 
   export const CreateBanner = checkExact([
     body(['title', 'description']).isString(),
-    body('tenant_ids').optional({ values: 'falsy' }).isArray(),
+    body('tenant_id').isFloat({ min: 1 }),
     body('external_url')
       .optional({ values: 'falsy' })
       .isURL({
@@ -24,7 +25,6 @@ export namespace BannerDto {
 
   export const UpdateBanner = checkExact([
     body(['title', 'description']).optional({ values: 'falsy' }).isString(),
-    body('tenant_ids').optional({ values: 'falsy' }).isArray(),
     body('external_url')
       .optional({ values: 'falsy' })
       .isURL({

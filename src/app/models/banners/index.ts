@@ -14,7 +14,7 @@ export class Banners extends Model<InferAttributes<Banners>, InferCreationAttrib
 
   declare user_id: number
 
-  declare community_id: number
+  declare tenant_id: number
 
   declare title: string
 
@@ -50,14 +50,7 @@ try {
         primaryKey: true,
       },
       user_id: DataTypes.INTEGER,
-      community_id: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: Communities,
-          key: 'id',
-        },
-        allowNull: true,
-      },
+      tenant_id: DataTypes.INTEGER,
       title: DataTypes.STRING,
       description: DataTypes.STRING,
       image_url: DataTypes.STRING,
@@ -74,16 +67,6 @@ try {
       updatedAt: 'updated_at',
     },
   )
-
-  Communities.hasMany(Banners, {
-    foreignKey: 'community_id',
-    as: 'banners',
-  })
-
-  Banners.belongsTo(Communities, {
-    foreignKey: 'community_id',
-    as: 'community',
-  })
 } catch (error) {
   /* eslint-disable no-console */
   console.error(error)

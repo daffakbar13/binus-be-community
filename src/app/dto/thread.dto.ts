@@ -30,7 +30,8 @@ export namespace ThreadDto {
           return !community_id && !sub_community_id
         }
         return community_id && sub_community_id
-      }),
+      })
+      .withMessage('community_id and sub_community_id or tenant_ids must be filled'),
     body('community_id').optional({ values: 'falsy' }).isFloat({ min: 1 }),
     body('sub_community_id').optional({ values: 'falsy' }).isFloat({ min: 1 }),
     body('tenant_ids').optional({ values: 'falsy' }).isArray(),

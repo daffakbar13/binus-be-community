@@ -44,18 +44,18 @@ try {
         autoIncrement: true,
         primaryKey: true,
       },
-      status_id: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: MasterStatus,
-          key: 'id',
-        },
-      },
       user_id: DataTypes.INTEGER,
       thread_id: {
         type: DataTypes.INTEGER,
         references: {
           model: Threads,
+          key: 'id',
+        },
+      },
+      status_id: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: MasterStatus,
           key: 'id',
         },
       },

@@ -1,3 +1,5 @@
+import { Communities } from 'app/models/communities'
+import { SubCommunities } from 'app/models/sub_communities'
 import { ThreadComments } from 'app/models/thread_comments'
 import { Threads } from 'app/models/threads'
 import {
@@ -10,7 +12,26 @@ import {
 } from 'sequelize'
 
 export namespace ThreadCommentRepository {
-  const relations: Includeable[] = [{ model: Threads, as: 'thread', required: true }, 'status']
+  const relations: Includeable[] = [
+    {
+      model: Threads,
+      as: 'thread',
+      required: true,
+      include: [
+        {
+          model: Communities,
+          as: 'community',
+          required: true,
+        },
+        {
+          model: SubCommunities,
+          as: 'sub_community',
+          required: true,
+        },
+      ],
+    },
+    'status',
+  ]
   const includeableThreadComments = (user_id?: number): (string | ProjectionAlias)[] => [
     [
       Sequelize.literal(`(

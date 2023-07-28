@@ -1,4 +1,5 @@
 import { ThreadComments } from 'app/models/thread_comments'
+import { Threads } from 'app/models/threads'
 import {
   Attributes,
   CreationAttributes,
@@ -9,7 +10,11 @@ import {
 } from 'sequelize'
 
 export namespace ThreadCommentRepository {
-  const relations: Includeable[] = ['likes', 'thread', 'status']
+  const relations: Includeable[] = [
+    'likes',
+    { model: Threads, as: 'thread', required: true },
+    'status',
+  ]
   const includeableThreadComments = (user_id?: number): (string | ProjectionAlias)[] => [
     [
       Sequelize.literal(`(

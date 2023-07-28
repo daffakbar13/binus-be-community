@@ -28,7 +28,7 @@ export namespace SubCommunityService {
             },
           },
           {
-            ...(query.tenant_uuid && { tenant_uuid: Number(query.tenant_uuid) }),
+            ...(query.tenant_uuid && { tenant_uuid: query.tenant_uuid as string }),
           },
         )
         return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))

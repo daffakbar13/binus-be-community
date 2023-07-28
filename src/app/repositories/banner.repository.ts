@@ -1,9 +1,21 @@
+import { BannerTenants } from 'app/models/banner_tenants'
 import { Banners } from 'app/models/banners'
 import { Attributes, CreationAttributes, WhereOptions } from 'sequelize'
 
 export namespace BannerRepository {
-  export function GetBannerList(props: Parameters<typeof Banners.findAll>[0]) {
+  export function GetBannerList(
+    props: Parameters<typeof Banners.findAll>[0],
+    whereBannerTenants?: WhereOptions<BannerTenants>,
+  ) {
     return Banners.findAndCountAll({
+      include: [
+        {
+          model: BannerTenants,
+          as: 'tenants',
+          where: whereBannerTenants,
+          attributes: [],
+        },
+      ],
       ...props,
       distinct: true,
     })

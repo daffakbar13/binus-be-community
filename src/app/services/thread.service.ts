@@ -87,15 +87,15 @@ export namespace ThreadService {
     try {
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        const { tenant_ids } = req.body
+        const { tenant_uuids } = req.body
         const result = await ThreadRepository.CreateThread({
           ...req.body,
           user_id: user.data.id,
           status_id: 1,
-          ...(tenant_ids && { is_pinned: true }),
+          ...(tenant_uuids && { is_pinned: true }),
         })
-        if (tenant_ids) {
-          await ThreadTenantService.CreateThreadTenant(result.id, tenant_ids)
+        if (tenant_uuids) {
+          await ThreadTenantService.CreateThreadTenant(result.id, tenant_uuids)
         }
         return baseResponse('Ok', { ...result.dataValues, user: user.data })
       }

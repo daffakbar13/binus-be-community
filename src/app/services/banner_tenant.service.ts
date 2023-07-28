@@ -1,38 +1,38 @@
-import { ThreadTenantRepository } from 'app/repositories/thread_tenant.repository'
+import { BannerTenantRepository } from 'app/repositories/banner_tenant.repository'
 import { baseResponse } from 'common/dto/baseResponse.dto'
 import { Request } from 'express'
 import { UserService } from './user.service'
 
-export namespace ThreadTenantService {
-  export async function GetListThreadTenant() {
+export namespace BannerTenantService {
+  export async function GetListBannerTenant() {
     try {
-      const result = await ThreadTenantRepository.GetListThreadTenant()
+      const result = await BannerTenantRepository.GetListBannerTenant()
       return baseResponse('Ok', { results: result })
     } catch (err) {
       return baseResponse('InternalServerError')
     }
   }
 
-  export async function GetDetailThreadTenant(req: Request) {
+  export async function GetDetailBannerTenant(req: Request) {
     try {
-      const result = await ThreadTenantRepository.GetDetailThreadTenant({ id: req.params.id })
+      const result = await BannerTenantRepository.GetDetailBannerTenant({ id: req.params.id })
       return baseResponse('Ok', result)
     } catch (err) {
       return baseResponse('InternalServerError')
     }
   }
 
-  export async function CreateThreadTenant(thread_id: number, tenant_uuids: string[]) {
-    const payload = tenant_uuids.map((tenant_uuid) => ({ thread_id, tenant_uuid }))
-    const result = await ThreadTenantRepository.CreateThreadTenant(payload)
+  export async function CreateBannerTenant(banner_id: number, tenant_uuids: string[]) {
+    const payload = tenant_uuids.map((tenant_uuid) => ({ banner_id, tenant_uuid }))
+    const result = await BannerTenantRepository.CreateBannerTenant(payload)
     return result
   }
 
-  export async function UpdateThreadTenant(req: Request) {
+  export async function UpdateBannerTenant(req: Request) {
     try {
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        const [, [result]] = await ThreadTenantRepository.UpdateThreadTenant(
+        const [, [result]] = await BannerTenantRepository.UpdateBannerTenant(
           Number(req.params.id),
           {
             ...req.body,
@@ -47,9 +47,9 @@ export namespace ThreadTenantService {
     }
   }
 
-  export async function DeleteThreadTenant(req: Request) {
+  export async function DeleteBannerTenant(req: Request) {
     try {
-      await ThreadTenantRepository.DeleteThreadTenant({ id: req.params.id })
+      await BannerTenantRepository.DeleteBannerTenant({ id: req.params.id })
       return baseResponse('Ok')
     } catch (err) {
       return baseResponse('InternalServerError')

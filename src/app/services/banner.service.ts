@@ -7,19 +7,24 @@ import { s3 } from 'configs/aws'
 import moment from 'moment'
 import { paginationObject, responseWithPagination } from 'utils/helpers/pagination'
 import { UserService } from './user.service'
+import { BannerTenantService } from './banner_tenant.service'
 
 export namespace BannerService {
   export async function GetBannerList(req: Request) {
     try {
       const { query } = req
       const pagination = paginationObject(query)
-      const result = await BannerRepository.GetBannerList({
-        ...pagination,
-        where: {
-          ...(query.tenant_uuid && { tenant_uuid: query.tenant_uuid }),
-          ...(query.is_active && { is_active: query.is_active }),
+      const result = await BannerRepository.GetBannerList(
+        {
+          ...pagination,
+          where: {
+            ...(query.is_active && { is_active: query.is_active }),
+          },
         },
-      })
+        {
+          ...(query.tenant_uuid && { tenant_uuid: query.tenant_uuid as string }),
+        },
+      )
       return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
     } catch (err) {
       return baseResponse('InternalServerError')
@@ -39,6 +44,7 @@ export namespace BannerService {
     try {
       const user = await UserService.UserInfo(req)
       const file = req.file as any
+      const { tenant_uuids } = req.body
       if (user.data) {
         if (file) {
           const result = await BannerRepository.CreateBanner({
@@ -48,6 +54,7 @@ export namespace BannerService {
             image_url: file.location,
             image_key: file.key,
           })
+          await BannerTenantService.CreateBannerTenant(result.id, tenant_uuids)
           return baseResponse('Ok', result)
         }
         return baseResponse('BadRequest')

@@ -12,7 +12,7 @@ export namespace BannerDto {
 
   export const CreateBanner = checkExact([
     body(['title', 'description']).isString(),
-    body('tenant_uuid').isString(),
+    body('tenant_uuids').isArray(),
     body('external_url')
       .optional({ values: 'falsy' })
       .isURL({

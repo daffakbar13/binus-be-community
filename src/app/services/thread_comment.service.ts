@@ -22,7 +22,7 @@ export namespace ThreadCommentService {
             ...(query.status_id && { status_id: query.status_id }),
           },
         })
-        const result = await UserService.GetMappedUsers(req, rows)
+        const result = await UserService.GetMappedUsers(req, rows, ['thread'])
         if (result.data) {
           return baseResponse(
             'Ok',
@@ -62,7 +62,7 @@ export namespace ThreadCommentService {
           id: req.params.id,
         })
         if (comment) {
-          const result = await UserService.GetMappedUsers(req, comment)
+          const result = await UserService.GetMappedUsers(req, comment, ['thread'])
           return result
         }
         return baseResponse('Ok')

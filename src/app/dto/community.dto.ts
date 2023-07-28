@@ -7,7 +7,7 @@ export namespace CommunityDto {
     ...PaginationDto.RequestPagination,
     SearchDto.SearchRequest,
     query('is_active').optional({ values: 'falsy' }).isBoolean(),
-    query('tenant_id').isFloat({ min: 1 }),
+    query('tenant_id').optional({ values: 'falsy' }).isFloat({ min: 1 }),
   ])
 
   export const GetCommunityDetail = checkExact([param('id').isFloat({ min: 1 })])

@@ -14,7 +14,7 @@ export class Banners extends Model<InferAttributes<Banners>, InferCreationAttrib
 
   declare user_id: number
 
-  declare tenant_id: number
+  declare tenant_uuid: string
 
   declare title: string
 
@@ -50,7 +50,7 @@ try {
         primaryKey: true,
       },
       user_id: DataTypes.INTEGER,
-      tenant_id: DataTypes.INTEGER,
+      tenant_uuid: DataTypes.TEXT,
       title: DataTypes.STRING,
       description: DataTypes.STRING,
       image_url: DataTypes.STRING,

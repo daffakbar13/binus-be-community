@@ -17,7 +17,7 @@ export class BannerTenants extends Model<
 
   declare banner_id: number
 
-  declare tenant_id: number
+  declare tenant_uuid: string
 
   declare banner: NonAttribute<Banners>
 }
@@ -37,7 +37,7 @@ try {
           key: 'id',
         },
       },
-      tenant_id: DataTypes.INTEGER,
+      tenant_uuid: DataTypes.TEXT,
     },
     {
       tableName: 'banner_tenants',

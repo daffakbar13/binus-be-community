@@ -17,7 +17,7 @@ export class ThreadTenants extends Model<
 
   declare thread_id: number
 
-  declare tenant_id: number
+  declare tenant_uuid: string
 
   declare thread: NonAttribute<Threads>
 }
@@ -37,7 +37,7 @@ try {
           key: 'id',
         },
       },
-      tenant_id: DataTypes.INTEGER,
+      tenant_uuid: DataTypes.TEXT,
     },
     {
       tableName: 'thread_tenants',

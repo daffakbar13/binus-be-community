@@ -16,7 +16,7 @@ export namespace BannerService {
       const result = await BannerRepository.GetBannerList({
         ...pagination,
         where: {
-          ...(query.tenant_id && { tenant_id: query.tenant_id }),
+          ...(query.tenant_uuid && { tenant_uuid: query.tenant_uuid }),
           ...(query.is_active && { is_active: query.is_active }),
         },
       })

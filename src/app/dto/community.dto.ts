@@ -7,14 +7,14 @@ export namespace CommunityDto {
     ...PaginationDto.RequestPagination,
     SearchDto.SearchRequest,
     query('is_active').optional({ values: 'falsy' }).isBoolean(),
-    query('tenant_id').optional({ values: 'falsy' }).isFloat({ min: 1 }),
+    query('tenant_uuid').optional({ values: 'falsy' }).isString(),
   ])
 
   export const GetCommunityDetail = checkExact([param('id').isFloat({ min: 1 })])
 
   export const CreateCommunity = checkExact([
     body(['name', 'description']).isString(),
-    body('tenant_id').isFloat({ min: 1 }),
+    body('tenant_uuid').isString(),
   ])
 
   export const UpdateCommunity = checkExact([

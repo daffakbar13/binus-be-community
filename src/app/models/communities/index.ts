@@ -19,7 +19,7 @@ export class Communities extends Model<
 
   declare user_id: number
 
-  declare tenant_id: number
+  declare tenant_uuid: string
 
   declare name: string
 
@@ -53,7 +53,7 @@ try {
         primaryKey: true,
       },
       user_id: DataTypes.INTEGER,
-      tenant_id: DataTypes.INTEGER,
+      tenant_uuid: DataTypes.TEXT,
       name: DataTypes.STRING,
       description: DataTypes.STRING,
       image_url: DataTypes.STRING,

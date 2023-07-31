@@ -11,7 +11,7 @@ import { Communities } from '../communities'
 import { SubCommunities } from '../sub_communities'
 import { ThreadLikes } from '../thread_likes'
 import { ThreadComments } from '../thread_comments'
-import { ThreadTenants } from '../thread_tenants'
+// import { ThreadTenants } from '../thread_tenants'
 import { MasterStatus } from '../master_status'
 
 export class Threads extends Model<InferAttributes<Threads>, InferCreationAttributes<Threads>> {

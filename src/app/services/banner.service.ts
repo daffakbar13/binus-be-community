@@ -53,7 +53,9 @@ export namespace BannerService {
             image_url: file.location,
             image_key: file.key,
           })
-          await BannerTenantService.CreateBannerTenant(result.id, tenant_uuids)
+          if (tenant_uuids) {
+            await BannerTenantService.CreateBannerTenant(result.id, tenant_uuids)
+          }
           return baseResponse('Ok', result)
         }
         return baseResponse('BadRequest')

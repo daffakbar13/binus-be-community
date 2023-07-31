@@ -17,7 +17,7 @@ export namespace ThreadRepository {
       Sequelize.literal(`(
         SELECT status
         FROM "master_statuses" as "status"
-        WHERE 
+        WHERE
           "status"."id" = "Threads"."status_id"
       )`),
       'status_name',
@@ -27,7 +27,7 @@ export namespace ThreadRepository {
         Sequelize.literal(`(
           SELECT COUNT(*)
           FROM "thread_tenants" as "tenants"
-          WHERE 
+          WHERE
             "tenants"."thread_id" = "Threads"."id"
         )`),
         'int',
@@ -37,9 +37,21 @@ export namespace ThreadRepository {
     [
       Sequelize.cast(
         Sequelize.literal(`(
+          SELECT tenant_uuid
+          FROM "thread_tenants" as "tenants"
+          WHERE
+            "tenants"."thread_id" = "Threads"."id"
+        )`),
+        'string',
+      ),
+      'tenant_uuid',
+    ],
+    [
+      Sequelize.cast(
+        Sequelize.literal(`(
           SELECT COUNT(*)
           FROM "thread_likes" as "likes"
-          WHERE 
+          WHERE
             "likes"."thread_id" = "Threads"."id"
         )`),
         'int',
@@ -51,7 +63,7 @@ export namespace ThreadRepository {
         Sequelize.literal(`(
           SELECT COUNT(*)
           FROM "thread_comments" as "comments"
-          WHERE 
+          WHERE
             "comments"."thread_id" = "Threads"."id"
         )`),
         'int',
@@ -63,7 +75,7 @@ export namespace ThreadRepository {
         Sequelize.literal(`(
           SELECT CASE WHEN EXISTS (
             SELECT * FROM "thread_likes" as "likes"
-            WHERE 
+            WHERE
               "likes"."user_id" = ${user_id}
               AND "likes"."thread_id" = "Threads"."id"
           )
@@ -77,8 +89,8 @@ export namespace ThreadRepository {
     ],
     [
       Sequelize.cast(
-        Sequelize.literal(`( 
-          SELECT CASE WHEN EXISTS ( SELECT * FROM "threads" as "t" WHERE "t"."user_id" = ${user_id} AND "t"."id" = "Threads"."id" ) THEN true ELSE false END 
+        Sequelize.literal(`(
+          SELECT CASE WHEN EXISTS ( SELECT * FROM "threads" as "t" WHERE "t"."user_id" = ${user_id} AND "t"."id" = "Threads"."id" ) THEN true ELSE false END
         )`),
         'boolean',
       ),
@@ -123,7 +135,7 @@ export namespace ThreadRepository {
             Sequelize.literal(`(
               SELECT COUNT(*)
               FROM "threads"
-              WHERE 
+              WHERE
                 "threads"."sub_community_id" = "SubCommunities"."id"
                 AND "threads"."deleted_at" IS NULL
             )`),

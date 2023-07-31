@@ -12,6 +12,7 @@ export namespace ThreadDto {
     query('is_pinned').optional({ values: 'falsy' }).isBoolean(),
     query('is_my_thread').optional({ values: 'falsy' }).isBoolean(),
     query(['status_id', 'sub_community_id']).optional({ values: 'falsy' }).isFloat({ min: 1 }),
+    query('tenant_uuid').optional({ values: 'falsy' }).isString(),
   ])
 
   export const GetMyThreadList = checkExact([...PaginationDto.RequestPagination])
@@ -34,7 +35,7 @@ export namespace ThreadDto {
       .withMessage('community_id and sub_community_id or tenant_uuids must be filled'),
     body('community_id').optional({ values: 'falsy' }).isFloat({ min: 1 }),
     body('sub_community_id').optional({ values: 'falsy' }).isFloat({ min: 1 }),
-    body('tenant_uuids').optional({ values: 'falsy' }).isArray(),
+    body('tenant_uuid').optional({ values: 'falsy' }).isString(),
   ])
 
   export const ThreadApproval = checkExact([
@@ -45,7 +46,7 @@ export namespace ThreadDto {
   export const UpdateThread = checkExact([
     body(['title', 'content', 'tags']).optional({ values: 'falsy' }).isString(),
     body(['community_id', 'sub_community_id']).optional({ values: 'falsy' }).isFloat({ min: 1 }),
-    body('tenant_uuids').optional({ values: 'falsy' }).isArray(),
+    body('tenant_uuid').optional({ values: 'falsy' }).isString(),
     body(['is_allow_comment', 'is_active']).optional({ values: 'falsy' }).isBoolean(),
   ])
 

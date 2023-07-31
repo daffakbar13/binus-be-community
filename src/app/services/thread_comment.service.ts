@@ -20,7 +20,6 @@ export namespace ThreadCommentService {
           where: {
             ...(query.thread_id && { thread_id: query.thread_id }),
             ...(query.status_id && { status_id: query.status_id }),
-            ...(query.tenant_uuid && { tenant_uuid: query.tenant_uuid }),
           },
         })
         const result = await UserService.GetMappedUsers(req, rows, ['thread'])

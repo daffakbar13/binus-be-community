@@ -23,6 +23,15 @@ export namespace ThreadRepository {
       'status_name',
     ],
     [
+      Sequelize.literal(`(
+        SELECT tenant_uuid
+        FROM "communities" as "community"
+        WHERE
+          "community"."id" = "Threads"."community_id"
+      )`),
+      'tenant_uuid',
+    ],
+    [
       Sequelize.cast(
         Sequelize.literal(`(
           SELECT COUNT(*)

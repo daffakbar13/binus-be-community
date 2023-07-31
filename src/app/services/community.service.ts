@@ -7,17 +7,16 @@ import { searchRequest } from 'utils/helpers/search'
 import { DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { getEnv } from 'configs/env'
 import { s3 } from 'configs/aws'
-import { UserService } from './user.service'
 
 export namespace CommunityService {
   export async function GetCommunityList(req: Request) {
     try {
       const { query } = req
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const pagination = paginationObject(query)
         const search = searchRequest<Communities>(['name'], query.search as string)
-        const result = await CommunityRepository.GetListCommunity(user.data.id, {
+        const result = await CommunityRepository.GetListCommunity(user.id, {
           ...pagination,
           where: {
             ...search,
@@ -36,9 +35,9 @@ export namespace CommunityService {
   export async function GetCommunityDetail(req: Request) {
     try {
       const { id } = req.params
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
-        const result = await CommunityRepository.GetDetailCommunity(user.data.id, { id })
+      const { user } = req.session
+      if (user) {
+        const result = await CommunityRepository.GetDetailCommunity(user.id, { id })
         return baseResponse('Ok', result)
       }
       return baseResponse('Unauthorized')
@@ -49,13 +48,13 @@ export namespace CommunityService {
 
   export async function CreateCommunity(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
+      const { user } = req.session
       const file = req.file as any
-      if (user.data) {
+      if (user) {
         if (file) {
           const result = await CommunityRepository.CreateCommunity({
             ...req.body,
-            user_id: user.data.id,
+            user_id: user.id,
             image_url: file.location,
             image_key: file.key,
           })
@@ -71,15 +70,15 @@ export namespace CommunityService {
 
   export async function UpdateCommunity(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
+      const { user } = req.session
       const file = req.file as any
-      if (user.data) {
+      if (user) {
         if (file) {
-          await DeleteImageFromAWS(user.data.id, Number(req.params.id))
+          await DeleteImageFromAWS(user.id, Number(req.params.id))
         }
         const [, [result]] = await CommunityRepository.UpdateCommunity(Number(req.params.id), {
           ...req.body,
-          user_id: user.data.id,
+          user_id: user.id,
           ...(file && {
             image_url: file.location,
             image_key: file.key,
@@ -96,10 +95,10 @@ export namespace CommunityService {
   export async function DeleteCommunity(req: Request) {
     try {
       const { id } = req.params
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         await CommunityRepository.DeleteCommunity({ id })
-        await DeleteImageFromAWS(user.data.id, Number(id))
+        await DeleteImageFromAWS(user.id, Number(id))
         return baseResponse('Ok')
       }
       return baseResponse('Unauthorized')

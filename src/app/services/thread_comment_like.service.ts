@@ -1,17 +1,16 @@
 import { baseResponse } from 'common/dto/baseResponse.dto'
 import { Request } from 'express'
 import { ThreadCommentLikeRepository } from 'app/repositories/thread_comment_like.repository'
-import { UserService } from './user.service'
 
 export namespace ThreadCommentLikeService {
   export async function LikeThreadComment(req: Request) {
     try {
       const id = Number(req.params.id)
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         await ThreadCommentLikeRepository.CreateThreadCommentLike({
           thread_comment_id: id,
-          user_id: user.data.id,
+          user_id: user.id,
         })
         const count = await CountLike(id)
         return baseResponse('Ok', { count })
@@ -25,10 +24,10 @@ export namespace ThreadCommentLikeService {
   export async function UnlikeThreadComment(req: Request) {
     try {
       const id = Number(req.params.id)
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         await ThreadCommentLikeRepository.DeleteThreadCommentLike({
-          user_id: user.data.id,
+          user_id: user.id,
           thread_comment_id: id,
         })
         const count = await CountLike(id)

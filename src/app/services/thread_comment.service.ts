@@ -9,12 +9,12 @@ import { UserService } from './user.service'
 export namespace ThreadCommentService {
   export async function GetListThreadComment(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const { query } = req
         const pagination = paginationObject(query)
         const order = sortRequest(query)
-        const { count, rows } = await ThreadCommentRepository.GetListThreadComment(user.data.id, {
+        const { count, rows } = await ThreadCommentRepository.GetListThreadComment(user.id, {
           ...pagination,
           order,
           where: {
@@ -40,14 +40,14 @@ export namespace ThreadCommentService {
 
   export async function CreateThreadComment(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const { dataValues } = await ThreadCommentRepository.CreateThreadComment({
           ...req.body,
-          user_id: user.data.id,
+          user_id: user.id,
           status_id: 1,
         })
-        return baseResponse('Ok', { ...dataValues, user: user.data })
+        return baseResponse('Ok', { ...dataValues, user })
       }
       return baseResponse('Unauthorized')
     } catch (err) {
@@ -57,9 +57,9 @@ export namespace ThreadCommentService {
 
   export async function GetDetailThreadComment(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
-        const comment = await ThreadCommentRepository.GetDetailThreadComment(user.data.id, {
+      const { user } = req.session
+      if (user) {
+        const comment = await ThreadCommentRepository.GetDetailThreadComment(user.id, {
           id: req.params.id,
         })
         if (comment) {
@@ -76,17 +76,17 @@ export namespace ThreadCommentService {
 
   export async function UpdateThreadComment(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const [isUpdated, [result]] = await ThreadCommentRepository.UpdateThreadComment(
           Number(req.params.id),
           {
             ...req.body,
-            user_id: user.data.id,
+            user_id: user.id,
           },
         )
 
-        return baseResponse('Ok', isUpdated ? { ...result.dataValues, user: user.data } : null)
+        return baseResponse('Ok', isUpdated ? { ...result.dataValues, user } : null)
       }
       return baseResponse('Unauthorized')
     } catch (err) {

@@ -7,18 +7,17 @@ import { searchRequest } from 'utils/helpers/search'
 import { DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { getEnv } from 'configs/env'
 import { s3 } from 'configs/aws'
-import { UserService } from './user.service'
 
 export namespace SubCommunityService {
   export async function GetListSubCommunity(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const { query } = req
         const pagination = paginationObject(query)
         const search = searchRequest<Communities>(['name'], query.search as string)
         const result = await SubCommunityRepository.GetListSubCommunity(
-          user.data.id,
+          user.id,
           {
             ...pagination,
             where: {
@@ -42,9 +41,9 @@ export namespace SubCommunityService {
   export async function GetDetailSubCommunity(req: Request) {
     try {
       const { id } = req.params
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
-        const result = await SubCommunityRepository.GetDetailSubCommunity(user.data.id, { id })
+      const { user } = req.session
+      if (user) {
+        const result = await SubCommunityRepository.GetDetailSubCommunity(user.id, { id })
         return baseResponse('Ok', result)
       }
       return baseResponse('Unauthorized')
@@ -55,13 +54,13 @@ export namespace SubCommunityService {
 
   export async function CreateSubCommunity(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
+      const { user } = req.session
       const file = req.file as any
-      if (user.data) {
+      if (user) {
         if (file) {
           const result = await SubCommunityRepository.CreateSubCommunity({
             ...req.body,
-            user_id: user.data.id,
+            user_id: user.id,
             image_url: file.location,
             image_key: file.key,
           })
@@ -77,17 +76,17 @@ export namespace SubCommunityService {
 
   export async function UpdateSubCommunity(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
+      const { user } = req.session
       const file = req.file as any
-      if (user.data) {
+      if (user) {
         if (file) {
-          await DeleteImageFromAWS(user.data.id, Number(req.params.id))
+          await DeleteImageFromAWS(user.id, Number(req.params.id))
         }
         const [, [result]] = await SubCommunityRepository.UpdateSubCommunity(
           Number(req.params.id),
           {
             ...req.body,
-            user_id: user.data.id,
+            user_id: user.id,
             ...(file && {
               image_url: file.location,
               image_key: file.key,
@@ -105,10 +104,10 @@ export namespace SubCommunityService {
   export async function DeleteSubCommunity(req: Request) {
     try {
       const { id } = req.params
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         await SubCommunityRepository.DeleteSubCommunity({ id })
-        await DeleteImageFromAWS(user.data.id, Number(id))
+        await DeleteImageFromAWS(user.id, Number(id))
         return baseResponse('Ok')
       }
       return baseResponse('Unauthorized')

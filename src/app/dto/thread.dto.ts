@@ -35,7 +35,7 @@ export namespace ThreadDto {
       .withMessage('community_id and sub_community_id or tenant_uuids must be filled'),
     body('community_id').optional({ values: 'falsy' }).isFloat({ min: 1 }),
     body('sub_community_id').optional({ values: 'falsy' }).isFloat({ min: 1 }),
-    body('tenant_uuid').optional({ values: 'falsy' }).isString(),
+    body('tenant_uuids').optional({ values: 'falsy' }).isArray(),
   ])
 
   export const ThreadApproval = checkExact([

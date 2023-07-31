@@ -1,7 +1,6 @@
 import { BannerTenantRepository } from 'app/repositories/banner_tenant.repository'
 import { baseResponse } from 'common/dto/baseResponse.dto'
 import { Request } from 'express'
-import { UserService } from './user.service'
 
 export namespace BannerTenantService {
   export async function GetListBannerTenant() {
@@ -30,13 +29,13 @@ export namespace BannerTenantService {
 
   export async function UpdateBannerTenant(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const [, [result]] = await BannerTenantRepository.UpdateBannerTenant(
           Number(req.params.id),
           {
             ...req.body,
-            user_id: user.data.id,
+            user_id: user.id,
           },
         )
         return baseResponse('Ok', result)

@@ -1,3 +1,4 @@
+import { UserDto } from 'app/dto/user.dto'
 import axios from 'axios'
 import { BaseResponse, baseResponse } from 'common/dto/baseResponse.dto'
 import { getEnv } from 'configs/env'
@@ -15,11 +16,12 @@ export namespace AuthService {
 
   export async function CheckToken(req: Request) {
     try {
-      const result = await authService.get<null, BaseResponse<{ token: string }>>('/token/verify', {
+      const result = await authService.get<null, BaseResponse<UserDto.User>>('/token/verify', {
         headers: { Authorization: req.headers.authorization },
       })
 
-      if (result.status === 200) {
+      if (result.data && result.status === 200) {
+        req.session.user = result.data
         return true
       }
     } catch (err) {

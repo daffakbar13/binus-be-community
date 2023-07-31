@@ -6,7 +6,6 @@ import { getEnv } from 'configs/env'
 import { s3 } from 'configs/aws'
 import moment from 'moment'
 import { paginationObject, responseWithPagination } from 'utils/helpers/pagination'
-import { UserService } from './user.service'
 import { BannerTenantService } from './banner_tenant.service'
 
 export namespace BannerService {
@@ -42,14 +41,14 @@ export namespace BannerService {
 
   export async function CreateBanner(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
+      const { user } = req.session
       const file = req.file as any
       const { tenant_uuids } = req.body
-      if (user.data) {
+      if (user) {
         if (file) {
           const result = await BannerRepository.CreateBanner({
             ...req.body,
-            user_id: user.data.id,
+            user_id: user.id,
             is_active: moment().isAfter(req.body.start_date),
             image_url: file.location,
             image_key: file.key,
@@ -67,16 +66,16 @@ export namespace BannerService {
 
   export async function UpdateBanner(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
+      const { user } = req.session
       const file = req.file as any
       const id = Number(req.params.id)
-      if (user.data) {
+      if (user) {
         if (file) {
           await DeleteImageFromAWS(id)
         }
         const [, [result]] = await BannerRepository.UpdateBanner(id, {
           ...req.body,
-          user_id: user.data.id,
+          user_id: user.id,
           ...(file && {
             image_url: file.location,
             image_key: file.key,

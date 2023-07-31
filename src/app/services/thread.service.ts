@@ -12,20 +12,20 @@ import { ThreadTenantService } from './thread_tenant.service'
 export namespace ThreadService {
   export async function GetListThread(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const { query } = req
         const pagination = paginationObject(query)
         const order = sortRequest(query)
         const search = searchRequest<Threads>(['tags', 'title'], query.search as string)
-        const { count, rows } = await ThreadRepository.GetListThread(user.data.id, {
+        const { count, rows } = await ThreadRepository.GetListThread(user.id, {
           ...pagination,
           order,
           where: {
             ...search,
             ...(query.is_active && { is_active: query.is_active }),
             ...(query.is_pinned && { is_pinned: query.is_pinned }),
-            ...(query.is_my_thread && { user_id: user.data.id }),
+            ...(query.is_my_thread && { user_id: user.id }),
             ...(query.status_id && { status_id: query.status_id }),
             ...(query.sub_community_id && { sub_community_id: query.sub_community_id }),
           },
@@ -48,12 +48,12 @@ export namespace ThreadService {
   export async function GetMyThreads(req: Request) {
     try {
       const { query } = req
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const pagination = paginationObject(query)
         const result = await ThreadRepository.GetMyThreads({
           ...pagination,
-          where: { user_id: user.data.id },
+          where: { user_id: user.id },
         })
         return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
       }
@@ -65,12 +65,12 @@ export namespace ThreadService {
 
   export async function GetDetailThread(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         if (req.query.increase_view === 'true') {
           await ThreadRepository.IncrementThreadView({ id: req.params.id })
         }
-        const thread = await ThreadRepository.GetDetailThread(user.data.id, { id: req.params.id })
+        const thread = await ThreadRepository.GetDetailThread(user.id, { id: req.params.id })
         if (thread) {
           const result = await UserService.GetMappedUsers(req, thread)
           return result
@@ -85,19 +85,19 @@ export namespace ThreadService {
 
   export async function CreateThread(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const { tenant_uuids } = req.body
         const result = await ThreadRepository.CreateThread({
           ...req.body,
-          user_id: user.data.id,
+          user_id: user.id,
           status_id: 1,
           ...(tenant_uuids && { is_pinned: true }),
         })
         if (tenant_uuids) {
           await ThreadTenantService.CreateThreadTenant(result.id, tenant_uuids)
         }
-        return baseResponse('Ok', { ...result.dataValues, user: user.data })
+        return baseResponse('Ok', { ...result.dataValues, user })
       }
       return baseResponse('Unauthorized')
     } catch (err) {
@@ -107,13 +107,13 @@ export namespace ThreadService {
 
   export async function UpdateThread(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const [isUpdated, [result]] = await ThreadRepository.UpdateThread(Number(req.params.id), {
           ...req.body,
-          user_id: user.data.id,
+          user_id: user.id,
         })
-        return baseResponse('Ok', isUpdated ? { ...result.dataValues, user: user.data } : null)
+        return baseResponse('Ok', isUpdated ? { ...result.dataValues, user } : null)
       }
       return baseResponse('Unauthorized')
     } catch (err) {

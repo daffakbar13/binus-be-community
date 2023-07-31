@@ -1,7 +1,6 @@
 import { ThreadTenantRepository } from 'app/repositories/thread_tenant.repository'
 import { baseResponse } from 'common/dto/baseResponse.dto'
 import { Request } from 'express'
-import { UserService } from './user.service'
 
 export namespace ThreadTenantService {
   export async function GetListThreadTenant() {
@@ -30,13 +29,13 @@ export namespace ThreadTenantService {
 
   export async function UpdateThreadTenant(req: Request) {
     try {
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const [, [result]] = await ThreadTenantRepository.UpdateThreadTenant(
           Number(req.params.id),
           {
             ...req.body,
-            user_id: user.data.id,
+            user_id: user.id,
           },
         )
         return baseResponse('Ok', result)

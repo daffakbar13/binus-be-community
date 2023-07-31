@@ -88,7 +88,7 @@ export namespace UserService {
             ...end,
           })
         }
-        return baseResponse('InternalServerError')
+        return baseResponse('Forbidden')
       }
       return baseResponse('Ok', data)
     } catch (err) {

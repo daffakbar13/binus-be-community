@@ -9,8 +9,8 @@ export namespace SubCommunityMemberService {
     try {
       const { query } = req
       const sub_community_id = Number(req.params.id)
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const pagination = paginationObject(query)
         const { count, rows } = await SubCommunityMemberRepository.GetSubCommunityMemberList({
           ...pagination,
@@ -41,13 +41,13 @@ export namespace SubCommunityMemberService {
   export async function RequestSubCommunityMember(req: Request) {
     try {
       const sub_community_id = Number(req.params.id)
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const [{ dataValues }] = await SubCommunityMemberRepository.RequestSubCommunityMember({
           sub_community_id,
-          user_id: user.data.id,
+          user_id: user.id,
         })
-        return baseResponse('Ok', { ...dataValues, user: user.data })
+        return baseResponse('Ok', { ...dataValues, user })
       }
       return baseResponse('Unauthorized')
     } catch (err) {
@@ -58,8 +58,8 @@ export namespace SubCommunityMemberService {
   export async function ApproveSubCommunityMember(req: Request) {
     try {
       const sub_community_id = Number(req.params.id)
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const [, results] = await SubCommunityMemberRepository.ApproveSubCommunityMember(
           sub_community_id,
           req.body.user_ids,
@@ -86,11 +86,11 @@ export namespace SubCommunityMemberService {
   export async function LeaveSubCommunityMember(req: Request) {
     try {
       const sub_community_id = Number(req.params.id)
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         await SubCommunityMemberRepository.LeaveSubCommunityMember({
           sub_community_id,
-          user_id: user.data.id,
+          user_id: user.id,
         })
         return baseResponse('Ok')
       }

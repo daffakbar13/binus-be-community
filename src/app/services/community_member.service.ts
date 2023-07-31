@@ -9,8 +9,8 @@ export namespace CommunityMemberService {
     try {
       const { query } = req
       const community_id = Number(req.params.id)
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const pagination = paginationObject(query)
         const { count, rows } = await CommunityMemberRepository.GetCommunityMemberList({
           ...pagination,
@@ -41,13 +41,13 @@ export namespace CommunityMemberService {
   export async function RequestCommunityMember(req: Request) {
     try {
       const community_id = Number(req.params.id)
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const [{ dataValues }] = await CommunityMemberRepository.RequestCommunityMember({
           community_id,
-          user_id: user.data.id,
+          user_id: user.id,
         })
-        return baseResponse('Ok', { ...dataValues, user: user.data })
+        return baseResponse('Ok', { ...dataValues, user })
       }
       return baseResponse('Unauthorized')
     } catch (err) {
@@ -58,8 +58,8 @@ export namespace CommunityMemberService {
   export async function ApproveCommunityMember(req: Request) {
     try {
       const community_id = Number(req.params.id)
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         const [, results] = await CommunityMemberRepository.ApproveCommunityMember(
           community_id,
           req.body.user_ids,
@@ -86,11 +86,11 @@ export namespace CommunityMemberService {
   export async function LeaveCommunityMember(req: Request) {
     try {
       const community_id = Number(req.params.id)
-      const user = await UserService.UserInfo(req)
-      if (user.data) {
+      const { user } = req.session
+      if (user) {
         await CommunityMemberRepository.LeaveCommunityMember({
           community_id,
-          user_id: user.data.id,
+          user_id: user.id,
         })
         return baseResponse('Ok')
       }

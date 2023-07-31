@@ -35,15 +35,6 @@ export namespace ThreadRepository {
       'total_tenants',
     ],
     [
-      Sequelize.literal(`(
-        SELECT tenants
-        FROM "thread_tenants" as "tenants"
-        WHERE
-          "tenants"."tenant_uuid" = "Threads"."id"
-      )`),
-      'tenant_uuid',
-    ],
-    [
       Sequelize.cast(
         Sequelize.literal(`(
           SELECT COUNT(*)

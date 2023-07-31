@@ -13,34 +13,35 @@ export namespace ThreadService {
   export async function GetListThread(req: Request) {
     try {
       const user = await UserService.UserInfo(req)
-      if (user.data) {
-        const { query } = req
-        const pagination = paginationObject(query)
-        const order = sortRequest(query)
-        const search = searchRequest<Threads>(['tags', 'title'], query.search as string)
-        const { count, rows } = await ThreadRepository.GetListThread(user.data.id, {
-          ...pagination,
-          order,
-          where: {
-            ...search,
-            ...(query.is_active && { is_active: query.is_active }),
-            ...(query.is_pinned && { is_pinned: query.is_pinned }),
-            ...(query.is_my_thread && { user_id: user.data.id }),
-            ...(query.status_id && { status_id: query.status_id }),
-            ...(query.sub_community_id && { sub_community_id: query.sub_community_id }),
-            ...(query.tenant_uuid && { tenant_uuid: query.tenant_uuid }),
-          },
-        })
-        const result = await UserService.GetMappedUsers(req, rows)
-        if (result.data) {
-          return baseResponse(
-            'Ok',
-            responseWithPagination({ count, rows: result.data, ...pagination }),
-          )
-        }
-        return result
-      }
-      return baseResponse('Unauthorized')
+      return user
+      // if (user.data) {
+      //   const { query } = req
+      //   const pagination = paginationObject(query)
+      //   const order = sortRequest(query)
+      //   const search = searchRequest<Threads>(['tags', 'title'], query.search as string)
+      //   const { count, rows } = await ThreadRepository.GetListThread(user.data.id, {
+      //     ...pagination,
+      //     order,
+      //     where: {
+      //       ...search,
+      //       ...(query.is_active && { is_active: query.is_active }),
+      //       ...(query.is_pinned && { is_pinned: query.is_pinned }),
+      //       ...(query.is_my_thread && { user_id: user.data.id }),
+      //       ...(query.status_id && { status_id: query.status_id }),
+      //       ...(query.sub_community_id && { sub_community_id: query.sub_community_id }),
+      //       ...(query.tenant_uuid && { tenant_uuid: query.tenant_uuid }),
+      //     },
+      //   })
+      //   const result = await UserService.GetMappedUsers(req, rows)
+      //   if (result.data) {
+      //     return baseResponse(
+      //       'Ok',
+      //       responseWithPagination({ count, rows: result.data, ...pagination }),
+      //     )
+      //   }
+      //   return result
+      // }
+      // return baseResponse('Unauthorized')
     } catch (err) {
       return baseResponse('InternalServerError')
     }

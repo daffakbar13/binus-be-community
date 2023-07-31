@@ -55,7 +55,7 @@ export class Threads extends Model<InferAttributes<Threads>, InferCreationAttrib
 
   declare status: NonAttribute<MasterStatus>
 
-  declare tenants: NonAttribute<ThreadTenants[]>
+  declare tenant_uuid: string
 }
 
 try {
@@ -67,6 +67,7 @@ try {
         primaryKey: true,
       },
       user_id: DataTypes.INTEGER,
+      tenant_uuid: DataTypes.TEXT,
       community_id: {
         type: DataTypes.INTEGER,
         references: {

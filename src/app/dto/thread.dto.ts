@@ -12,7 +12,6 @@ export namespace ThreadDto {
     query('is_pinned').optional({ values: 'falsy' }).isBoolean(),
     query('is_my_thread').optional({ values: 'falsy' }).isBoolean(),
     query(['status_id', 'sub_community_id']).optional({ values: 'falsy' }).isFloat({ min: 1 }),
-    query('tenant_uuid').optional({ values: 'falsy' }).isString(),
   ])
 
   export const GetMyThreadList = checkExact([...PaginationDto.RequestPagination])

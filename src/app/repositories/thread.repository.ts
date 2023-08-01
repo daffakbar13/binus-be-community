@@ -27,10 +27,16 @@ export namespace ThreadRepository {
     [
       Sequelize.literal(`(
         SELECT tenant_uuid
+        FROM "communities" as "community"
+        WHERE
+          "community"."tenant_uuid" = ${tenant_uuid}
+          AND"community"."id" = "Threads"."community_id"
+        UNION
+        SELECT tenant_uuid
         FROM "thread_tenants" as "tenants"
         WHERE
-          "tenants"."thread_id" = "Threads"."id"
-          AND "tenants"."tenant_uuid" = ${tenant_uuid}
+          "tenants"."tenant_uuid" = ${tenant_uuid}
+          AND"tenants"."thread_id" = "Threads"."id"
       )`),
       'tenant_uuid',
     ],

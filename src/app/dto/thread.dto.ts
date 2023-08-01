@@ -46,7 +46,6 @@ export namespace ThreadDto {
   export const UpdateThread = checkExact([
     body(['title', 'content', 'tags']).optional({ values: 'falsy' }).isString(),
     body(['community_id', 'sub_community_id']).optional({ values: 'falsy' }).isFloat({ min: 1 }),
-    body('tenant_uuid').optional({ values: 'falsy' }).isString(),
     body(['is_allow_comment', 'is_active']).optional({ values: 'falsy' }).isBoolean(),
   ])
 

@@ -1,5 +1,6 @@
 import { Communities } from 'app/models/communities'
 import { SubCommunities } from 'app/models/sub_communities'
+import { ThreadTenants } from 'app/models/thread_tenants'
 import { Threads } from 'app/models/threads'
 import {
   Attributes,
@@ -11,9 +12,18 @@ import {
 } from 'sequelize'
 
 export namespace ThreadRepository {
-  const relations: Includeable[] = ['tenants', 'community', 'sub_community', 'status', 'likes']
-  const includeableThreads = (
-    user_id?: number, tenant_uuid?: string): (string | ProjectionAlias)[] => [
+  const relations = (whereThreadTenants?: WhereOptions): Includeable[] => [
+    {
+      model: ThreadTenants,
+      as: 'tenants',
+      attributes: [],
+      where: whereThreadTenants,
+    },
+    'community',
+    'sub_community',
+    'status',
+  ]
+  const includeableThreads = (user_id?: number): (string | ProjectionAlias)[] => [
     [
       Sequelize.literal(`(
         SELECT status
@@ -22,30 +32,6 @@ export namespace ThreadRepository {
           "status"."id" = "Threads"."status_id"
       )`),
       'status_name',
-    ],
-    [
-      Sequelize.literal(`(
-        SELECT CASE
-          WHEN "Threads"."community_id" IS NOT NULL
-            THEN (
-            SELECT tenant_uuid
-              FROM "communities" as "community"
-              WHERE
-                "community"."id" = "Threads"."community_id"
-                AND "community"."tenant_uuid" = ${tenant_uuid}
-                LIMIT 1
-            )
-          ELSE (
-            SELECT tenant_uuid
-              FROM "thread_tenants" as "tenants"
-              WHERE
-                "tenants"."thread_id" = "Threads"."id"
-                AND "tenants"."tenant_uuid" = ${tenant_uuid}
-                LIMIT 1
-            )
-        END
-      )`),
-      'tenant_uuid',
     ],
     [
       Sequelize.cast(
@@ -113,13 +99,13 @@ export namespace ThreadRepository {
 
   export function GetListThread(
     user_id: number,
-    uuid: string,
-    props: Parameters<typeof Threads.findAll>[0]) {
+    props: Parameters<typeof Threads.findAll>[0],
+    whereThreadTenants?: WhereOptions,
+  ) {
     return Threads.findAndCountAll({
       ...props,
-      include: relations,
-      attributes: { include: includeableThreads(user_id, uuid) },
-      having: { tenant_uuid: uuid },
+      include: relations(whereThreadTenants),
+      attributes: { include: includeableThreads(user_id) },
       distinct: true,
     })
   }
@@ -168,9 +154,13 @@ export namespace ThreadRepository {
     })
   }
 
-  export function GetDetailThread(user_id: number, where: WhereOptions<Threads>) {
+  export function GetDetailThread(
+    user_id: number,
+    where: WhereOptions<Threads>,
+    whereThreadTenants?: WhereOptions,
+  ) {
     return Threads.findOne({
-      include: relations,
+      include: relations(whereThreadTenants),
       attributes: { include: includeableThreads(user_id) },
       where,
     })

@@ -19,6 +19,12 @@ export namespace ThreadRepository {
       attributes: [],
       where: whereThreadTenants,
     },
+    {
+      model: Communities,
+      as: 'community_name',
+      attributes: [],
+      where: whereThreadTenants,
+    },
     'community',
     'sub_community',
     'status',

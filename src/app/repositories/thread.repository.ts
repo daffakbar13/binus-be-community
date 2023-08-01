@@ -91,7 +91,8 @@ export namespace ThreadRepository {
   export function GetListThread(
     user_id: number,
     props: Parameters<typeof Threads.findAll>[0],
-    whereThreadTenants?: WhereOptions<ThreadTenants>) {
+    whereThreadTenants?: WhereOptions<ThreadTenants>,
+    whereThreadCommunities?: WhereOptions<Communities>) {
     return Threads.findAndCountAll({
       ...props,
       include: [
@@ -99,6 +100,12 @@ export namespace ThreadRepository {
           model: ThreadTenants,
           as: 'tenants',
           where: whereThreadTenants,
+          attributes: [],
+        },
+        {
+          model: Communities,
+          as: 'community',
+          where: whereThreadCommunities,
           attributes: [],
         },
         'tenants', 'community', 'sub_community', 'status', 'likes',

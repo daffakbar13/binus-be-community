@@ -29,8 +29,9 @@ export namespace ThreadService {
               ...(query.is_my_thread && { user_id: user.id }),
               ...(query.status_id && { status_id: query.status_id }),
               ...(query.sub_community_id && { sub_community_id: query.sub_community_id }),
-              ...(query.tenant_uuid && { tenant_uuid: query.tenant_uuid }),
             },
+          }, {
+            ...(query.tenant_uuid && { tenant_uuid: query.tenant_uuid as string }),
           }, {
             ...(query.tenant_uuid && { tenant_uuid: query.tenant_uuid as string }),
           })

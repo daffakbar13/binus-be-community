@@ -27,15 +27,6 @@ export namespace ThreadRepository {
     [
       Sequelize.literal(`(
         SELECT tenant_uuid
-        FROM "communities" as "community"
-        WHERE
-          "community"."id" = "Threads"."community_id"
-      )`),
-      'tenant_uuid',
-    ],
-    [
-      Sequelize.literal(`(
-        SELECT tenant_uuid
         FROM "thread_tenants" as "tenants"
         WHERE
           "tenants"."thread_id" = "Threads"."id"

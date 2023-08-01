@@ -29,8 +29,7 @@ export namespace ThreadRepository {
         SELECT tenant_uuid
         FROM "communities" as "community"
         WHERE
-          "community"."tenant_uuid" = ${tenant_uuid}
-          AND "community"."id" = "Threads"."community_id"
+          "community"."id" = "Threads"."community_id"
       )`),
       'tenant_uuid',
     ],

@@ -12,7 +12,9 @@ import {
 
 export namespace ThreadRepository {
   const relations: Includeable[] = ['tenants', 'community', 'sub_community', 'status', 'likes']
-  const includeableThreads = (user_id?: number): (string | ProjectionAlias)[] => [
+  const includeableThreads = (
+    user_id?: number,
+    tenant_uuid?: string): (string | ProjectionAlias)[] => [
     [
       Sequelize.literal(`(
         SELECT status
@@ -28,6 +30,16 @@ export namespace ThreadRepository {
         FROM "communities" as "community"
         WHERE
           "community"."id" = "Threads"."community_id"
+      )`),
+      'tenant_uuid',
+    ],
+    [
+      Sequelize.literal(`(
+        SELECT tenant_uuid
+        FROM "thread_tenants" as "tenants"
+        WHERE
+          "tenants"."thread_id" = "Threads"."id"
+          AND "tenants"."tenant_uuid" = ${tenant_uuid}
       )`),
       'tenant_uuid',
     ],
@@ -95,11 +107,14 @@ export namespace ThreadRepository {
     ],
   ]
 
-  export function GetListThread(user_id: number, props: Parameters<typeof Threads.findAll>[0]) {
+  export function GetListThread(
+    user_id: number,
+    tenant_uuid: string,
+    props: Parameters<typeof Threads.findAll>[0]) {
     return Threads.findAndCountAll({
       ...props,
       include: relations,
-      attributes: { include: includeableThreads(user_id) },
+      attributes: { include: includeableThreads(user_id, tenant_uuid) },
       distinct: true,
     })
   }

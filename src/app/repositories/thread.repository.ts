@@ -26,10 +26,27 @@ export namespace ThreadRepository {
     ],
     [
       Sequelize.literal(`(
-        SELECT tenant_uuid
-        FROM "communities" as "community"
-        WHERE
-          "community"."id" = "Threads"."community_id"
+        SELECT CASE
+          WHEN threads.community_id IS NOT NULL
+            THEN (
+            SELECT tenant_uuid
+              FROM communities as community
+              WHERE
+                community.id = threads.community_id
+                AND community.tenant_uuid = ${tenant_uuid}
+                LIMIT 1
+            )
+          WHEN threads.community_id IS NULL
+            THEN (
+            SELECT tenant_uuid
+              FROM thread_tenants as tenants
+              WHERE
+                tenants.thread_id = threads.id
+                AND tenants.tenant_uuid = ${tenant_uuid}
+                LIMIT 1
+            )
+      END
+      FROM threads
       )`),
       'tenant_uuid',
     ],

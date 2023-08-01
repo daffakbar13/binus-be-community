@@ -30,7 +30,7 @@ export namespace ThreadRepository {
         FROM "communities" as "community"
         WHERE
           "community"."tenant_uuid" = ${tenant_uuid}
-          AND"community"."id" = "Threads"."community_id"
+          AND "community"."id" = "Threads"."community_id"
       )`),
       'tenant_uuid',
     ],

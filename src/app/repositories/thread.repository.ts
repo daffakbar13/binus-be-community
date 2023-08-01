@@ -113,12 +113,13 @@ export namespace ThreadRepository {
 
   export function GetListThread(
     user_id: number,
-    tenant_uuid: string,
+    uuid: string,
     props: Parameters<typeof Threads.findAll>[0]) {
     return Threads.findAndCountAll({
       ...props,
       include: relations,
-      attributes: { include: includeableThreads(user_id, tenant_uuid) },
+      attributes: { include: includeableThreads(user_id, uuid) },
+      having: { tenant_uuid: uuid },
       distinct: true,
     })
   }

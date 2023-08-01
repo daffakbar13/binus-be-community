@@ -31,12 +31,6 @@ export namespace ThreadRepository {
         WHERE
           "community"."tenant_uuid" = ${tenant_uuid}
           AND"community"."id" = "Threads"."community_id"
-        UNION
-        SELECT tenant_uuid
-        FROM "thread_tenants" as "tenants"
-        WHERE
-          "tenants"."tenant_uuid" = ${tenant_uuid}
-          AND"tenants"."thread_id" = "Threads"."id"
       )`),
       'tenant_uuid',
     ],

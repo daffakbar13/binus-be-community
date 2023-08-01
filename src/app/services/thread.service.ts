@@ -19,7 +19,7 @@ export namespace ThreadService {
         const order = sortRequest(query)
         const search = searchRequest<Threads>(['tags', 'title'], query.search as string)
         const { count, rows } = await ThreadRepository.GetListThread(
-          user.id, query.tenant_uuid as string, {
+          user.id, {
             ...pagination,
             order,
             where: {

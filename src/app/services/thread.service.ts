@@ -19,7 +19,7 @@ export namespace ThreadService {
         const order = sortRequest(query)
         const search = searchRequest<Threads>(['tags', 'title'], query.search as string)
         const { count, rows } = await ThreadRepository.GetListThread(
-          user.id, {
+          user.id, query.tenant_uuid as string, {
             ...pagination,
             order,
             where: {
@@ -42,7 +42,8 @@ export namespace ThreadService {
       }
       return baseResponse('Unauthorized')
     } catch (err) {
-      return baseResponse('InternalServerError')
+      return err
+      // return baseResponse('InternalServerError')
     }
   }
 

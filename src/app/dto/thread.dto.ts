@@ -23,16 +23,7 @@ export namespace ThreadDto {
   ])
 
   export const CreateThread = checkExact([
-    body(['title', 'content', 'tags'])
-      .isString()
-      .custom((_, { req }) => {
-        const { community_id, sub_community_id, tenant_uuids } = req.body
-        if (tenant_uuids) {
-          return !community_id && !sub_community_id
-        }
-        return community_id && sub_community_id
-      })
-      .withMessage('community_id and sub_community_id or tenant_uuids must be filled'),
+    body(['title', 'content', 'tags']).isString(),
     body('community_id').optional({ values: 'falsy' }).isFloat({ min: 1 }),
     body('sub_community_id').optional({ values: 'falsy' }).isFloat({ min: 1 }),
     body('tenant_uuids').optional({ values: 'falsy' }).isArray(),

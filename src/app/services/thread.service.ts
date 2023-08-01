@@ -100,9 +100,7 @@ export namespace ThreadService {
           status_id: 1,
           ...(tenant_uuids && { is_pinned: true }),
         })
-        if (tenant_uuids) {
-          await ThreadTenantService.CreateThreadTenant(result.id, tenant_uuids)
-        }
+        await ThreadTenantService.CreateThreadTenant(result.id, tenant_uuids)
         return baseResponse('Ok', { ...result.dataValues, user })
       }
       return baseResponse('Unauthorized')

@@ -1,5 +1,6 @@
 import { Communities } from 'app/models/communities'
 import { SubCommunities } from 'app/models/sub_communities'
+import { ThreadTenants } from 'app/models/thread_tenants'
 import { Threads } from 'app/models/threads'
 import {
   Attributes,
@@ -13,8 +14,7 @@ import {
 export namespace ThreadRepository {
   const relations: Includeable[] = ['tenants', 'community', 'sub_community', 'status', 'likes']
   const includeableThreads = (
-    user_id?: number,
-    tenant_uuid?: string): (string | ProjectionAlias)[] => [
+    user_id?: number): (string | ProjectionAlias)[] => [
     [
       Sequelize.literal(`(
         SELECT status
@@ -23,31 +23,6 @@ export namespace ThreadRepository {
           "status"."id" = "Threads"."status_id"
       )`),
       'status_name',
-    ],
-    [
-      Sequelize.literal(`(
-        SELECT CASE
-          WHEN "threads"."community_id" IS NOT NULL
-            THEN (
-            SELECT tenant_uuid
-              FROM "communities" as "community"
-              WHERE
-                "community"."id" = "threads"."community_id"
-                AND "community"."tenant_uuid" = ${tenant_uuid}
-                LIMIT 1
-            )
-          WHEN "threads"."community_id" IS NULL
-            THEN (
-            SELECT tenant_uuid
-              FROM "thread_tenants" as "tenants"
-              WHERE
-                "tenants"."thread_id" = "threads"."id"
-                AND "tenants"."tenant_uuid" = ${tenant_uuid}
-                LIMIT 1
-            )
-        END
-      )`),
-      'tenant_uuid',
     ],
     [
       Sequelize.cast(
@@ -115,12 +90,20 @@ export namespace ThreadRepository {
 
   export function GetListThread(
     user_id: number,
-    tenant_uuid: string,
-    props: Parameters<typeof Threads.findAll>[0]) {
+    props: Parameters<typeof Threads.findAll>[0],
+    whereThreadTenants?: WhereOptions<ThreadTenants>) {
     return Threads.findAndCountAll({
       ...props,
-      include: relations,
-      attributes: { include: includeableThreads(user_id, tenant_uuid) },
+      include: [
+        {
+          model: ThreadTenants,
+          as: 'tenants',
+          where: whereThreadTenants,
+          attributes: [],
+        },
+        'tenants', 'community', 'sub_community', 'status', 'likes',
+      ],
+      attributes: { include: includeableThreads(user_id) },
       distinct: true,
     })
   }

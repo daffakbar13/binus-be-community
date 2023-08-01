@@ -19,7 +19,7 @@ export namespace ThreadService {
         const order = sortRequest(query)
         const search = searchRequest<Threads>(['tags', 'title'], query.search as string)
         const { count, rows } = await ThreadRepository.GetListThread(
-          user.id, query.tenant_uuid as string, {
+          user.id, {
             ...pagination,
             order,
             where: {
@@ -31,6 +31,8 @@ export namespace ThreadService {
               ...(query.sub_community_id && { sub_community_id: query.sub_community_id }),
               ...(query.tenant_uuid && { tenant_uuid: query.tenant_uuid }),
             },
+          }, {
+            ...(query.tenant_uuid && { tenant_uuid: query.tenant_uuid as string }),
           })
         const result = await UserService.GetMappedUsers(req, rows)
         if (result.data) {

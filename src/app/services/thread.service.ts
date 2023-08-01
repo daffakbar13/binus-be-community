@@ -42,8 +42,7 @@ export namespace ThreadService {
       }
       return baseResponse('Unauthorized')
     } catch (err) {
-      return err
-      // return baseResponse('InternalServerError')
+      return baseResponse('InternalServerError')
     }
   }
 

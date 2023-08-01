@@ -26,12 +26,12 @@ export namespace ThreadRepository {
     [
       Sequelize.literal(`(
         SELECT CASE
-          WHEN "threads"."community_id" IS NOT NULL
+          WHEN "Threads"."community_id" IS NOT NULL
             THEN (
             SELECT tenant_uuid
               FROM "communities" as "community"
               WHERE
-                "community"."id" = "threads"."community_id"
+                "community"."id" = "Threads"."community_id"
                 AND "community"."tenant_uuid" = ${tenant_uuid}
                 LIMIT 1
             )
@@ -39,7 +39,7 @@ export namespace ThreadRepository {
             SELECT tenant_uuid
               FROM "thread_tenants" as "tenants"
               WHERE
-                "tenants"."thread_id" = "threads"."id"
+                "tenants"."thread_id" = "Threads"."id"
                 AND "tenants"."tenant_uuid" = ${tenant_uuid}
                 LIMIT 1
             )

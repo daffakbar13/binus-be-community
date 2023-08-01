@@ -29,6 +29,7 @@ export namespace ThreadService {
               ...(query.is_pinned && { is_pinned: query.is_pinned }),
               ...(query.is_my_thread && { user_id: user.id }),
               ...(query.status_id && { status_id: query.status_id }),
+              ...(query.community_id && { community_id: query.community_id }),
               ...(query.sub_community_id && { sub_community_id: query.sub_community_id }),
             },
           },
@@ -98,7 +99,7 @@ export namespace ThreadService {
           ...req.body,
           user_id: user.id,
           status_id: 1,
-          ...(tenant_uuids && { is_pinned: true }),
+          ...(!['STUDENT', 'PARENT', 'TEACHER'].includes(user.role_name) && { is_pinned: true }),
         })
         if (tenant_uuids) {
           await ThreadTenantService.CreateThreadTenant(result.id, tenant_uuids)

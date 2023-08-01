@@ -21,8 +21,13 @@ export namespace ThreadTenantService {
     }
   }
 
-  export async function CreateThreadTenant(thread_id: number, tenant_uuids: string[]) {
-    const payload = tenant_uuids.map((tenant_uuid) => ({ thread_id, tenant_uuid }))
+  export async function CreateThreadTenant(thread_id: number, tenant_uuids: string | string[]) {
+    const payload: any[] = []
+    if (Array.isArray(tenant_uuids)) {
+      payload.push(...tenant_uuids.map((tenant_uuid) => ({ thread_id, tenant_uuid })))
+    } else {
+      payload.push({ thread_id, tenant_uuid: tenant_uuids })
+    }
     const result = await ThreadTenantRepository.CreateThreadTenant(payload)
     return result
   }

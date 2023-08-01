@@ -21,8 +21,13 @@ export namespace BannerTenantService {
     }
   }
 
-  export async function CreateBannerTenant(banner_id: number, tenant_uuids: string[]) {
-    const payload = tenant_uuids.map((tenant_uuid) => ({ banner_id, tenant_uuid }))
+  export async function CreateBannerTenant(banner_id: number, tenant_uuids: string | string[]) {
+    const payload: any[] = []
+    if (Array.isArray(tenant_uuids)) {
+      payload.push(...tenant_uuids.map((tenant_uuid) => ({ banner_id, tenant_uuid })))
+    } else {
+      payload.push({ banner_id, tenant_uuid: tenant_uuids })
+    }
     const result = await BannerTenantRepository.CreateBannerTenant(payload)
     return result
   }

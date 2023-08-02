@@ -72,6 +72,21 @@ export namespace SubCommunityMemberService {
     }
   }
 
+  export async function CancelSubCommunityMember(req: Request) {
+    try {
+      const sub_community_id = Number(req.params.id)
+      const { user } = req.session
+      if (user) {
+        await SubCommunityMemberRepository.CancelSubCommunityMember(sub_community_id, user.id)
+
+        return baseResponse('Ok')
+      }
+      return baseResponse('Unauthorized')
+    } catch (err) {
+      return baseResponse('InternalServerError')
+    }
+  }
+
   export async function DeleteSubCommunityMember(req: Request) {
     try {
       const sub_community_id = Number(req.params.id)

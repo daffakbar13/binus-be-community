@@ -3,7 +3,7 @@ import { AuthMiddleware } from 'app/middlewares/auth.middleware'
 import { Router } from 'express'
 
 const router = Router()
-const baseUrl = '/users'
+const baseUrl = '/user'
 
 router.get(
   '/info',

@@ -1,7 +1,6 @@
 import { Communities } from 'app/models/communities'
 import { SubCommunities } from 'app/models/sub_communities'
 import { ThreadComments } from 'app/models/thread_comments'
-import { ThreadTenants } from 'app/models/thread_tenants'
 import { Threads } from 'app/models/threads'
 import {
   Attributes,
@@ -13,13 +12,7 @@ import {
 } from 'sequelize'
 
 export namespace ThreadCommentRepository {
-  const relations = (whereThreadTenants?: WhereOptions): Includeable[] => [
-    {
-      model: ThreadTenants,
-      as: 'tenants',
-      attributes: [],
-      where: whereThreadTenants,
-    },
+  const relations: Includeable[] = [
     {
       model: Threads,
       as: 'thread',
@@ -97,23 +90,18 @@ export namespace ThreadCommentRepository {
   export function GetListThreadComment(
     user_id: number,
     props: Parameters<typeof ThreadComments.findAll>[0],
-    whereThreadTenants?: WhereOptions,
   ) {
     return ThreadComments.findAndCountAll({
       ...props,
-      include: relations(whereThreadTenants),
+      include: relations,
       attributes: { include: includeableThreadComments(user_id) },
       distinct: true,
     })
   }
 
-  export function GetDetailThreadComment(
-    user_id: number,
-    where: WhereOptions<ThreadComments>,
-    whereThreadTenants?: WhereOptions,
-  ) {
+  export function GetDetailThreadComment(user_id: number, where: WhereOptions<ThreadComments>) {
     return ThreadComments.findOne({
-      include: relations(whereThreadTenants),
+      include: relations,
       attributes: { include: includeableThreadComments(user_id) },
       where,
     })

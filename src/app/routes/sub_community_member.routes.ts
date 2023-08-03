@@ -34,6 +34,13 @@ router.post(
 )
 
 router.delete(
+  '/:id/members/request',
+  SubCommunityMemberDto.CancelSubCommunityMember,
+  ErrorMiddleware.DtoValidator,
+  SubCommunityMemberController.CancelSubCommunityMember,
+)
+
+router.delete(
   '/:id/members/delete',
   SubCommunityMemberDto.DeleteSubCommunityMember,
   ErrorMiddleware.DtoValidator,

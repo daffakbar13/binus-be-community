@@ -23,6 +23,11 @@ export namespace SubCommunityMemberController {
     return sendResponse(res, result)
   }
 
+  export async function CancelSubCommunityMember(req: Request, res: Response) {
+    const result = await SubCommunityMemberService.CancelSubCommunityMember(req)
+    return sendResponse(res, result)
+  }
+
   export async function DeleteSubCommunityMember(req: Request, res: Response) {
     const result = await SubCommunityMemberService.DeleteSubCommunityMember(req)
     return sendResponse(res, result)

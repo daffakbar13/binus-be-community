@@ -42,6 +42,12 @@ export namespace SubCommunityMemberRepository {
     )
   }
 
+  export function CancelSubCommunityMember(sub_community_id: number, user_ids: number) {
+    return SubCommunityMembers.destroy({
+      where: { sub_community_id, user_id: user_ids },
+    })
+  }
+
   export function DeleteSubCommunityMember(sub_community_id: number, user_ids: number[]) {
     return SubCommunityMembers.destroy({
       where: { sub_community_id, user_id: { [Op.or]: user_ids } },

@@ -1,4 +1,5 @@
 import { UserDto } from 'app/dto/user.dto'
+import { UserRepository } from 'app/repositories/user.repository'
 import axios from 'axios'
 import { BaseResponseSokrates, baseResponse } from 'common/dto/baseResponse.dto'
 import { getEnv } from 'configs/env'
@@ -12,6 +13,35 @@ export namespace UserService {
     return axiosInstance
   }
   const authService = instance()
+
+  export async function GetUserInfo(req: Request) {
+    try {
+      const { user } = req.session
+      if (user) {
+        const result_threads = await UserRepository.GetTotalThreads(
+          user.id,
+          {
+            where: { user_id: user.id },
+          },
+        )
+
+        const result_communities = await UserRepository.GetTotalCommunities(
+          user.id,
+          {
+            where: { user_id: user.id },
+          },
+        )
+
+        const total_threads = result_threads.length
+        const total_communities = result_communities.length
+
+        return baseResponse('Ok', { total_threads, total_communities })
+      }
+      return baseResponse('Unauthorized')
+    } catch (err) {
+      return baseResponse('InternalServerError')
+    }
+  }
 
   export async function UserInfo(req: Request) {
     try {

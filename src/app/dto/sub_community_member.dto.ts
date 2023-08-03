@@ -21,4 +21,6 @@ export namespace SubCommunityMemberDto {
   ])
 
   export const DeleteSubCommunityMember = ApproveSubCommunityMember
+
+  export const CancelSubCommunityMember = ApproveSubCommunityMember
 }

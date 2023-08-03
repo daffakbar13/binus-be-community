@@ -10,6 +10,7 @@ import {
 import { Threads } from '../threads'
 import { ThreadLikes } from '../thread_likes'
 import { MasterStatus } from '../master_status'
+import { ThreadTenants } from '../thread_tenants'
 
 export class ThreadComments extends Model<
   InferAttributes<ThreadComments>,
@@ -34,6 +35,8 @@ export class ThreadComments extends Model<
   declare status: NonAttribute<MasterStatus>
 
   declare status_id: number
+
+  declare tenants: NonAttribute<ThreadTenants[]>
 }
 
 try {

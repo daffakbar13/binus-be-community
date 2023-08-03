@@ -25,7 +25,7 @@ router.get(
 
 router.post(
   '/create',
-  UploadMiddleware.uploadFile('.svg').single('image'),
+  UploadMiddleware.uploadFile('.svg', '.png', '.jpeg', '.jpg').single('image'),
   SubCommunityDto.CreateSubCommunity,
   ErrorMiddleware.DtoValidator,
   SubCommunityController.CreateSubCommunity,
@@ -33,7 +33,7 @@ router.post(
 
 router.put(
   '/update/:id',
-  UploadMiddleware.uploadFile('.svg').single('image'),
+  UploadMiddleware.uploadFile('.svg', '.png', '.jpeg', '.jpg').single('image'),
   SubCommunityDto.UpdateSubCommunity,
   ErrorMiddleware.DtoValidator,
   SubCommunityController.Update,

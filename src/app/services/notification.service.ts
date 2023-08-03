@@ -14,6 +14,28 @@ export namespace NotificationService {
   }
   const notificationService = instance()
 
+  // eslint-disable-next-line no-shadow
+  export enum NotificationTypes {
+    // eslint-disable-next-line no-unused-vars
+    GLOBAL = 1,
+    // eslint-disable-next-line no-unused-vars
+    ARTICLES = 2,
+    // eslint-disable-next-line no-unused-vars
+    VIDEOS = 3,
+    // eslint-disable-next-line no-unused-vars
+    UPDATES = 4,
+    // eslint-disable-next-line no-unused-vars
+    MINIAPPS = 5,
+    // eslint-disable-next-line no-unused-vars
+    UPDATESCOMMUNITY = 6,
+    // eslint-disable-next-line no-unused-vars
+    THREADS = 7,
+    // eslint-disable-next-line no-unused-vars
+    COMMUNITY = 8,
+    // eslint-disable-next-line no-unused-vars
+    SUBCOMMUNITY = 9,
+  }
+
   export type RecipientTypes = 'all-users' | 'community' | 'specific-user'
 
   export interface CreateNotification {

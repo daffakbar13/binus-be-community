@@ -2,7 +2,6 @@ import { baseResponse } from 'common/dto/baseResponse.dto'
 import { Request } from 'express'
 import { paginationObject, responseWithPagination } from 'utils/helpers/pagination'
 import { CommunityMemberRepository } from 'app/repositories/community_member.repository'
-import moment from 'moment'
 import { UserService } from './user.service'
 import { NotificationService } from './notification.service'
 
@@ -88,7 +87,7 @@ export namespace CommunityMemberService {
           title: 'Join Community Approved',
           body: 'Your request join has been approved',
           user_ids: [user.id],
-          publish_date: moment().add(1, 'minutes').toDate(),
+          // publish_date: moment().add(1, 'minutes').toDate(),
           data: { id: String(community_id) },
         })
         return baseResponse('Ok', { results })

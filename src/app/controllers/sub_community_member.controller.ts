@@ -3,6 +3,11 @@ import { sendResponse } from 'common/dto/sendResponse.dto'
 import { Request, Response } from 'express'
 
 export namespace SubCommunityMemberController {
+  export async function GetAllSubCommunityMember(req: Request, res: Response) {
+    const result = await SubCommunityMemberService.GetAllSubCommunityMember(req)
+    return sendResponse(res, result)
+  }
+
   export async function GetSubCommunityMemberList(req: Request, res: Response) {
     const result = await SubCommunityMemberService.GetSubCommunityMemberList(req)
     return sendResponse(res, result)

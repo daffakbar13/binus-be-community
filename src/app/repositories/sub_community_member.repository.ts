@@ -4,6 +4,12 @@ import { CreationAttributes, Op, WhereOptions } from 'sequelize'
 export namespace SubCommunityMemberRepository {
   const relations = ['sub_community']
 
+  export async function GetAllSubCommunityMember(
+    props: Parameters<typeof SubCommunityMembers.findAll>[0],
+  ) {
+    return SubCommunityMembers.findAll(props)
+  }
+
   export async function GetSubCommunityMemberList(
     props: Parameters<typeof SubCommunityMembers.findAll>[0],
   ) {

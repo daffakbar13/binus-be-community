@@ -5,6 +5,22 @@ import { SubCommunityMemberRepository } from 'app/repositories/sub_community_mem
 import { UserService } from './user.service'
 
 export namespace SubCommunityMemberService {
+  export async function GetAllSubCommunityMember(req: Request) {
+    try {
+      const { params, query } = req
+      const community_id = Number(params.id)
+      const result = await SubCommunityMemberRepository.GetAllSubCommunityMember({
+        where: {
+          community_id,
+          ...(query.is_approved && { is_approved: query.is_approved }),
+        },
+      })
+      return baseResponse('Ok', result)
+    } catch (err) {
+      return baseResponse('InternalServerError')
+    }
+  }
+
   export async function GetSubCommunityMemberList(req: Request) {
     try {
       const { query } = req

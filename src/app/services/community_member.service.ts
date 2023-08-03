@@ -2,9 +2,27 @@ import { baseResponse } from 'common/dto/baseResponse.dto'
 import { Request } from 'express'
 import { paginationObject, responseWithPagination } from 'utils/helpers/pagination'
 import { CommunityMemberRepository } from 'app/repositories/community_member.repository'
+import moment from 'moment'
 import { UserService } from './user.service'
+import { NotificationService } from './notification.service'
 
 export namespace CommunityMemberService {
+  export async function GetAllCommunityMember(req: Request) {
+    try {
+      const { params, query } = req
+      const community_id = Number(params.id)
+      const result = await CommunityMemberRepository.GetAllCommunityMember({
+        where: {
+          community_id,
+          ...(query.is_approved && { is_approved: query.is_approved }),
+        },
+      })
+      return baseResponse('Ok', result)
+    } catch (err) {
+      return baseResponse('InternalServerError')
+    }
+  }
+
   export async function GetCommunityMemberList(req: Request) {
     try {
       const { query } = req
@@ -64,6 +82,15 @@ export namespace CommunityMemberService {
           community_id,
           req.body.user_ids,
         )
+        await NotificationService.CreateNotification(req, {
+          recipient_type: 'specific-user',
+          type_id: 8,
+          title: 'Join Community Approved',
+          body: 'Your request join has been approved',
+          user_ids: [user.id],
+          publish_date: moment().add(1, 'minutes').toDate(),
+          data: { id: String(community_id) },
+        })
         return baseResponse('Ok', { results })
       }
       return baseResponse('Unauthorized')

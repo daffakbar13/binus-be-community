@@ -6,6 +6,13 @@ import { Router } from 'express'
 const router = Router()
 
 router.get(
+  '/:id/members/all',
+  CommunityMemberDto.GetAllCommunityMember,
+  ErrorMiddleware.DtoValidator,
+  CommunityMemberController.GetAllCommunityMember,
+)
+
+router.get(
   '/:id/members/list',
   CommunityMemberDto.GetCommunityMemberList,
   ErrorMiddleware.DtoValidator,

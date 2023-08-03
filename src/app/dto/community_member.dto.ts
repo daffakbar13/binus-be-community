@@ -2,6 +2,11 @@ import { PaginationDto } from 'common/dto/pagination.dto'
 import { body, checkExact, param, query } from 'express-validator'
 
 export namespace CommunityMemberDto {
+  export const GetAllCommunityMember = checkExact([
+    param('id').isFloat({ min: 1 }),
+    query('is_approved').optional({ values: 'falsy' }).isBoolean(),
+  ])
+
   export const GetCommunityMemberList = checkExact([
     ...PaginationDto.RequestPagination,
     param('id').isFloat({ min: 1 }),

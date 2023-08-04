@@ -5,6 +5,7 @@ import { ErrorMiddleware } from 'app/middlewares/error.middleware'
 import { Router } from 'express'
 import { ThreadCommentRouter } from './thread_comment.routes'
 import { ThreadLikeRouter } from './thread_like.routes'
+import { ThreadSettingRouter } from './thread_setting.routes'
 
 const baseUrl = '/threads'
 const router = Router()
@@ -63,5 +64,6 @@ export const ThreadRouter = Router().use(
   AuthMiddleware.checkAuthenticate,
   ThreadCommentRouter,
   ThreadLikeRouter,
+  ThreadSettingRouter,
   router,
 )

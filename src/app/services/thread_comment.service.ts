@@ -48,7 +48,7 @@ export namespace ThreadCommentService {
     try {
       const { user } = req.session
       if (user) {
-        const result = await ThreadCommentRepository.CreateThreadComment({
+        const [result] = await ThreadCommentRepository.CreateThreadComment({
           ...req.body,
           user_id: user.id,
           status_id: 1,

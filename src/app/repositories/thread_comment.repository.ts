@@ -120,7 +120,7 @@ export namespace ThreadCommentRepository {
   }
 
   export function CreateThreadComment(payload: CreationAttributes<ThreadComments>) {
-    return ThreadComments.create(payload, { include: ['thread'] })
+    return ThreadComments.findOrCreate({ include: ['thread'], where: payload, defaults: payload })
   }
 
   export function UpdateThreadComment(

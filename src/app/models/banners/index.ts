@@ -7,7 +7,6 @@ import {
   DataTypes,
   NonAttribute,
 } from 'sequelize'
-import { Communities } from '../communities'
 
 export class Banners extends Model<InferAttributes<Banners>, InferCreationAttributes<Banners>> {
   declare id: CreationOptional<number>
@@ -35,8 +34,6 @@ export class Banners extends Model<InferAttributes<Banners>, InferCreationAttrib
   declare updated_at: NonAttribute<Date>
 
   declare deleted_at: NonAttribute<Date>
-
-  declare community: NonAttribute<Communities>
 }
 
 try {

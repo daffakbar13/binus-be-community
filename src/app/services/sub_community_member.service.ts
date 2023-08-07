@@ -3,6 +3,7 @@ import { Request } from 'express'
 import { paginationObject, responseWithPagination } from 'utils/helpers/pagination'
 import { SubCommunityMemberRepository } from 'app/repositories/sub_community_member.repository'
 import { UserService } from './user.service'
+import { NotificationService } from './notification.service'
 
 export namespace SubCommunityMemberService {
   export async function GetAllSubCommunityMember(req: Request) {
@@ -80,6 +81,14 @@ export namespace SubCommunityMemberService {
           sub_community_id,
           req.body.user_ids,
         )
+        await NotificationService.CreateNotification(req, {
+          recipient_type: 'specific-user',
+          type_id: NotificationService.NotificationTypes.SUBCOMMUNITY,
+          title: 'Join Sub Community Approved',
+          body: 'Your request join has been approved',
+          user_ids: results.map((r) => r.user_id),
+          data: { id: String(sub_community_id) },
+        })
         return baseResponse('Ok', { results })
       }
       return baseResponse('Unauthorized')

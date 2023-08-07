@@ -1,6 +1,7 @@
 import { baseResponse } from 'common/dto/baseResponse.dto'
 import { Request } from 'express'
 import { ThreadCommentLikeRepository } from 'app/repositories/thread_comment_like.repository'
+import { NotificationService } from './notification.service'
 
 export namespace ThreadCommentLikeService {
   export async function LikeThreadComment(req: Request) {
@@ -8,11 +9,19 @@ export namespace ThreadCommentLikeService {
       const id = Number(req.params.id)
       const { user } = req.session
       if (user) {
-        await ThreadCommentLikeRepository.CreateThreadCommentLike({
+        const [result] = await ThreadCommentLikeRepository.CreateThreadCommentLike({
           thread_comment_id: id,
           user_id: user.id,
         })
         const count = await CountLike(id)
+        await NotificationService.CreateNotification(req, {
+          recipient_type: 'specific-user',
+          title: 'Thread Comment Like',
+          body: `${user.name} like your comment`,
+          type_id: NotificationService.NotificationTypes.THREAD,
+          user_ids: [result.comment.thread.user_id],
+          data: { id: String(result.comment.thread.id) },
+        })
         return baseResponse('Ok', { count })
       }
       return baseResponse('Unauthorized')

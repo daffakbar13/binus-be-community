@@ -3,7 +3,7 @@ import { CreationAttributes, WhereOptions } from 'sequelize'
 
 export namespace ThreadLikeRepository {
   export function CreateThreadLike(payload: CreationAttributes<ThreadLikes>) {
-    return ThreadLikes.findOrCreate({ where: payload, defaults: payload })
+    return ThreadLikes.findOrCreate({ include: ['thread'], where: payload, defaults: payload })
   }
 
   export function DeleteThreadLike(where: WhereOptions<ThreadLikes>) {

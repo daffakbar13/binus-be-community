@@ -8,6 +8,7 @@ import { sortRequest } from 'utils/helpers/sort'
 import { MasterStatusRepository } from 'app/repositories/master_status.repository'
 import { UserService } from './user.service'
 import { ThreadTenantService } from './thread_tenant.service'
+import { NotificationService } from './notification.service'
 
 export namespace ThreadService {
   export async function GetListThread(req: Request) {
@@ -101,8 +102,16 @@ export namespace ThreadService {
           status_id: 1,
           ...(!['STUDENT', 'PARENT', 'TEACHER'].includes(user.role_name) && { is_pinned: true }),
         })
-        if (tenant_uuids) {
-          await ThreadTenantService.CreateThreadTenant(result.id, tenant_uuids)
+        await ThreadTenantService.CreateThreadTenant(result.id, tenant_uuids)
+        if (result.is_active && result.status_id === 2) {
+          await NotificationService.CreateNotification(req, {
+            recipient_type: 'specific-user',
+            title: 'New Thread',
+            body: `New Thread ${result.title}`,
+            type_id: NotificationService.NotificationTypes.THREAD,
+            tenant_uuids: Array.isArray(tenant_uuids) ? tenant_uuids : [tenant_uuids],
+            data: { id: String(result.id) },
+          })
         }
         return baseResponse('Ok', { ...result.dataValues, user })
       }
@@ -136,6 +145,16 @@ export namespace ThreadService {
         const [, [result]] = await ThreadRepository.UpdateThread(Number(req.params.id), {
           ...req.body,
         })
+        if (result.is_active && result.status_id === 2) {
+          await NotificationService.CreateNotification(req, {
+            recipient_type: 'specific-user',
+            title: 'Thread Approved',
+            body: `Thread ${result.title} has approved`,
+            type_id: NotificationService.NotificationTypes.THREAD,
+            user_ids: [result.user_id],
+            data: { id: String(result.id) },
+          })
+        }
         return baseResponse('Ok', result)
       }
       return baseResponse('BadRequest')

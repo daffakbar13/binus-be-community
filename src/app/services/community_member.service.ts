@@ -83,11 +83,10 @@ export namespace CommunityMemberService {
         )
         await NotificationService.CreateNotification(req, {
           recipient_type: 'specific-user',
-          type_id: 8,
+          type_id: NotificationService.NotificationTypes.COMMUNITY,
           title: 'Join Community Approved',
           body: 'Your request join has been approved',
-          user_ids: [user.id],
-          // publish_date: moment().add(1, 'minutes').toDate(),
+          user_ids: results.map((r) => r.user_id),
           data: { id: String(community_id) },
         })
         return baseResponse('Ok', { results })

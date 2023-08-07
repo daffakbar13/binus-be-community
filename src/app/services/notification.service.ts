@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-shadow */
 import { UserDto } from 'app/dto/user.dto'
 import axios from 'axios'
 import { BaseResponseSokrates, baseResponse } from 'common/dto/baseResponse.dto'
@@ -14,25 +16,15 @@ export namespace NotificationService {
   }
   const notificationService = instance()
 
-  // eslint-disable-next-line no-shadow
   export enum NotificationTypes {
-    // eslint-disable-next-line no-unused-vars
     GLOBAL = 1,
-    // eslint-disable-next-line no-unused-vars
-    ARTICLES = 2,
-    // eslint-disable-next-line no-unused-vars
-    VIDEOS = 3,
-    // eslint-disable-next-line no-unused-vars
-    UPDATES = 4,
-    // eslint-disable-next-line no-unused-vars
-    MINIAPPS = 5,
-    // eslint-disable-next-line no-unused-vars
-    UPDATESCOMMUNITY = 6,
-    // eslint-disable-next-line no-unused-vars
-    THREADS = 7,
-    // eslint-disable-next-line no-unused-vars
+    ARTICLE = 2,
+    VIDEO = 3,
+    BANNER = 4,
+    MINIAPP = 5,
+    BANNERCOMMUNITY = 6,
+    THREAD = 7,
     COMMUNITY = 8,
-    // eslint-disable-next-line no-unused-vars
     SUBCOMMUNITY = 9,
   }
 

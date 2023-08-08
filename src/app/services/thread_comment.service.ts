@@ -46,17 +46,17 @@ export namespace ThreadCommentService {
 
   export async function CreateThreadComment(req: Request) {
     try {
-      const { user } = req.session
-      if (user) {
+      const user = await UserService.UserInfo(req)
+      if (user.data) {
         const [result] = await ThreadCommentRepository.CreateThreadComment({
           ...req.body,
-          user_id: user.id,
+          user_id: user.data.id,
           status_id: 1,
         })
         await NotificationService.CreateNotification(req, {
           recipient_type: 'specific-user',
           title: 'Thread Comment',
-          body: `${user.name} commented your thread`,
+          body: `${user.data.name} commented your thread`,
           type_id: NotificationService.NotificationTypes.THREAD,
           user_ids: [result.thread.user_id],
           data: { id: String(result.thread.id) },

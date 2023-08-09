@@ -16,7 +16,7 @@ export namespace ThreadRepository {
     {
       model: ThreadTenants,
       as: 'tenants',
-      attributes: [],
+      attributes: ['tenant_uuid'],
       where: whereThreadTenants,
     },
     'community',

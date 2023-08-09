@@ -56,6 +56,8 @@ export class Threads extends Model<InferAttributes<Threads>, InferCreationAttrib
   declare status: NonAttribute<MasterStatus>
 
   declare tenants: NonAttribute<ThreadTenants[]>
+
+  declare tenantsUuid: NonAttribute<String>
 }
 
 try {

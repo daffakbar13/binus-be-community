@@ -39,10 +39,19 @@ export namespace ThreadService {
           },
         )
         const result = await UserService.GetMappedUsers(req, rows)
+        const thread: any = []
         if (result.data) {
+          result.data.forEach((data: any) => {
+            data.tenants.forEach((tenant: any) => {
+              thread.push({
+                ...data,
+                tenantsUuid: tenant.tenant_uuid,
+              })
+            })
+          })
           return baseResponse(
             'Ok',
-            responseWithPagination({ count, rows: result.data, ...pagination }),
+            responseWithPagination({ count: thread.length, rows: thread, ...pagination }),
           )
         }
         return result

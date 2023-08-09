@@ -34,8 +34,9 @@ export namespace ThreadDto {
     //   return community_id && sub_community_id
     // })
     // .withMessage('community_id and sub_community_id or tenant_uuids must be filled'),
-    body('community_id').isFloat({ min: 1 }),
-    body('sub_community_id').isFloat({ min: 1 }),
+    body('community_id').optional({ values: 'falsy' }).isFloat({ min: 1 }),
+    body('sub_community_id').optional({ values: 'falsy' }).isFloat({ min: 1 }),
+    body('is_allow_comment').isBoolean(),
     body('tenant_uuids').custom((value) => Array.isArray(value) || typeof value === 'string'),
   ])
 

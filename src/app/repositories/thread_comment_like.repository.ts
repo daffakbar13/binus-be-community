@@ -4,7 +4,7 @@ import { CreationAttributes, WhereOptions } from 'sequelize'
 
 export namespace ThreadCommentLikeRepository {
   export async function CreateThreadCommentLike(payload: CreationAttributes<ThreadCommentLikes>) {
-    const like = await ThreadCommentLikes.create(payload)
+    const [like] = await ThreadCommentLikes.findOrCreate({ where: payload, defaults: payload })
     const result = await ThreadCommentLikes.findOne({
       include: [
         {

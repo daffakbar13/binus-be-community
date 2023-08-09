@@ -34,6 +34,16 @@ export namespace ThreadRepository {
       'status_name',
     ],
     [
+      Sequelize.literal(`(
+        SELECT tenant_uuid
+        FROM "thread_tenants" as "tenants"
+        WHERE
+          "tenants"."thread_id" = "Threads"."id"
+        LIMIT 1
+      )`),
+      'tenant_uuid',
+    ],
+    [
       Sequelize.cast(
         Sequelize.literal(`(
           SELECT COUNT(*)

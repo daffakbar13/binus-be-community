@@ -2,8 +2,10 @@ import { ThreadLikes } from 'app/models/thread_likes'
 import { CreationAttributes, WhereOptions } from 'sequelize'
 
 export namespace ThreadLikeRepository {
-  export function CreateThreadLike(payload: CreationAttributes<ThreadLikes>) {
-    return ThreadLikes.findOrCreate({ include: ['thread'], where: payload, defaults: payload })
+  export async function CreateThreadLike(payload: CreationAttributes<ThreadLikes>) {
+    const like = await ThreadLikes.create(payload)
+    const result = await ThreadLikes.findOne({ include: ['thread'], where: { id: like.id } })
+    return result as ThreadLikes
   }
 
   export function DeleteThreadLike(where: WhereOptions<ThreadLikes>) {

@@ -119,8 +119,13 @@ export namespace ThreadCommentRepository {
     })
   }
 
-  export function CreateThreadComment(payload: CreationAttributes<ThreadComments>) {
-    return ThreadComments.findOrCreate({ include: ['thread'], where: payload, defaults: payload })
+  export async function CreateThreadComment(payload: CreationAttributes<ThreadComments>) {
+    const comment = await ThreadComments.create(payload)
+    const result = await ThreadComments.findOne({
+      include: ['thread'],
+      where: { id: comment.id },
+    })
+    return result as ThreadComments
   }
 
   export function UpdateThreadComment(

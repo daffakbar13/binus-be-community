@@ -48,7 +48,7 @@ export namespace ThreadCommentService {
     try {
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        const [result] = await ThreadCommentRepository.CreateThreadComment({
+        const result = await ThreadCommentRepository.CreateThreadComment({
           ...req.body,
           user_id: user.data.id,
           status_id: 1,
@@ -61,7 +61,7 @@ export namespace ThreadCommentService {
           user_ids: [result.thread.user_id],
           data: { id: String(result.thread.id) },
         })
-        return baseResponse('Ok', { ...result.dataValues, user })
+        return baseResponse('Ok', { ...result.dataValues, user: user.data })
       }
       return baseResponse('Unauthorized')
     } catch (err) {

@@ -10,7 +10,7 @@ export namespace ThreadLikeService {
       const id = Number(req.params.id)
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        const [result] = await ThreadLikeRepository.CreateThreadLike({
+        const result = await ThreadLikeRepository.CreateThreadLike({
           thread_id: Number(id),
           user_id: user.data.id,
         })

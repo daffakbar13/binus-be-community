@@ -10,7 +10,7 @@ export namespace ThreadCommentLikeService {
       const id = Number(req.params.id)
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        const [result] = await ThreadCommentLikeRepository.CreateThreadCommentLike({
+        const result = await ThreadCommentLikeRepository.CreateThreadCommentLike({
           thread_comment_id: id,
           user_id: user.data.id,
         })

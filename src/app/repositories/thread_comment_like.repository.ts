@@ -3,8 +3,9 @@ import { ThreadComments } from 'app/models/thread_comments'
 import { CreationAttributes, WhereOptions } from 'sequelize'
 
 export namespace ThreadCommentLikeRepository {
-  export function CreateThreadCommentLike(payload: CreationAttributes<ThreadCommentLikes>) {
-    return ThreadCommentLikes.findOrCreate({
+  export async function CreateThreadCommentLike(payload: CreationAttributes<ThreadCommentLikes>) {
+    const like = await ThreadCommentLikes.create(payload)
+    const result = await ThreadCommentLikes.findOne({
       include: [
         {
           model: ThreadComments,
@@ -12,9 +13,9 @@ export namespace ThreadCommentLikeRepository {
           include: ['thread'],
         },
       ],
-      where: payload,
-      defaults: payload,
+      where: { id: like.id },
     })
+    return result as ThreadCommentLikes
   }
 
   export function DeleteThreadCommentLike(where: WhereOptions<ThreadCommentLikes>) {

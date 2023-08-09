@@ -4,7 +4,10 @@ import { CreationAttributes, WhereOptions } from 'sequelize'
 
 export namespace ThreadCommentLikeRepository {
   export async function CreateThreadCommentLike(payload: CreationAttributes<ThreadCommentLikes>) {
-    const [like] = await ThreadCommentLikes.findOrCreate({ where: payload, defaults: payload })
+    const [like, isLike] = await ThreadCommentLikes.findOrCreate({
+      where: payload,
+      defaults: payload,
+    })
     const result = await ThreadCommentLikes.findOne({
       include: [
         {
@@ -15,7 +18,7 @@ export namespace ThreadCommentLikeRepository {
       ],
       where: { id: like.id },
     })
-    return result as ThreadCommentLikes
+    return [result, isLike] as [ThreadCommentLikes, boolean]
   }
 
   export function DeleteThreadCommentLike(where: WhereOptions<ThreadCommentLikes>) {

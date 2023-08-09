@@ -10,19 +10,21 @@ export namespace ThreadLikeService {
       const id = Number(req.params.id)
       const user = await UserService.UserInfo(req)
       if (user.data) {
-        const result = await ThreadLikeRepository.CreateThreadLike({
+        const [result, isLike] = await ThreadLikeRepository.CreateThreadLike({
           thread_id: Number(id),
           user_id: user.data.id,
         })
         const count = await CountLike(id)
-        await NotificationService.CreateNotification(req, {
-          recipient_type: 'specific-user',
-          title: 'Thread Like',
-          body: `${user.data.name} liked your thread`,
-          type_id: NotificationService.NotificationTypes.THREAD,
-          user_ids: [result.thread.user_id],
-          data: { id: String(result.thread.id) },
-        })
+        if (isLike) {
+          await NotificationService.CreateNotification(req, {
+            recipient_type: 'specific-user',
+            title: 'Thread Like',
+            body: `${user.data.name} liked your thread`,
+            type_id: NotificationService.NotificationTypes.THREAD,
+            user_ids: [result.thread.user_id],
+            data: { id: String(result.thread.id) },
+          })
+        }
         return baseResponse('Ok', { count })
       }
       return baseResponse('Unauthorized')

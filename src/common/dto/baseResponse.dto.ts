@@ -22,3 +22,9 @@ export type BaseResponseSokrates<T extends Data = null> = {
   data: T
   meta: any
 }
+
+export type BaseResponseTenant<T extends Data = null> = {
+  error: number
+  message: string
+  result: T
+}

@@ -22,6 +22,7 @@ export namespace CommunityDto {
   export const UpdateCommunity = checkExact([
     body(['name', 'description']).optional({ values: 'falsy' }).isString(),
     body('is_active').optional({ values: 'falsy' }).isBoolean(),
+    body(['is_parent', 'is_teacher', 'is_student']).optional({ values: 'falsy' }).isBoolean(),
   ])
 
   export const DeleteCommunity = checkExact([param('id').isFloat({ min: 1 })])

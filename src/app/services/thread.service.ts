@@ -9,6 +9,7 @@ import { MasterStatusRepository } from 'app/repositories/master_status.repositor
 import { UserService } from './user.service'
 import { ThreadTenantService } from './thread_tenant.service'
 import { NotificationService } from './notification.service'
+import { TenantService } from './tenant.service'
 
 export namespace ThreadService {
   export async function GetListThread(req: Request) {
@@ -39,10 +40,12 @@ export namespace ThreadService {
           },
         )
         const result = await UserService.GetMappedUsers(req, rows)
-        if (result.data) {
+        const tenant = await TenantService.GetMappedTenant(req, result.data)
+
+        if (tenant.data) {
           return baseResponse(
             'Ok',
-            responseWithPagination({ count, rows: result.data, ...pagination }),
+            responseWithPagination({ count, rows: tenant.data, ...pagination }),
           )
         }
         return result

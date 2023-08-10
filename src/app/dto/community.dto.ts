@@ -7,7 +7,7 @@ export namespace CommunityDto {
     ...PaginationDto.RequestPagination,
     SearchDto.SearchRequest,
     query('is_active').optional({ values: 'falsy' }).isBoolean(),
-    query(['is_parent', 'is_teacher', 'is_student']).optional({ values: 'falsy' }).isBoolean(),
+    query('is_member_type').optional({ values: 'falsy' }).isBoolean(),
     query('tenant_uuid').optional({ values: 'falsy' }).isString(),
   ])
 

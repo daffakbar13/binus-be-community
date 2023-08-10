@@ -53,14 +53,17 @@ export namespace ThreadCommentService {
           user_id: user.data.id,
           status_id: 1,
         })
-        await NotificationService.CreateNotification(req, {
-          recipient_type: 'specific-user',
-          title: 'Thread Comment',
-          body: `${user.data.name} commented your thread`,
-          type_id: NotificationService.NotificationTypes.THREAD,
-          user_ids: [result.thread.user_id],
-          data: { id: String(result.thread.id) },
-        })
+        const isMyThread = result.thread.user_id === user.data.id
+        if (!isMyThread) {
+          await NotificationService.CreateNotification(req, {
+            recipient_type: 'specific-user',
+            title: 'Thread Comment',
+            body: `${user.data.name} commented your thread`,
+            type_id: NotificationService.NotificationTypes.THREAD,
+            user_ids: [result.thread.user_id],
+            data: { id: String(result.thread.id) },
+          })
+        }
         return baseResponse('Ok', { ...result.dataValues, user: user.data })
       }
       return baseResponse('Unauthorized')

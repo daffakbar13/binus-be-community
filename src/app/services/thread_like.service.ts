@@ -15,7 +15,8 @@ export namespace ThreadLikeService {
           user_id: user.data.id,
         })
         const count = await CountLike(id)
-        if (isLike) {
+        const isMyThread = result.thread.user_id === user.data.id
+        if (isLike && !isMyThread) {
           await NotificationService.CreateNotification(req, {
             recipient_type: 'specific-user',
             title: 'Thread Like',

@@ -5,6 +5,7 @@ import { paginationObject, responseWithPagination } from 'utils/helpers/paginati
 import { MasterStatusRepository } from 'app/repositories/master_status.repository'
 import { sortRequest } from 'utils/helpers/sort'
 import { UserService } from './user.service'
+import { TenantService } from './tenant.service'
 import { NotificationService } from './notification.service'
 
 export namespace ThreadCommentService {
@@ -30,10 +31,12 @@ export namespace ThreadCommentService {
           },
         )
         const result = await UserService.GetMappedUsers(req, rows, ['thread'])
-        if (result.data) {
+        const tenant = await TenantService.GetMappedTenant(req, result.data)
+
+        if (tenant.data) {
           return baseResponse(
             'Ok',
-            responseWithPagination({ count, rows: result.data, ...pagination }),
+            responseWithPagination({ count, rows: tenant.data, ...pagination }),
           )
         }
         return result

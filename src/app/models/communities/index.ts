@@ -31,6 +31,12 @@ export class Communities extends Model<
 
   declare is_active: boolean
 
+  declare is_parent: boolean
+
+  declare is_student: boolean
+
+  declare is_teacher: boolean
+
   declare created_at: NonAttribute<Date>
 
   declare updated_at: NonAttribute<Date>
@@ -61,6 +67,18 @@ try {
       is_active: {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
+      },
+      is_parent: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      is_student: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      is_teacher: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
       },
     },
     {

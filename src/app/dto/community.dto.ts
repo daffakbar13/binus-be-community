@@ -7,6 +7,7 @@ export namespace CommunityDto {
     ...PaginationDto.RequestPagination,
     SearchDto.SearchRequest,
     query('is_active').optional({ values: 'falsy' }).isBoolean(),
+    query('is_member_type').optional({ values: 'falsy' }).isBoolean(),
     query('tenant_uuid').optional({ values: 'falsy' }).isString(),
   ])
 
@@ -15,6 +16,7 @@ export namespace CommunityDto {
   export const CreateCommunity = checkExact([
     body(['name', 'description']).isString(),
     body('tenant_uuid').isString(),
+    body(['is_parent', 'is_teacher', 'is_student']).isBoolean(),
   ])
 
   export const UpdateCommunity = checkExact([

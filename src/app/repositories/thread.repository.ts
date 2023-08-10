@@ -16,7 +16,7 @@ export namespace ThreadRepository {
     {
       model: ThreadTenants,
       as: 'tenants',
-      attributes: [],
+      attributes: ['tenant_uuid'],
       where: whereThreadTenants,
     },
     'community',
@@ -32,6 +32,16 @@ export namespace ThreadRepository {
           "status"."id" = "Threads"."status_id"
       )`),
       'status_name',
+    ],
+    [
+      Sequelize.literal(`(
+        SELECT tenant_uuid
+        FROM "thread_tenants" as "tenants"
+        WHERE
+          "tenants"."thread_id" = "Threads"."id"
+        LIMIT 1
+      )`),
+      'tenant_uuid',
     ],
     [
       Sequelize.cast(

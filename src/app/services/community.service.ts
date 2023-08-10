@@ -23,6 +23,9 @@ export namespace CommunityService {
             ...search,
             ...(query.tenant_uuid && { tenant_uuid: query.tenant_uuid }),
             ...(query.is_active && { is_active: query.is_active }),
+            ...(query.is_member_type && user.role_name === 'TEACHER' && { is_teacher: true }),
+            ...(query.is_member_type && user.role_name === 'STUDENT' && { is_student: true }),
+            ...(query.is_member_type && user.role_name === 'PARENT' && { is_parent: true }),
           },
         })
         return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))

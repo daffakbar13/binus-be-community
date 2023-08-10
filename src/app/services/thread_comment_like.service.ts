@@ -21,7 +21,7 @@ export namespace ThreadCommentLikeService {
             title: 'Thread Comment Like',
             body: `${user.data.name} like your comment`,
             type_id: NotificationService.NotificationTypes.THREAD,
-            user_ids: [result.comment.thread.user_id],
+            user_ids: [result.comment.user_id],
             data: { id: String(result.comment.thread.id) },
           })
         }

@@ -46,7 +46,12 @@ export namespace TenantService {
         })
       } else {
         const filter = tenant.find((a: any) => a.tenant_uuid === data.user.tenant_uuid)
-        result.push({ ...data, tenant: filter })
+        const assign: any = []
+        data.tenants.forEach((item: any) => {
+          const filterTenant = tenant.find((a: any) => a.tenant_uuid === item.tenant_uuid)
+          assign.push(filterTenant)
+        })
+        result.push({ ...data, tenant: filter, assignTenant: assign })
       }
 
       return baseResponse('Ok', result)

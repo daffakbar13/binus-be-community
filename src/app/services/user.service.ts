@@ -74,7 +74,7 @@ export namespace UserService {
 
   export async function GetMappedUsers<T extends Model = Model>(
     req: Request,
-    data: ({ user_id: number } & T) | ({ user_id: number } & T)[],
+    data: ({ user_id: number } & T) | ({ user_id: number } & T)[] | any,
     relations: string[] = [],
   ) {
     try {
@@ -87,6 +87,9 @@ export namespace UserService {
         )
       } else {
         user_ids.push(data.user_id)
+        if (data.thread) {
+          user_ids.push(data.thread.user_id)
+        }
       }
       if (user_ids.length > 0) {
         const users = await GetUserByIds(req, { user_ids: JSON.stringify(user_ids) })

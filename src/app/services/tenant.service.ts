@@ -35,12 +35,19 @@ export namespace TenantService {
       const tenants: any = await TenantList(req)
       const tenant = tenants.result.data
 
+      const isArray = Array.isArray(data)
+
       const result: any = []
 
-      data.forEach((item: any) => {
-        const tenantFilter = tenant.find((a: any) => a.tenant_uuid === item.user.tenant_uuid)
-        result.push({ ...item, tenant: tenantFilter })
-      })
+      if (isArray) {
+        data.forEach((item: any) => {
+          const tenantFilter = tenant.find((a: any) => a.tenant_uuid === item.user.tenant_uuid)
+          result.push({ ...item, tenant: tenantFilter })
+        })
+      } else {
+        const filter = tenant.find((a: any) => a.tenant_uuid === data.user.tenant_uuid)
+        result.push({ ...data, tenant: filter })
+      }
 
       return baseResponse('Ok', result)
     } catch (err) {

@@ -14,6 +14,7 @@ export const s3Storage = multerS3({
   s3,
   bucket: getEnv('BUCKET_NAME'),
   acl: 'public-read',
+  contentType: multerS3.AUTO_CONTENT_TYPE,
   metadata: (_, file, cb) => {
     const { fieldname } = file
     cb(null, { fieldname })

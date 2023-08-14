@@ -36,6 +36,8 @@ export class ThreadComments extends Model<
 
   declare status_id: number
 
+  declare tenant_uuid: string
+
   declare tenants: NonAttribute<ThreadTenants[]>
 }
 
@@ -63,6 +65,7 @@ try {
         },
       },
       comment: DataTypes.STRING,
+      tenant_uuid: DataTypes.TEXT,
     },
     {
       tableName: 'thread_comments',

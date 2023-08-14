@@ -37,7 +37,7 @@ export namespace TenantService {
 
       const isArray = Array.isArray(data)
 
-      const result: any = []
+      let result: any = []
 
       if (isArray) {
         data.forEach((item: any) => {
@@ -51,7 +51,7 @@ export namespace TenantService {
           const filterTenant = tenant.find((a: any) => a.tenant_uuid === item.tenant_uuid)
           assign.push(filterTenant)
         })
-        result.push({ ...data, tenant: filter, assignTenant: assign })
+        result = ({ ...data, tenant: filter, assignTenant: assign })
       }
 
       return baseResponse('Ok', result)

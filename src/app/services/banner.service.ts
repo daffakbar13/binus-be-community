@@ -6,6 +6,8 @@ import { getEnv } from 'configs/env'
 import { s3 } from 'configs/aws'
 import moment from 'moment'
 import { paginationObject, responseWithPagination } from 'utils/helpers/pagination'
+import { Constant } from 'common/constants'
+import { format } from 'util'
 import { BannerTenantService } from './banner_tenant.service'
 import { NotificationService } from './notification.service'
 
@@ -57,9 +59,9 @@ export namespace BannerService {
           const tenants = await BannerTenantService.CreateBannerTenant(result.id, tenant_uuids)
           await NotificationService.CreateNotification(req, {
             recipient_type: 'specific-user',
-            type_id: NotificationService.NotificationTypes.BANNERCOMMUNITY,
-            title: 'New Banner Community',
-            body: `New Banner Community ${result.title}`,
+            type_id: NotificationService.NotificationTypes.BANNER,
+            title: Constant.NOTIFICATION_TITLE_NEW_BANNER,
+            body: format(Constant.NOTIFICATION_BODY_NEW_BANNER, result.title),
             tenant_uuids: tenants.map((t) => t.tenant_uuid),
             data: { id: String(result.id) },
           })

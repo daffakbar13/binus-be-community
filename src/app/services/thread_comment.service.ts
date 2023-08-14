@@ -4,6 +4,8 @@ import { Request } from 'express'
 import { paginationObject, responseWithPagination } from 'utils/helpers/pagination'
 import { MasterStatusRepository } from 'app/repositories/master_status.repository'
 import { sortRequest } from 'utils/helpers/sort'
+import { Constant } from 'common/constants'
+import { format } from 'util'
 import { UserService } from './user.service'
 import { TenantService } from './tenant.service'
 import { NotificationService } from './notification.service'
@@ -60,8 +62,8 @@ export namespace ThreadCommentService {
         if (!isMyThread) {
           await NotificationService.CreateNotification(req, {
             recipient_type: 'specific-user',
-            title: 'Thread Comment',
-            body: `${user.data.name} commented your thread`,
+            title: Constant.NOTIFICATION_TITLE_COMMENT_THREAD,
+            body: format(Constant.NOTIFICATION_BODY_COMMENT_THREAD, user.data.name),
             type_id: NotificationService.NotificationTypes.THREAD,
             user_ids: [result.thread.user_id],
             data: { id: String(result.thread.id) },

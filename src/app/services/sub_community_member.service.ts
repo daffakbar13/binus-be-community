@@ -2,6 +2,7 @@ import { baseResponse } from 'common/dto/baseResponse.dto'
 import { Request } from 'express'
 import { paginationObject, responseWithPagination } from 'utils/helpers/pagination'
 import { SubCommunityMemberRepository } from 'app/repositories/sub_community_member.repository'
+import { Constant } from 'common/constants'
 import { UserService } from './user.service'
 import { NotificationService } from './notification.service'
 
@@ -84,8 +85,8 @@ export namespace SubCommunityMemberService {
         await NotificationService.CreateNotification(req, {
           recipient_type: 'specific-user',
           type_id: NotificationService.NotificationTypes.SUBCOMMUNITY,
-          title: 'Join Sub Community Approved',
-          body: 'Your request join has been approved',
+          title: Constant.NOTIFICATION_TITLE_APPROVE_SUB_COMMUNITY_MEMBER,
+          body: Constant.NOTIFICATION_BODY_APPROVE_SUB_COMMUNITY_MEMBER,
           user_ids: results.map((r) => r.user_id),
           data: { id: String(sub_community_id) },
         })

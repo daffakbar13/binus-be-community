@@ -1,6 +1,8 @@
 import { baseResponse } from 'common/dto/baseResponse.dto'
 import { Request } from 'express'
 import { ThreadCommentLikeRepository } from 'app/repositories/thread_comment_like.repository'
+import { Constant } from 'common/constants'
+import { format } from 'util'
 import { NotificationService } from './notification.service'
 import { UserService } from './user.service'
 
@@ -19,8 +21,8 @@ export namespace ThreadCommentLikeService {
         if (isLike && !isMyThread) {
           await NotificationService.CreateNotification(req, {
             recipient_type: 'specific-user',
-            title: 'Thread Comment Like',
-            body: `${user.data.name} like your comment`,
+            title: Constant.NOTIFICATION_TITLE_COMMENT_LIKE_THREAD,
+            body: format(Constant.NOTIFICATION_BODY_COMMENT_LIKE_THREAD, user.data.name),
             type_id: NotificationService.NotificationTypes.THREAD,
             user_ids: [result.comment.user_id],
             data: { id: String(result.comment.thread.id) },

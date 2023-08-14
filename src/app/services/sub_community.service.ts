@@ -7,6 +7,8 @@ import { searchRequest } from 'utils/helpers/search'
 import { DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { getEnv } from 'configs/env'
 import { s3 } from 'configs/aws'
+import { Constant } from 'common/constants'
+import { format } from 'util'
 import { NotificationService } from './notification.service'
 
 export namespace SubCommunityService {
@@ -67,8 +69,8 @@ export namespace SubCommunityService {
           })
           await NotificationService.CreateNotification(req, {
             recipient_type: 'specific-user',
-            title: 'New Sub Community',
-            body: `New Sub Community ${result.name}`,
+            title: Constant.NOTIFICATION_TITLE_NEW_SUB_COMMUNITY,
+            body: format(Constant.NOTIFICATION_BODY_NEW_SUB_COMMUNITY, result.name),
             type_id: NotificationService.NotificationTypes.COMMUNITY,
             community_id: result.community_id,
             data: { id: String(result.id) },

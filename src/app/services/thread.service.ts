@@ -6,6 +6,8 @@ import { paginationObject, responseWithPagination } from 'utils/helpers/paginati
 import { searchRequest } from 'utils/helpers/search'
 import { sortRequest } from 'utils/helpers/sort'
 import { MasterStatusRepository } from 'app/repositories/master_status.repository'
+import { Constant } from 'common/constants'
+import { format } from 'util'
 import { UserService } from './user.service'
 import { ThreadTenantService } from './thread_tenant.service'
 import { NotificationService } from './notification.service'
@@ -110,8 +112,8 @@ export namespace ThreadService {
         if (result.is_active && result.status_id === 2) {
           await NotificationService.CreateNotification(req, {
             recipient_type: 'specific-user',
-            title: 'New Thread',
-            body: `New Thread ${result.title}`,
+            title: Constant.NOTIFICATION_TITLE_NEW_THREAD,
+            body: format(Constant.NOTIFICATION_BODY_NEW_THREAD, result.title),
             type_id: NotificationService.NotificationTypes.THREAD,
             tenant_uuids: Array.isArray(tenant_uuids) ? tenant_uuids : [tenant_uuids],
             data: { id: String(result.id) },

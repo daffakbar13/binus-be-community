@@ -59,7 +59,7 @@ export namespace BannerService {
           const tenants = await BannerTenantService.CreateBannerTenant(result.id, tenant_uuids)
           await NotificationService.CreateNotification(req, {
             recipient_type: 'specific-user',
-            type_id: NotificationService.NotificationTypes.BANNER,
+            type_id: NotificationService.NotificationTypes.BANNERCOMMUNITY,
             title: Constant.NOTIFICATION_TITLE_NEW_BANNER,
             body: format(Constant.NOTIFICATION_BODY_NEW_BANNER, result.title),
             tenant_uuids: tenants.map((t) => t.tenant_uuid),

@@ -84,7 +84,8 @@ export namespace ThreadService {
         const thread = await ThreadRepository.GetDetailThread(user.id, { id: req.params.id })
         if (thread) {
           const result = await UserService.GetMappedUsers(req, thread)
-          return result
+          const tenant = await TenantService.GetMappedTenant(req, result.data)
+          return tenant
         }
         return baseResponse('Ok')
       }

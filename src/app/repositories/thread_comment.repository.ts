@@ -28,12 +28,12 @@ export namespace ThreadCommentRepository {
         {
           model: Communities,
           as: 'community',
-          required: true,
+          required: false,
         },
         {
           model: SubCommunities,
           as: 'sub_community',
-          required: true,
+          required: false,
         },
       ],
     },

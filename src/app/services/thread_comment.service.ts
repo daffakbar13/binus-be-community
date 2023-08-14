@@ -26,6 +26,7 @@ export namespace ThreadCommentService {
             where: {
               ...(query.thread_id && { thread_id: query.thread_id }),
               ...(query.status_id && { status_id: query.status_id }),
+              ...(user.tenant_uuid !== null && { tenant_uuid: user.tenant_uuid }),
             },
           },
           {
@@ -56,6 +57,7 @@ export namespace ThreadCommentService {
         const result = await ThreadCommentRepository.CreateThreadComment({
           ...req.body,
           user_id: user.data.id,
+          tenant_uuid: user.data.tenant_uuid,
           status_id: 1,
         })
         const isMyThread = result.thread.user_id === user.data.id

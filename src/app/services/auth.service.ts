@@ -3,6 +3,8 @@ import axios from 'axios'
 import { BaseResponse, baseResponse } from 'common/dto/baseResponse.dto'
 import { getEnv } from 'configs/env'
 import { Request } from 'express'
+import { Constant } from 'common/constants'
+import { LoggingService } from './logging.service'
 
 export namespace AuthService {
   const instance = () => {
@@ -16,8 +18,9 @@ export namespace AuthService {
 
   export async function CheckToken(req: Request) {
     try {
+      const { authorization, xid } = req.headers
       const result = await authService.get<null, BaseResponse<UserDto.User>>('/token/verify', {
-        headers: { Authorization: req.headers.authorization },
+        headers: { Authorization: authorization, xid },
       })
 
       if (result.data && result.status === 200) {
@@ -25,6 +28,7 @@ export namespace AuthService {
         return true
       }
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, err)
       return false
     }
     return false
@@ -32,11 +36,13 @@ export namespace AuthService {
 
   export async function DecodeToken(req: Request) {
     try {
+      const { authorization, xid } = req.headers
       const result = await authService.get('/token/decode', {
-        headers: req.headers,
+        headers: { Authorization: authorization, xid },
       })
       return result
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, err)
       return baseResponse('InternalServerError')
     }
   }

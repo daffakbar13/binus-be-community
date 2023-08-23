@@ -5,11 +5,11 @@ import { Request, Response } from 'express'
 export namespace ThreadCommentLikeController {
   export async function Like(req: Request, res: Response) {
     const result = await ThreadCommentLikeService.LikeThreadComment(req)
-    return sendResponse(res, result)
+    return sendResponse(req, res, result)
   }
 
   export async function Unlike(req: Request, res: Response) {
     const result = await ThreadCommentLikeService.UnlikeThreadComment(req)
-    return sendResponse(res, result)
+    return sendResponse(req, res, result)
   }
 }

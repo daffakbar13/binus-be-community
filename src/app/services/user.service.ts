@@ -1,10 +1,12 @@
 import { UserDto } from 'app/dto/user.dto'
 import { UserRepository } from 'app/repositories/user.repository'
 import axios from 'axios'
+import { Constant } from 'common/constants'
 import { BaseResponseSokrates, baseResponse } from 'common/dto/baseResponse.dto'
 import { getEnv } from 'configs/env'
 import { Request } from 'express'
 import { Model } from 'sequelize'
+import { LoggingService } from './logging.service'
 
 export namespace UserService {
   const instance = () => {
@@ -18,27 +20,23 @@ export namespace UserService {
     try {
       const { user } = req.session
       if (user) {
-        const result_threads = await UserRepository.GetTotalThreads(
-          user.id,
-          {
-            where: { user_id: user.id },
-          },
-        )
+        const result_threads = await UserRepository.GetTotalThreads(user.id, {
+          where: { user_id: user.id },
+        })
 
-        const result_communities = await UserRepository.GetTotalCommunities(
-          user.id,
-          {
-            where: { user_id: user.id },
-          },
-        )
+        const result_communities = await UserRepository.GetTotalCommunities(user.id, {
+          where: { user_id: user.id },
+        })
 
         const total_threads = result_threads.length
         const total_communities = result_communities.length
 
         return baseResponse('Ok', { total_threads, total_communities })
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_SOKRATES_SERVICE, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -53,6 +51,7 @@ export namespace UserService {
       )
       return result
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_SOKRATES_SERVICE, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -68,6 +67,7 @@ export namespace UserService {
       )
       return result
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_SOKRATES_SERVICE, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -121,10 +121,12 @@ export namespace UserService {
             ...end,
           })
         }
+        LoggingService.Error(req, Constant.ERR_SOKRATES_SERVICE, Constant.ERR_USER_FORBIDDEN)
         return baseResponse('Forbidden')
       }
       return baseResponse('Ok', data)
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_SOKRATES_SERVICE, err)
       return baseResponse('InternalServerError')
     }
   }

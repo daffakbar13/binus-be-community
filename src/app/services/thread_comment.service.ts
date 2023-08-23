@@ -9,6 +9,7 @@ import { format } from 'util'
 import { UserService } from './user.service'
 import { TenantService } from './tenant.service'
 import { NotificationService } from './notification.service'
+import { LoggingService } from './logging.service'
 
 export namespace ThreadCommentService {
   export async function GetListThreadComment(req: Request) {
@@ -44,8 +45,10 @@ export namespace ThreadCommentService {
         }
         return result
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -73,8 +76,10 @@ export namespace ThreadCommentService {
         }
         return baseResponse('Ok', { ...result.dataValues, user: user.data })
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -92,8 +97,10 @@ export namespace ThreadCommentService {
         }
         return baseResponse('Ok')
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -112,8 +119,10 @@ export namespace ThreadCommentService {
 
         return baseResponse('Ok', isUpdated ? { ...result.dataValues, user } : null)
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -131,6 +140,7 @@ export namespace ThreadCommentService {
       }
       return baseResponse('BadRequest')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -141,6 +151,7 @@ export namespace ThreadCommentService {
       await ThreadCommentRepository.DeleteThreadComment({ id })
       return baseResponse('Ok')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }

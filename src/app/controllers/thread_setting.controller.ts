@@ -5,11 +5,11 @@ import { Request, Response } from 'express'
 export namespace ThreadSettingController {
   export async function GetThreadSettingList(req: Request, res: Response) {
     const result = await ThreadSettingService.GetListThreadSetting(req)
-    return sendResponse(res, result)
+    return sendResponse(req, res, result)
   }
 
   export async function UpdateThreadSetting(req: Request, res: Response) {
     const result = await ThreadSettingService.UpdateThreadSetting(req)
-    return sendResponse(res, result)
+    return sendResponse(req, res, result)
   }
 }

@@ -30,4 +30,20 @@ export namespace Constant {
   export const NOTIFICATION_BODY_COMMENT_LIKE_THREAD = '%s like your comment'
 
   // <END> NOTIFICATIONS
+
+  export const LOG_KEY = 'logs'
+  export const LOG_CACHE_EXP = 1000 * 60 * 60 * 24 * 2 // 3 days
+  export const APP_NAME = 'Sokrates Community'
+  export const ERR_APP = 'errors'
+  export const ERR_INTERNAL = 'internal server error, err: '
+  export const ERR_AUTH_SERVICE = 'third party error on auth service, err: '
+  export const ERR_SUPERAPPS_SERVICE = 'third party error on superapps service, err: '
+  export const ERR_COMMUNITY_SERVICE = 'third party error on community service, err: '
+  export const ERR_SOKRATES_SERVICE = 'third party error on sokrates service, err: '
+  export const ERR_SOKRATES_SYSTEM_SERVICE = 'third party error on sokrates system service, err: '
+  export const ERR_AWS = 'aws server error, err: '
+  export const ERR_FILE_NOT_EXISTS = 'file not exists'
+  export const ERR_SESSION_USER_NOT_FOUND = 'session user not found'
+  export const ERR_STATUS_NOT_FOUND = 'status not found'
+  export const ERR_USER_FORBIDDEN = 'user forbidden to access'
 }

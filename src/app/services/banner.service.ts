@@ -10,6 +10,7 @@ import { Constant } from 'common/constants'
 import { format } from 'util'
 import { BannerTenantService } from './banner_tenant.service'
 import { NotificationService } from './notification.service'
+import { LoggingService } from './logging.service'
 
 export namespace BannerService {
   export async function GetBannerList(req: Request) {
@@ -29,6 +30,7 @@ export namespace BannerService {
       )
       return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -38,6 +40,7 @@ export namespace BannerService {
       const result = await BannerRepository.GetBannerDetail({ id: req.params.id })
       return baseResponse('Ok', result)
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -56,7 +59,7 @@ export namespace BannerService {
             image_url: file.location,
             image_key: file.key,
           })
-          const tenants = await BannerTenantService.CreateBannerTenant(result.id, tenant_uuids)
+          const tenants = await BannerTenantService.CreateBannerTenant(req, result.id, tenant_uuids)
           await NotificationService.CreateNotification(req, {
             recipient_type: 'specific-user',
             type_id: NotificationService.NotificationTypes.BANNERCOMMUNITY,
@@ -67,10 +70,13 @@ export namespace BannerService {
           })
           return baseResponse('Ok', result)
         }
+        LoggingService.Error(req, Constant.ERR_INTERNAL, Constant.ERR_FILE_NOT_EXISTS)
         return baseResponse('BadRequest')
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -82,7 +88,7 @@ export namespace BannerService {
       const id = Number(req.params.id)
       if (user) {
         if (file) {
-          await DeleteImageFromAWS(id)
+          await DeleteImageFromAWS(req, id)
         }
         const [, [result]] = await BannerRepository.UpdateBanner(id, {
           ...req.body,
@@ -94,8 +100,10 @@ export namespace BannerService {
         })
         return baseResponse('Ok', result)
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -103,22 +111,27 @@ export namespace BannerService {
   export async function DeleteBanner(req: Request) {
     try {
       const id = Number(req.params.id)
-      await DeleteImageFromAWS(id)
+      await DeleteImageFromAWS(req, id)
       await BannerRepository.DeleteBanner({ id })
       return baseResponse('Ok')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
 
-  export async function DeleteImageFromAWS(id: number) {
-    const oldData = await BannerRepository.GetBannerDetail({ id })
-    if (oldData) {
-      const deleteCmd = new DeleteObjectCommand({
-        Bucket: getEnv('BUCKET_NAME'),
-        Key: oldData.image_key,
-      })
-      await s3.send(deleteCmd)
+  export async function DeleteImageFromAWS(req: Request, id: number) {
+    try {
+      const oldData = await BannerRepository.GetBannerDetail({ id })
+      if (oldData) {
+        const deleteCmd = new DeleteObjectCommand({
+          Bucket: getEnv('BUCKET_NAME'),
+          Key: oldData.image_key,
+        })
+        await s3.send(deleteCmd)
+      }
+    } catch (err) {
+      LoggingService.Error(req, Constant.ERR_AWS, err)
     }
   }
 }

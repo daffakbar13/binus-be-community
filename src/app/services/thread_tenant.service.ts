@@ -1,13 +1,16 @@
 import { ThreadTenantRepository } from 'app/repositories/thread_tenant.repository'
+import { Constant } from 'common/constants'
 import { baseResponse } from 'common/dto/baseResponse.dto'
 import { Request } from 'express'
+import { LoggingService } from './logging.service'
 
 export namespace ThreadTenantService {
-  export async function GetListThreadTenant() {
+  export async function GetListThreadTenant(req: Request) {
     try {
       const result = await ThreadTenantRepository.GetListThreadTenant()
       return baseResponse('Ok', { results: result })
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -17,6 +20,7 @@ export namespace ThreadTenantService {
       const result = await ThreadTenantRepository.GetDetailThreadTenant({ id: req.params.id })
       return baseResponse('Ok', result)
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -45,8 +49,10 @@ export namespace ThreadTenantService {
         )
         return baseResponse('Ok', result)
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -56,6 +62,7 @@ export namespace ThreadTenantService {
       await ThreadTenantRepository.DeleteThreadTenant({ id: req.params.id })
       return baseResponse('Ok')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }

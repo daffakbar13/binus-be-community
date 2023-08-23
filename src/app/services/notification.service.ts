@@ -5,6 +5,8 @@ import axios from 'axios'
 import { BaseResponseSokrates, baseResponse } from 'common/dto/baseResponse.dto'
 import { getEnv } from 'configs/env'
 import { Request } from 'express'
+import { Constant } from 'common/constants'
+import { LoggingService } from './logging.service'
 
 export namespace NotificationService {
   const instance = () => {
@@ -54,6 +56,7 @@ export namespace NotificationService {
       )
       return result
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_SUPERAPPS_SERVICE, err)
       return baseResponse('InternalServerError')
     }
   }

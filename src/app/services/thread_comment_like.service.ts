@@ -5,6 +5,7 @@ import { Constant } from 'common/constants'
 import { format } from 'util'
 import { NotificationService } from './notification.service'
 import { UserService } from './user.service'
+import { LoggingService } from './logging.service'
 
 export namespace ThreadCommentLikeService {
   export async function LikeThreadComment(req: Request) {
@@ -30,8 +31,10 @@ export namespace ThreadCommentLikeService {
         }
         return baseResponse('Ok', { count })
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -48,8 +51,10 @@ export namespace ThreadCommentLikeService {
         const count = await CountLike(id)
         return baseResponse('Ok', { count })
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }

@@ -5,6 +5,7 @@ import { SubCommunityMemberRepository } from 'app/repositories/sub_community_mem
 import { Constant } from 'common/constants'
 import { UserService } from './user.service'
 import { NotificationService } from './notification.service'
+import { LoggingService } from './logging.service'
 
 export namespace SubCommunityMemberService {
   export async function GetAllSubCommunityMember(req: Request) {
@@ -19,6 +20,7 @@ export namespace SubCommunityMemberService {
       })
       return baseResponse('Ok', result)
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -50,8 +52,10 @@ export namespace SubCommunityMemberService {
         }
         return result
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -67,8 +71,10 @@ export namespace SubCommunityMemberService {
         })
         return baseResponse('Ok', { ...dataValues, user })
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -92,8 +98,10 @@ export namespace SubCommunityMemberService {
         })
         return baseResponse('Ok', { results })
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -107,8 +115,10 @@ export namespace SubCommunityMemberService {
 
         return baseResponse('Ok')
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -120,6 +130,7 @@ export namespace SubCommunityMemberService {
       await SubCommunityMemberRepository.DeleteSubCommunityMember(sub_community_id, user_ids)
       return baseResponse('Ok')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -135,8 +146,10 @@ export namespace SubCommunityMemberService {
         })
         return baseResponse('Ok')
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }

@@ -6,8 +6,11 @@ import { SubCommunityRouter } from './sub_community.routes'
 import { MasterStatusRouter } from './master_status.routes'
 import { MasterStatusTypeRouter } from './master_status_type.routes'
 import { UserInfoRouter } from './user_info.routes'
+import { LoggingRouter } from './logging.routes'
 
 const router = Router()
+
+router.use(LoggingRouter)
 
 router.use(MasterStatusRouter)
 

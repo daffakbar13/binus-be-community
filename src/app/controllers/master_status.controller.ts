@@ -5,11 +5,11 @@ import { Request, Response } from 'express'
 export namespace MasterStatusController {
   export async function GetListMasterStatus(req: Request, res: Response) {
     const result = await MasterStatusService.GetListMasterStatus(req)
-    return sendResponse(res, result)
+    return sendResponse(req, res, result)
   }
 
   export async function GetMasterStatusDetail(req: Request, res: Response) {
     const result = await MasterStatusService.GetMasterStatusDetail(req)
-    return sendResponse(res, result)
+    return sendResponse(req, res, result)
   }
 }

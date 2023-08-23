@@ -10,6 +10,7 @@ import { s3 } from 'configs/aws'
 import { Constant } from 'common/constants'
 import { format } from 'util'
 import { NotificationService } from './notification.service'
+import { LoggingService } from './logging.service'
 
 export namespace CommunityService {
   export async function GetCommunityList(req: Request) {
@@ -32,8 +33,10 @@ export namespace CommunityService {
         })
         return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -46,8 +49,10 @@ export namespace CommunityService {
         const result = await CommunityRepository.GetDetailCommunity(user.id, { id })
         return baseResponse('Ok', result)
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -74,10 +79,13 @@ export namespace CommunityService {
           })
           return baseResponse('Ok', result)
         }
+        LoggingService.Error(req, Constant.ERR_INTERNAL, Constant.ERR_FILE_NOT_EXISTS)
         return baseResponse('BadRequest')
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -88,7 +96,7 @@ export namespace CommunityService {
       const file = req.file as any
       if (user) {
         if (file) {
-          await DeleteImageFromAWS(user.id, Number(req.params.id))
+          await DeleteImageFromAWS(req, user.id, Number(req.params.id))
         }
         const [, [result]] = await CommunityRepository.UpdateCommunity(Number(req.params.id), {
           ...req.body,
@@ -100,8 +108,10 @@ export namespace CommunityService {
         })
         return baseResponse('Ok', result)
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -112,23 +122,29 @@ export namespace CommunityService {
       const { user } = req.session
       if (user) {
         await CommunityRepository.DeleteCommunity({ id })
-        await DeleteImageFromAWS(user.id, Number(id))
+        await DeleteImageFromAWS(req, user.id, Number(id))
         return baseResponse('Ok')
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
 
-  export async function DeleteImageFromAWS(user_id: number, id: number) {
-    const oldData = await CommunityRepository.GetDetailCommunity(user_id, { id })
-    if (oldData) {
-      const deleteCmd = new DeleteObjectCommand({
-        Bucket: getEnv('BUCKET_NAME'),
-        Key: oldData.image_key,
-      })
-      await s3.send(deleteCmd)
+  export async function DeleteImageFromAWS(req: Request, user_id: number, id: number) {
+    try {
+      const oldData = await CommunityRepository.GetDetailCommunity(user_id, { id })
+      if (oldData) {
+        const deleteCmd = new DeleteObjectCommand({
+          Bucket: getEnv('BUCKET_NAME'),
+          Key: oldData.image_key,
+        })
+        await s3.send(deleteCmd)
+      }
+    } catch (err) {
+      LoggingService.Error(req, Constant.ERR_AWS, err)
     }
   }
 }

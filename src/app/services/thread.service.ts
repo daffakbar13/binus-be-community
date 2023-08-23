@@ -12,6 +12,7 @@ import { UserService } from './user.service'
 import { ThreadTenantService } from './thread_tenant.service'
 import { NotificationService } from './notification.service'
 import { TenantService } from './tenant.service'
+import { LoggingService } from './logging.service'
 
 export namespace ThreadService {
   export async function GetListThread(req: Request) {
@@ -52,8 +53,10 @@ export namespace ThreadService {
         }
         return result
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -70,8 +73,10 @@ export namespace ThreadService {
         })
         return baseResponse('Ok', responseWithPagination({ ...result, ...pagination }))
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -91,8 +96,10 @@ export namespace ThreadService {
         }
         return baseResponse('Ok')
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -121,8 +128,10 @@ export namespace ThreadService {
         }
         return baseResponse('Ok', { ...result.dataValues, user })
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -137,8 +146,10 @@ export namespace ThreadService {
         })
         return baseResponse('Ok', isUpdated ? { ...result.dataValues, user } : null)
       }
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -163,8 +174,10 @@ export namespace ThreadService {
         }
         return baseResponse('Ok', result)
       }
+      LoggingService.Error(req, Constant.ERR_INTERNAL, Constant.ERR_STATUS_NOT_FOUND)
       return baseResponse('BadRequest')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -175,6 +188,7 @@ export namespace ThreadService {
       await ThreadRepository.DeleteThread({ id })
       return baseResponse('Ok')
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_INTERNAL, err)
       return baseResponse('InternalServerError')
     }
   }

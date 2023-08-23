@@ -3,6 +3,8 @@ import axios from 'axios'
 import { BaseResponseTenant, baseResponse } from 'common/dto/baseResponse.dto'
 import { getEnv } from 'configs/env'
 import { Request } from 'express'
+import { Constant } from 'common/constants'
+import { LoggingService } from './logging.service'
 
 export namespace TenantService {
   const instance = () => {
@@ -22,14 +24,12 @@ export namespace TenantService {
       )
       return result
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_SOKRATES_SYSTEM_SERVICE, err)
       return baseResponse('InternalServerError')
     }
   }
 
-  export async function GetMappedTenant(
-    req: Request,
-    data: any,
-  ) {
+  export async function GetMappedTenant(req: Request, data: any) {
     try {
       // Get Tenant List
       const tenants: any = await TenantList(req)
@@ -51,11 +51,12 @@ export namespace TenantService {
           const filterTenant = tenant.find((a: any) => a.tenant_uuid === item.tenant_uuid)
           assign.push(filterTenant)
         })
-        result = ({ ...data, tenant: filter, assignTenant: assign })
+        result = { ...data, tenant: filter, assignTenant: assign }
       }
 
       return baseResponse('Ok', result)
     } catch (err) {
+      LoggingService.Error(req, Constant.ERR_SOKRATES_SYSTEM_SERVICE, err)
       return baseResponse('InternalServerError')
     }
   }

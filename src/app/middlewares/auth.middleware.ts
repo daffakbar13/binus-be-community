@@ -8,7 +8,7 @@ export namespace AuthMiddleware {
     const verify = await AuthService.CheckToken(req)
 
     if (!verify) {
-      return sendResponse(res, baseResponse('Unauthorized'))
+      return sendResponse(req, res, baseResponse('Unauthorized'))
     }
 
     return next()

@@ -8,7 +8,7 @@ export namespace ErrorMiddleware {
     const validation = validationResult(req)
 
     if (!validation.isEmpty()) {
-      return sendResponse(res, baseResponse('BadRequest', validation.array()))
+      return sendResponse(req, res, baseResponse('BadRequest', validation.array()))
     }
 
     return next()

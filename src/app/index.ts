@@ -37,8 +37,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 app.use(AppRouter)
 
-app.use('*', (_, res) => {
-  sendResponse(res, baseResponse('NotFound'))
+app.use('*', (req, res) => {
+  sendResponse(req, res, baseResponse('NotFound'))
 })
 
 export default app

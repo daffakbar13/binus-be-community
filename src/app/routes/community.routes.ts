@@ -7,6 +7,7 @@ import { Router } from 'express'
 import { CommunityMemberRouter } from './community_member.routes'
 
 const router = Router()
+const baseUrl = '/'
 
 router.get(
   '/list',
@@ -46,6 +47,7 @@ router.delete(
 )
 
 export const CommunityRouter = Router().use(
+  baseUrl,
   AuthMiddleware.checkAuthenticate,
   router,
   CommunityMemberRouter,

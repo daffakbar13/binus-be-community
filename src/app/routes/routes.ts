@@ -16,8 +16,6 @@ router.use(MasterStatusRouter)
 
 router.use(MasterStatusTypeRouter)
 
-router.use(CommunityRouter)
-
 router.use(SubCommunityRouter)
 
 router.use(BannerRouter)
@@ -25,5 +23,7 @@ router.use(BannerRouter)
 router.use(ThreadRouter)
 
 router.use(UserInfoRouter)
+
+router.use(CommunityRouter)
 
 export const AppRouter = router

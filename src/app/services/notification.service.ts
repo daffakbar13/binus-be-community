@@ -56,7 +56,7 @@ export namespace NotificationService {
       )
       return result
     } catch (err) {
-      LoggingService.Error(req, Constant.ERR_SUPERAPPS_SERVICE, err)
+      LoggingService.Error(req, Constant.ERR_SUPERAPPS_SERVICE, JSON.stringify(err))
       return baseResponse('InternalServerError')
     }
   }

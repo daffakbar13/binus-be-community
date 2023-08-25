@@ -36,7 +36,7 @@ export namespace UserService {
       LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, Constant.ERR_SESSION_USER_NOT_FOUND)
       return baseResponse('Unauthorized')
     } catch (err) {
-      LoggingService.Error(req, Constant.ERR_SOKRATES_SERVICE, JSON.stringify(err))
+      LoggingService.Error(req, Constant.ERR_SOKRATES_SERVICE, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -51,7 +51,7 @@ export namespace UserService {
       )
       return result
     } catch (err) {
-      LoggingService.Error(req, Constant.ERR_SOKRATES_SERVICE, JSON.stringify(err))
+      LoggingService.Error(req, Constant.ERR_SOKRATES_SERVICE, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -67,7 +67,7 @@ export namespace UserService {
       )
       return result
     } catch (err) {
-      LoggingService.Error(req, Constant.ERR_SOKRATES_SERVICE, JSON.stringify(err))
+      LoggingService.Error(req, Constant.ERR_SOKRATES_SERVICE, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -126,7 +126,7 @@ export namespace UserService {
       }
       return baseResponse('Ok', data)
     } catch (err) {
-      LoggingService.Error(req, Constant.ERR_SOKRATES_SERVICE, JSON.stringify(err))
+      LoggingService.Error(req, Constant.ERR_SOKRATES_SERVICE, err)
       return baseResponse('InternalServerError')
     }
   }

@@ -28,7 +28,7 @@ export namespace AuthService {
         return true
       }
     } catch (err) {
-      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, JSON.stringify(err))
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, err)
       return false
     }
     return false
@@ -42,7 +42,7 @@ export namespace AuthService {
       })
       return result
     } catch (err) {
-      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, JSON.stringify(err))
+      LoggingService.Error(req, Constant.ERR_AUTH_SERVICE, err)
       return baseResponse('InternalServerError')
     }
   }

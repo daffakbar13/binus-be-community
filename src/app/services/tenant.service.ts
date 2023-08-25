@@ -24,7 +24,7 @@ export namespace TenantService {
       )
       return result
     } catch (err) {
-      LoggingService.Error(req, Constant.ERR_SOKRATES_SYSTEM_SERVICE, JSON.stringify(err))
+      LoggingService.Error(req, Constant.ERR_SOKRATES_SYSTEM_SERVICE, err)
       return baseResponse('InternalServerError')
     }
   }
@@ -56,7 +56,7 @@ export namespace TenantService {
 
       return baseResponse('Ok', result)
     } catch (err) {
-      LoggingService.Error(req, Constant.ERR_SOKRATES_SYSTEM_SERVICE, JSON.stringify(err))
+      LoggingService.Error(req, Constant.ERR_SOKRATES_SYSTEM_SERVICE, err)
       return baseResponse('InternalServerError')
     }
   }

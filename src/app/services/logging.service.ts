@@ -8,7 +8,7 @@ import { format } from 'util'
 export namespace LoggingService {
   export function GetLogging(req: Request) {
     const xid = req.params.xid as string
-    const result = getLogs().filter((l) => l.xid === xid)
+    const result = getLogs(xid)
     return baseResponse('Ok', result)
   }
 
@@ -28,7 +28,7 @@ export namespace LoggingService {
       errors: getErrors(req),
       response,
     }
-    cache.set(Constant.LOG_KEY, [...getLogs(), log], Constant.LOG_CACHE_EXP)
+    cache.set(xid, [...getLogs(xid), log], Constant.LOG_CACHE_EXP)
   }
 
   export function Error(req: Request, baseErr: string, ...err: any[]) {
@@ -42,5 +42,5 @@ export namespace LoggingService {
 
   const getErrors = (req: Request) => (req.res?.get(Constant.ERR_APP) || []) as Array<any>
 
-  const getLogs = () => cache.get<LoggingDto.Log[]>(Constant.LOG_KEY) || []
+  const getLogs = (xid: string) => cache.get<LoggingDto.Log[]>(xid as string) || []
 }

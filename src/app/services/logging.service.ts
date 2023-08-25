@@ -32,9 +32,15 @@ export namespace LoggingService {
     cache.set(Constant.LOG_KEY, [...getLogs(), log], Constant.LOG_CACHE_EXP)
   }
 
-  export function Error(req: Request, ...err: any) {
+  export function Error(req: Request, baseErr?: any, ...err: any) {
     const errors = getErrors(req)
-    req.res?.set(Constant.ERR_APP, [...errors, format(...err)])
+    req.res?.set(Constant.ERR_APP, [
+      ...errors,
+      format(
+        baseErr,
+        (err || []).map((e: any) => JSON.stringify(e)),
+      ),
+    ])
   }
 
   const getErrors = (req: Request) => (req.res?.get(Constant.ERR_APP) || []) as Array<any>
